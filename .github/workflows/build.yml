@@ -19,10 +19,6 @@ jobs:
         platform:
           - os: ubuntu-22.04
             key: linux-amd64
-          - os: ubuntu-22.04-arm
-            key: linux-aarch64
-          - os: macos-14
-            key: macos-aarch64
     name: Build natives (${{matrix.platform.key}})
     runs-on: ${{matrix.platform.os}}
     steps:
