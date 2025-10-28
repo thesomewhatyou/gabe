@@ -1,0 +1,51 @@
+services:
+  bot:
+    # Uncomment the below line to build locally:
+    # build: .
+    image: ghcr.io/gabrielpiss/gabe:edge
+    restart: unless-stopped
+    volumes:
+      - ./logs:/app/logs
+      - ./bot-help:/app/help
+      - ./bot-temp:/app/temp
+      - ./config:/app/config
+      - ./db:/app/db
+    env_file:
+      - .env
+    environment:
+      OUTPUT: /app/help/help.md
+      TEMPDIR: /app/temp
+    links:
+      - lavalink
+    depends_on:
+      lavalink:
+        condition: service_healthy
+
+    networks:
+      gabe:
+        ipv4_address: 172.20.0.2
+
+  lavalink:
+    container_name: lavalink
+    image: ghcr.io/lavalink-devs/lavalink:4
+    restart: unless-stopped
+    volumes:
+      - ./application.yml:/opt/Lavalink/application.yml
+    healthcheck:
+      test: 'curl -H "Authorization: $$(cat /opt/Lavalink/application.yml | grep password: | sed ''s/^ *password: //g'' | tr -d ''"'')" -f http://localhost:2333/version'
+      interval: 15s
+      retries: 5
+    networks:
+      gabe:
+        ipv4_address: 172.20.0.3
+
+volumes:
+  bot-help:
+  bot-temp:
+
+networks:
+  gabe:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24

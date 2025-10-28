@@ -1,0 +1,121 @@
+{
+  "name": "gabe",
+  "version": "0.5.0",
+  "description": "Gabe - Your multi-functional Discord pal, enemy, or both all at once",
+  "exports": "./dist/app.js",
+  "bin": "./dist/app.js",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc && pnpm build:natives",
+    "build:no-magick": "tsc && pnpm build:natives:no-magick",
+    "build:debug": "tsc && pnpm build:natives:debug",
+    "build:debug-no-magick": "tsc && pnpm build:natives:debug-no-magick",
+    "build:natives": "cmake-js compile --CDWITH_MAGICK=ON",
+    "build:natives:debug": "cmake-js compile -BDebug --CDWITH_MAGICK=ON",
+    "build:natives:no-magick": "cmake-js compile --CDWITH_MAGICK=OFF",
+    "build:natives:debug-no-magick": "cmake-js compile -BDebug --CDWITH_MAGICK=OFF",
+    "build:ts": "tsc",
+    "docker:build": "DOCKER_BUILDKIT=1 docker build -t gabe .",
+    "docker:run-bot": "docker run --rm --network=host gabe",
+    "docker:run-api": "docker run --rm --network=host --entrypoint='[\"node\", \"dist/api/index.js\"]' gabe",
+    "docker:run-lava": "docker run --rm --network host -v \"$(pwd)\"/application.yml:/opt/Lavalink/application.yml ghcr.io/lavalink-devs/lavalink:4",
+    "format": "prettier .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "start": "node dist/app.js",
+    "start:bun": "bun src/app.ts",
+    "start:deno": "deno -P src/app.ts",
+    "start:debug": "DEBUG=true node dist/app.js",
+    "start:bun:debug": "DEBUG=true bun src/app.ts",
+    "start:deno:debug": "DEBUG=true deno -P src/app.ts",
+    "start-api": "node dist/api/index.js",
+    "start-api:bun": "bun src/api/index.ts",
+    "start-api:deno": "deno -P src/api/index.ts",
+    "start-api:debug": "DEBUG=true node dist/api/index.js",
+    "start-api:bun:debug": "DEBUG=true bun src/api/index.ts",
+    "start-api:deno:debug": "DEBUG=true deno -P src/api/index.ts"
+  },
+  "author": "Gabriel Piss",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gabrielpiss/gabe.git"
+  },
+  "dependencies": {
+    "@db/sqlite": "jsr:^0.12.0",
+    "better-sqlite3": "^12.4.1",
+    "bufferutil": "^4.0.9",
+    "codex": "^0.2.3",
+    "dotenv": "^17.2.3",
+    "file-type": "^21.0.0",
+    "format-duration": "^3.0.2",
+    "ipaddr.js": "^2.2.0",
+    "node-addon-api": "^8.5.0",
+    "oceanic.js": "1.12.0",
+    "postgres": "^3.4.7",
+    "shoukaku": "^4.1.1",
+    "winston": "^3.18.3",
+    "winston-daily-rotate-file": "^5.0.0",
+    "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "@eslint/compat": "^1.4.0",
+    "@eslint/js": "^9.37.0",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/bun": "^1.2.23",
+    "@types/node": "^22.18.8",
+    "@types/ws": "^8.18.1",
+    "cmake-js": "^7.3.1",
+    "eslint": "^9.37.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "eslint-plugin-import-x": "^4.16.1",
+    "eslint-plugin-prettier": "^5.5.4",
+    "globals": "^16.4.0",
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.0"
+  },
+  "optionalDependencies": {
+    "@sentry/bun": "^10.19.0",
+    "@sentry/deno": "^10.19.0",
+    "@sentry/node": "^10.19.0",
+    "pm2": "^6.0.13"
+  },
+  "binary": {
+    "napi_versions": [
+      7
+    ]
+  },
+  "imports": {
+    "#cmd-classes/*": {
+      "node": "./dist/classes/*",
+      "default": "./src/classes/*"
+    },
+    "#utils/*": {
+      "node": "./dist/utils/*",
+      "default": "./src/utils/*"
+    },
+    "#pagination": {
+      "node": "./dist/pagination/pagination.js",
+      "default": "./src/pagination/pagination.ts"
+    },
+    "#config/*": "./config/*"
+  },
+  "packageManager": "pnpm@10.13.1+sha512.37ebf1a5c7a30d5fabe0c5df44ee8da4c965ca0c5af3dbab28c3a1681b70a256218d05c81c9c0dcf767ef6b8551eb5b960042b9ed4300c59242336377e01cfad",
+  "pnpm": {
+    "ignoredOptionalDependencies": [
+      "@discordjs/voice"
+    ],
+    "onlyBuiltDependencies": [
+      "better-sqlite3",
+      "bufferutil"
+    ],
+    "patchedDependencies": {
+      "pm2": "patches/pm2.patch"
+    }
+  }
+}

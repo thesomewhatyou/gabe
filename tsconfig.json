@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "lib": ["es2023"],
+    "target": "es2022",
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "allowJs": true,
+    "sourceMap": true,
+    "rewriteRelativeImportExtensions": true,
+    "allowImportingTsExtensions": true,
+    "erasableSyntaxOnly": true,
+    "verbatimModuleSyntax": true,
+    "resolveJsonModule": true,
+    "paths": {
+      "#cmd-classes/*": ["./src/classes/*"],
+      "#utils/*": ["./src/utils/*"],
+      "#pagination": ["./src/pagination/pagination.js"],
+      "#config/*": ["./config/*"]
+    }
+  },
+  "include": ["./src/**/*"],
+  "exclude": ["./dist/**/*", "./commands/**/*"]
+}

@@ -1,0 +1,31 @@
+name: Build commit/edge image
+
+permissions:
+  contents: read
+  packages: write
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  build:
+    if: github.repository == 'Gabe/Gabe'
+    uses: ./.github/workflows/docker.yml
+    with:
+      imagemagick: true
+      stable: false
+      tags: |
+        type=raw,value=edge
+        type=sha
+    secrets: inherit
+
+  build-no-magick:
+    if: github.repository == 'Gabe/Gabe'
+    uses: ./.github/workflows/docker.yml
+    with:
+      stable: false
+      tags: |
+        type=raw,value=edge-no-magick
+        type=sha,suffix=-no-magick
+    secrets: inherit

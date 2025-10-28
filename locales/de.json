@@ -1,0 +1,305 @@
+{
+    "commands": {
+        "descriptions": {
+            "bird": "Gibt ein random Bild eines Vogels",
+            "cat": "Gibt ein random Katzenbild",
+            "dice": "Rollt den Würfel",
+            "homebrew": "Erzeugt ein Homebrew Channel edit",
+            "sonic": "Erzeugt ein Sonic Sprechblase bild",
+            "avatar": "Gibt den Avatar eines Users",
+            "banner": "Gibt den Banner eines Users",
+            "broadcast": "Schickt eine nachricht bis the befehl nochmal ausgeführt wird oder der bot neugestartet wird",
+            "command": "Aktiviert/Deaktiviert einen klassischen befehl auf einem server (benutz settings für slash commands)",
+            "count": "Zeigt wie oft ein befehl verwendet wurde",
+            "eval": "Führt JavaScript code aus",
+            "exec": "Führt einen shell command aus",
+            "image": "Sucht nach bilder im Netz",
+            "imagereload": "Versucht sich mit allen verfügbaren Bildverarbeitungs server neu zu verbinden",
+            "info": "Zeigt ein paar infos und credits von mir",
+            "lengthen": "Expandiert eine short URL",
+            "ping": "Pingt Discords server",
+            "prefix": "Checkt/verändert den server prefix",
+            "reload": "Lädt einen Befehl neu",
+            "restart": "Restartet mich",
+            "snowflake": "Konvertiert eine Discord snowflake id zu einen timestamp",
+            "soundreload": "Versucht sich zu allen verfügbaren Lavalink nodes neu zu verbinden",
+            "stats": "Zeigt ein paar Statistiken über mich",
+            "sticker": "Gibt die Bild Datei eines Stickers",
+            "youtube": "Sucht eingabe in YouTube",
+            "bounce": "Lässt ein Bild auf und ab bouncen",
+            "caption": "Fügt oben eine caption in einem Bild ein",
+            "caption2": "Fügt unten eine caption in einem Bild ein",
+            "blur": "Macht ein Bild unscharf",
+            "circle": "Fügt eine radiale unschärfe zu einem Bild hinzu",
+            "deepfry": "Macht ein Bild gedeepfried",
+            "flag": "Fügt einen Flaggen Overlay in einem Bild ein",
+            "flip": "Dreht ein Bild um",
+            "freeze": "Deaktiviert die Schleife eines GIFs und lässt es dadurch nur einmal spielen",
+            "gif": "Konvertiert ein Bild zu einem GIF",
+            "globe": "Verwandelt ein Bild in einen drehenden Globus",
+            "grayscale": "Macht ein Bild Schwarz-Weiss",
+            "haah": "Spiegelt die linke Seite eines Bildes auf die rechte",
+            "implode": "Lässt ein Bild Implodieren",
+            "invert": "Invertiert ein Bild",
+            "magik": "Fügt einem Bild einen content aware Skalierungseffekt hinzu",
+            "meme": "Erzeugt ein Meme aus einem Bild (oberen und unteren Text durch Komma trennen)",
+            "motivate": "Erzeugt ein Motvationsposter",
+            "pixelate": "Verpixelt ein Bild",
+            "reddit": "Fügt ein Reddit Watermark in ein Bild ein",
+            "reverse": "Kehrt eine Bild sequenz (z.B. GIFs) um",
+            "scott": "Lässt Scott the Woz ein Bild zeigen",
+            "sepia": "Fügt einen Sepia Filter ein",
+            "sharpen": "Schärft ein Bild",
+            "dog": "Gibt ein random Hundephoto",
+            "base64": "Codiert/Decodiert einen Base64 string",
+            "hooh": "Spiegelt die untere Seite eines Bilds auf die obere",
+            "imagestats": "Zeigt ein paar Statistiken über die Bildserver",
+            "crop": "Schneidet in Bild zu einem 1:1 Verhältnis",
+            "8ball": "Fragt den magischen 8-ball eine Frage",
+            "channel": "Aktiviert/Deaktiviert klassische commands in channels (benutze settings für slash commands)",
+            "explode": "Explodiert ein Bild",
+            "donate": "Lerne mehr darüber wie du die Entwicklung von Gabe unterstützen kannst",
+            "flop": "Spiegelt ein Bild",
+            "help": "Zeigt eine liste aller Befehle",
+            "raw": "Zeigt die direkte image URL eines bildes (nützlich um GIFs von seiten wie Tenor zu speichern)",
+            "emote": "Gibt die Bild Datei eines Emojis",
+            "gamexplain": "Erstellt aus einem Bild ein GameXplain-Thumbnail",
+            "jpeg": "Fügt Künstliche JPEG Komprimierung zu einem Bild hinzu",
+            "slow": "Verlangsamt eine Bildsequenz",
+            "soos": "„Wiederholt“ eine Bildsequenz durch umkehren wenn sie zu Ende ist",
+            "speechbubble": "Fügt eine Sprechblase zu einem Bild hinzu",
+            "speed": "Macht eine Bildsequenz schneller",
+            "spin": "Lässt ein Bild drehen",
+            "squish": "Staucht/Streckt ein Bild",
+            "stretch": "Streckt ein Bild zu einem 1:1-Seitenverhältnis",
+            "swirl": "Verstrudelt ein Bild",
+            "tile": "Erstellt ein Fliesenmuster von einem Bild",
+            "uncaption": "Entfernt die Bildunterschrift",
+            "unfreeze": "Setzt eine Bildsequenz fort",
+            "vignette": "Fügt einen Vignetteneffekt zu einem Bild hinzu",
+            "waaw": "Spiegelt die rechte Bildseite nach links",
+            "wall": "Erstellt eine Wand aus einem Bild",
+            "wide": "Streckt ein Bild auf 19x seine Breite",
+            "woow": "Spiegelt die obere Bildhälfte nach unten",
+            "Select Image": "Keine Beschreibung gefunden",
+            "music": "Handhabt die Musikwiedergabe",
+            "uncanny": "Macht ein Bild mit „Mr. Incredible Becomes Uncanny“ (links/rechts mit Komma trennen)",
+            "spotify": "Für einen Spotify-„Das-ist“-Header zu einem Bild hinzu",
+            "tags": "Der Hauptbefehl für Tags. Konsultiere die Hilfeseite: https://gabe.net/help.html",
+            "snapchat": "Fügt einen Text wie bei Snapshat hinzu",
+            "fade": "Blendet ein Bild aus",
+            "whisper": "Fügt einem Bild eine Beschriftung im Whisper-Stil hinzu",
+            "hue": "Farbtonverschiebung eines Bildes"
+        },
+        "flagNames": {
+            "8ball": {
+                "question": "frage"
+            },
+            "dice": {
+                "max": "max"
+            },
+            "avatar": {
+                "member": "mitglied"
+            },
+            "banner": {
+                "member": "mitglied"
+            },
+            "base64": {
+                "decode": "entschlüsseln",
+                "encode": "verschlüsseln"
+            },
+            "base64 decode": {
+                "text": "text"
+            },
+            "base64 encode": {
+                "text": "text"
+            },
+            "broadcast": {
+                "message": "nachricht"
+            },
+            "channel": {
+                "enable": "aktivieren",
+                "disable": "deaktivieren"
+            },
+            "channel enable": {
+                "text": "text"
+            },
+            "channel disable": {
+                "text": "text"
+            },
+            "command": {
+                "enable": "aktivieren",
+                "disable": "deaktivieren"
+            },
+            "command enable": {
+                "text": "text"
+            },
+            "command disable": {
+                "text": "text"
+            },
+            "count": {
+                "command": "befehl"
+            },
+            "emote": {
+                "emoji": "emoji"
+            },
+            "eval": {
+                "code": "code",
+                "broadcast": "übertragen"
+            },
+            "exec": {
+                "cmd": "cmd"
+            },
+            "help": {
+                "command": "befehl"
+            },
+            "image": {
+                "query": "abfragen"
+            },
+            "lengthen": {
+                "url": "url"
+            },
+            "prefix": {
+                "prefix": "prefix"
+            },
+            "reload": {
+                "cmd": "cmd",
+                "skipsend": "sendenüberspringen"
+            },
+            "youtube": {
+                "query": "abfrage"
+            },
+            "caption": {
+                "noegg": "keinei",
+                "font": "schriftart"
+            },
+            "caption2": {
+                "top": "oben",
+                "font": "schriftart"
+            },
+            "fade": {
+                "alpha": "alpha"
+            },
+            "freeze": {
+                "endframe": "letzterframe"
+            },
+            "jpeg": {
+                "quality": "qualität"
+            },
+            "hue": {
+                "shift": "verschiebung"
+            },
+            "snowflake": {
+                "id": "id"
+            },
+            "tags get": {
+                "name": "name"
+            },
+            "tags": {
+                "edit": "bearbeiten",
+                "owner": "besitzer",
+                "random": "zufällig",
+                "add": "hinzufügen",
+                "delete": "löschen"
+            },
+            "tags add": {
+                "name": "name"
+            },
+            "slow": {
+                "multiplier": "multiplikator"
+            },
+            "snapchat": {
+                "position": "position"
+            },
+            "uncanny": {
+                "font": "schriftart"
+            },
+            "speechbubble": {
+                "alpha": "alpha",
+                "flip": "umdrehen",
+                "bottom": "unten",
+                "scale": "skalierung"
+            },
+            "speed": {
+                "multiplier": "multiplikator"
+            },
+            "music host": {
+                "user": "benutzer"
+            },
+            "music play": {
+                "query": "abfrage"
+            },
+            "music remove": {
+                "position": "position"
+            },
+            "music seek": {
+                "position": "position"
+            },
+            "music volume": {
+                "level": "pegel"
+            },
+            "tags delete": {
+                "name": "name"
+            },
+            "tags edit": {
+                "name": "name"
+            },
+            "meme": {
+                "font": "schriftart"
+            },
+            "motivate": {
+                "font": "schriftart"
+            },
+            "uncaption": {
+                "tolerance": "toleranz"
+            }
+        },
+        "flags": {
+            "meme": {
+                "font": "Gib die Schriftart and, die du verwenden willst (standard: impact)"
+            },
+            "motivate": {
+                "font": "Gib die Schriftart and, die du verwenden willst (standard: times)"
+            },
+            "caption": {
+                "font": "Gib die Schriftart and, die du verwenden willst (standard: futura)"
+            },
+            "uncanny": {
+                "font": "Gib die Schriftart and, die du verwenden willst (standard: helvetica)"
+            },
+            "caption2": {
+                "font": "Gib die Schriftart and, die du verwenden willst (standard: helvetica)"
+            },
+            "music": {
+                "host": "Holt oder ändert den Host der aktuellen Sprachsitzung",
+                "loop": "Wiederholt die Musik",
+                "nowplaying": "Zeigt den aktuellen gespielten Song",
+                "play": "Spielt einen Song oder fügt ihn in die Reihe ein",
+                "queue": "Zeigt die aktuelle Reihe",
+                "remove": "Entfernt einen Song aus der Reihe",
+                "seek": "Springt zu einer anderen Stelle in der Musik",
+                "shuffle": "Durchmischt die Musik",
+                "skip": "Überspringt den aktuellen Song",
+                "stop": "Hält die Musik an",
+                "toggle": "Pausiert den aktuellen Song, oder setzt ihn fort",
+                "volume": "Stellt die Musiklautstärke ein"
+            },
+            "watermark": {
+                "9gag": "Fügt einen 9GAG Watermark in einem Bild ein",
+                "avs4you": "Fügt den avs4you Watermark in einem Bild ein",
+                "bandicam": "Fügt den Bandicam Watermark in einem Bild ein",
+                "deviantart": "Fügt ein DeviantArt Watermark in einem Bild ein",
+                "funky": "Fügt den New Funky Mode Banner in einem Bild ein",
+                "hypercam": "Fügt ein Hypercam Watermark in ein Bild ein",
+                "ifunny": "Fügt ein iFunny Watermark in ein Bild ein",
+                "kinemaster": "Fügt ein KineMaster Watermark in ein Bild ein",
+                "memecenter": "Fügt ein MemeCenter Watermark in ein Bild ein",
+                "shutterstock": "Fügt ein Shutterstock Watermark in ein Bild ein"
+            },
+            "qr": {
+                "create": "Generiert einen QR code",
+                "read": "Liest einen QR code"
+            }
+        }
+    }
+}
