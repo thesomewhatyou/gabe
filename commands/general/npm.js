@@ -1,56 +1,76 @@
-import { Constants } from "oceanic.js";
-import Command from "#cmd-classes/command.js";
+import { Constants } from 'oceanic.js';
+import Command from '#cmd-classes/command.js';
+
+function formatDate(dateString) {
+  if (!dateString) {
+    return 'Unknown';
+  }
+  const date = new Date(dateString);
+  if (Number.isNaN(date.getTime())) {
+    return 'Unknown';
+  }
+  return date.toISOString().split('T')[0];
+}
 
 class NpmCommand extends Command {
   async run() {
     this.success = false;
-    if (!this.args[0]) return "Please provide a package name to search for.";
+    const pkgName = this.args[0];
 
-    const packageName = this.args[0];
+    if (!pkgName) {
+      await this.interaction.reply({ content: 'Please provide a package name to search for.', flags: 64 });
+      return;
+    }
 
     try {
-      const response = await fetch(`https://registry.npmjs.org/${encodeURIComponent(packageName)}`);
+      await this.interaction.defer();
+
+      const response = await fetch(`https://registry.npmjs.org/${encodeURIComponent(pkgName)}`);
+      
+      if (response.status === 404) {
+        await this.interaction.editOriginal({ content: `Package **${pkgName}** was not found on npm.` });
+        return;
+      }
       
       if (!response.ok) {
-        if (response.status === 404) {
-          return `Package "${packageName}" not found on npm.`;
-        }
-        return `Failed to fetch package information (Status: ${response.status})`;
+        throw new Error(`npm registry request failed with status ${response.status}`);
+      }
+      
+      const data = await response.json();
+      const latestVersion = data?.['dist-tags']?.latest;
+      
+      if (!latestVersion) {
+        await this.interaction.editOriginal({ content: `Could not determine the latest version for **${pkgName}**.` });
+        return;
+      }
+      
+      const latestMetadata = data.versions?.[latestVersion] ?? {};
+      const { description = 'No description provided.', homepage, repository } = latestMetadata;
+      const author = latestMetadata.author?.name || latestMetadata._npmUser?.name || 'Unknown';
+      const publishedDate = formatDate(data.time?.[latestVersion]);
+      
+      const embed = {
+        title: `${pkgName}@${latestVersion}`,
+        url: `https://www.npmjs.com/package/${encodeURIComponent(pkgName)}`,
+        description: description,
+        fields: [
+          { name: 'Author', value: author, inline: true },
+          { name: 'Published', value: publishedDate, inline: true },
+        ],
+      };
+
+      if (homepage) {
+        embed.fields.push({ name: 'Homepage', value: homepage });
+      }
+      if (repository?.url) {
+        embed.fields.push({ name: 'Repository', value: repository.url.replace(/^git\+/, '') });
       }
 
-      const data = await response.json();
-      
-      const latestVersion = data["dist-tags"]?.latest || "Unknown";
-      const repository = data.repository?.url || data.repository || "No repository";
-      const cleanRepo = typeof repository === "string" 
-        ? repository.replace(/^git\+/, "").replace(/\.git$/, "") 
-        : "No repository";
-      
-      const latestReleaseDate = data.time?.[latestVersion] || "Unknown";
-      const formattedDate = latestReleaseDate !== "Unknown" 
-        ? new Date(latestReleaseDate).toLocaleDateString("en-US", { 
-            year: "numeric", 
-            month: "long", 
-            day: "numeric" 
-          })
-        : "Unknown";
-      
-      const description = data.description || "No description";
-      const homepage = data.homepage || cleanRepo;
-      const license = data.license || "Unknown";
-
       this.success = true;
-      return `**${packageName}**
-\`\`\`
-Version:       ${latestVersion}
-Released:      ${formattedDate}
-License:       ${license}
-Repository:    ${cleanRepo}
-Homepage:      ${homepage}
-Description:   ${description}
-\`\`\``;
+      await this.interaction.editOriginal({ embeds: [embed] });
     } catch (error) {
-      return `Error fetching package information: ${error.message}`;
+      console.error('npm lookup failed:', error);
+      await this.interaction.editOriginal({ content: 'Unable to contact the npm registry right now.' });
     }
   }
 
