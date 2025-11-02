@@ -44,6 +44,8 @@ If you want to setup **gabe**, a guide can be found in the [Setup Guide](docs/se
 
 *i hope scott the woz burns*
 
+Gabe does not respond to commands via regular text forms. They can be done with commands, however. Sorry.
+
 ## Credits
 
 **gabe** is built on the foundation of [esmBot](https://github.com/esmBot/esmBot) by [Essem](https://github.com/TheEssem). Everything else? It's just **gabe**.
