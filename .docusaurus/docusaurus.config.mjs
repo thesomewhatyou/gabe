@@ -32,7 +32,7 @@ export default {
     "experimental_router": "browser"
   },
   "url": "https://thesomewhatyou.github.io",
-  "baseUrl": "/",
+  "baseUrl": "/gabe/",
   "organizationName": "thesomewhatyou",
   "projectName": "gabe",
   "onBrokenLinks": "throw",

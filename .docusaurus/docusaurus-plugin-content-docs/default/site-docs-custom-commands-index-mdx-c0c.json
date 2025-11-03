@@ -5,7 +5,7 @@
   "source": "@site/docs/custom-commands/index.mdx",
   "sourceDirName": "custom-commands",
   "slug": "/custom-commands/",
-  "permalink": "/docs/custom-commands/",
+  "permalink": "/gabe/docs/custom-commands/",
   "draft": false,
   "unlisted": false,
   "editUrl": "https://github.com/thesomewhatyou/gabe/tree/gh-pages/docs/custom-commands/index.mdx",
@@ -17,10 +17,10 @@
   "sidebar": "tutorialSidebar",
   "previous": {
     "title": "Containers",
-    "permalink": "/docs/containers/"
+    "permalink": "/gabe/docs/containers/"
   },
   "next": {
     "title": "Welcome",
-    "permalink": "/docs/intro"
+    "permalink": "/gabe/docs/intro"
   }
 }

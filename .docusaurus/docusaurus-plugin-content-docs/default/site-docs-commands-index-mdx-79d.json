@@ -5,7 +5,7 @@
   "source": "@site/docs/commands/index.mdx",
   "sourceDirName": "commands",
   "slug": "/commands/",
-  "permalink": "/docs/commands/",
+  "permalink": "/gabe/docs/commands/",
   "draft": false,
   "unlisted": false,
   "editUrl": "https://github.com/thesomewhatyou/gabe/tree/gh-pages/docs/commands/index.mdx",
@@ -17,6 +17,6 @@
   "sidebar": "tutorialSidebar",
   "next": {
     "title": "Config",
-    "permalink": "/docs/config/"
+    "permalink": "/gabe/docs/config/"
   }
 }

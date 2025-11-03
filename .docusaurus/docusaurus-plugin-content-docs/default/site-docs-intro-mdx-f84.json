@@ -5,7 +5,7 @@
   "source": "@site/docs/intro.mdx",
   "sourceDirName": ".",
   "slug": "/intro",
-  "permalink": "/docs/intro",
+  "permalink": "/gabe/docs/intro",
   "draft": false,
   "unlisted": false,
   "editUrl": "https://github.com/thesomewhatyou/gabe/tree/gh-pages/docs/intro.mdx",
@@ -18,10 +18,10 @@
   "sidebar": "tutorialSidebar",
   "previous": {
     "title": "Custom Commands",
-    "permalink": "/docs/custom-commands/"
+    "permalink": "/gabe/docs/custom-commands/"
   },
   "next": {
     "title": "PostgreSQL",
-    "permalink": "/docs/postgresql/"
+    "permalink": "/gabe/docs/postgresql/"
   }
 }

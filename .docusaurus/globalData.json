@@ -1,53 +1,53 @@
 {
   "docusaurus-plugin-content-docs": {
     "default": {
-      "path": "/docs",
+      "path": "/gabe/docs",
       "versions": [
         {
           "name": "current",
           "label": "Next",
           "isLast": true,
-          "path": "/docs",
+          "path": "/gabe/docs",
           "mainDocId": "commands/index",
           "docs": [
             {
               "id": "commands/index",
-              "path": "/docs/commands/",
+              "path": "/gabe/docs/commands/",
               "sidebar": "tutorialSidebar"
             },
             {
               "id": "config/index",
-              "path": "/docs/config/",
+              "path": "/gabe/docs/config/",
               "sidebar": "tutorialSidebar"
             },
             {
               "id": "containers/index",
-              "path": "/docs/containers/",
+              "path": "/gabe/docs/containers/",
               "sidebar": "tutorialSidebar"
             },
             {
               "id": "custom-commands/index",
-              "path": "/docs/custom-commands/",
+              "path": "/gabe/docs/custom-commands/",
               "sidebar": "tutorialSidebar"
             },
             {
               "id": "intro",
-              "path": "/docs/intro",
+              "path": "/gabe/docs/intro",
               "sidebar": "tutorialSidebar"
             },
             {
               "id": "postgresql/index",
-              "path": "/docs/postgresql/",
+              "path": "/gabe/docs/postgresql/",
               "sidebar": "tutorialSidebar"
             },
             {
               "id": "runtimes/index",
-              "path": "/docs/runtimes/",
+              "path": "/gabe/docs/runtimes/",
               "sidebar": "tutorialSidebar"
             },
             {
               "id": "setup/index",
-              "path": "/docs/setup/",
+              "path": "/gabe/docs/setup/",
               "sidebar": "tutorialSidebar"
             }
           ],
@@ -55,7 +55,7 @@
           "sidebars": {
             "tutorialSidebar": {
               "link": {
-                "path": "/docs/commands/",
+                "path": "/gabe/docs/commands/",
                 "label": "Gabe Bot Commands Documentation"
               }
             }

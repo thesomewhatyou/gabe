@@ -5,7 +5,7 @@
   "source": "@site/docs/postgresql/index.mdx",
   "sourceDirName": "postgresql",
   "slug": "/postgresql/",
-  "permalink": "/docs/postgresql/",
+  "permalink": "/gabe/docs/postgresql/",
   "draft": false,
   "unlisted": false,
   "editUrl": "https://github.com/thesomewhatyou/gabe/tree/gh-pages/docs/postgresql/index.mdx",
@@ -17,10 +17,10 @@
   "sidebar": "tutorialSidebar",
   "previous": {
     "title": "Welcome",
-    "permalink": "/docs/intro"
+    "permalink": "/gabe/docs/intro"
   },
   "next": {
     "title": "Runtime Compatibility",
-    "permalink": "/docs/runtimes/"
+    "permalink": "/gabe/docs/runtimes/"
   }
 }

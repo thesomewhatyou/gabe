@@ -3,62 +3,62 @@ import ComponentCreator from '@docusaurus/ComponentCreator';
 
 export default [
   {
-    path: '/docs',
-    component: ComponentCreator('/docs', '342'),
+    path: '/gabe/docs',
+    component: ComponentCreator('/gabe/docs', '5ff'),
     routes: [
       {
-        path: '/docs',
-        component: ComponentCreator('/docs', 'e40'),
+        path: '/gabe/docs',
+        component: ComponentCreator('/gabe/docs', '1b9'),
         routes: [
           {
-            path: '/docs',
-            component: ComponentCreator('/docs', 'a5d'),
+            path: '/gabe/docs',
+            component: ComponentCreator('/gabe/docs', '663'),
             routes: [
               {
-                path: '/docs/commands/',
-                component: ComponentCreator('/docs/commands/', '3cf'),
+                path: '/gabe/docs/commands/',
+                component: ComponentCreator('/gabe/docs/commands/', '650'),
                 exact: true,
                 sidebar: "tutorialSidebar"
               },
               {
-                path: '/docs/config/',
-                component: ComponentCreator('/docs/config/', '38b'),
+                path: '/gabe/docs/config/',
+                component: ComponentCreator('/gabe/docs/config/', '505'),
                 exact: true,
                 sidebar: "tutorialSidebar"
               },
               {
-                path: '/docs/containers/',
-                component: ComponentCreator('/docs/containers/', '690'),
+                path: '/gabe/docs/containers/',
+                component: ComponentCreator('/gabe/docs/containers/', '8d1'),
                 exact: true,
                 sidebar: "tutorialSidebar"
               },
               {
-                path: '/docs/custom-commands/',
-                component: ComponentCreator('/docs/custom-commands/', '38e'),
+                path: '/gabe/docs/custom-commands/',
+                component: ComponentCreator('/gabe/docs/custom-commands/', '860'),
                 exact: true,
                 sidebar: "tutorialSidebar"
               },
               {
-                path: '/docs/intro',
-                component: ComponentCreator('/docs/intro', '89a'),
+                path: '/gabe/docs/intro',
+                component: ComponentCreator('/gabe/docs/intro', '283'),
                 exact: true,
                 sidebar: "tutorialSidebar"
               },
               {
-                path: '/docs/postgresql/',
-                component: ComponentCreator('/docs/postgresql/', '270'),
+                path: '/gabe/docs/postgresql/',
+                component: ComponentCreator('/gabe/docs/postgresql/', 'de2'),
                 exact: true,
                 sidebar: "tutorialSidebar"
               },
               {
-                path: '/docs/runtimes/',
-                component: ComponentCreator('/docs/runtimes/', 'fc7'),
+                path: '/gabe/docs/runtimes/',
+                component: ComponentCreator('/gabe/docs/runtimes/', '4a6'),
                 exact: true,
                 sidebar: "tutorialSidebar"
               },
               {
-                path: '/docs/setup/',
-                component: ComponentCreator('/docs/setup/', '859'),
+                path: '/gabe/docs/setup/',
+                component: ComponentCreator('/gabe/docs/setup/', '21c'),
                 exact: true,
                 sidebar: "tutorialSidebar"
               }
@@ -69,8 +69,8 @@ export default [
     ]
   },
   {
-    path: '/',
-    component: ComponentCreator('/', '070'),
+    path: '/gabe/',
+    component: ComponentCreator('/gabe/', 'dc4'),
     exact: true
   },
   {

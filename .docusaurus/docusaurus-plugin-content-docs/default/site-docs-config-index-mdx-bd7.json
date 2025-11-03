@@ -5,7 +5,7 @@
   "source": "@site/docs/config/index.mdx",
   "sourceDirName": "config",
   "slug": "/config/",
-  "permalink": "/docs/config/",
+  "permalink": "/gabe/docs/config/",
   "draft": false,
   "unlisted": false,
   "editUrl": "https://github.com/thesomewhatyou/gabe/tree/gh-pages/docs/config/index.mdx",
@@ -17,10 +17,10 @@
   "sidebar": "tutorialSidebar",
   "previous": {
     "title": "Gabe Bot Commands Documentation",
-    "permalink": "/docs/commands/"
+    "permalink": "/gabe/docs/commands/"
   },
   "next": {
     "title": "Containers",
-    "permalink": "/docs/containers/"
+    "permalink": "/gabe/docs/containers/"
   }
 }

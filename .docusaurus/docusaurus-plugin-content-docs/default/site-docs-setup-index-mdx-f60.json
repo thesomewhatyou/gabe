@@ -5,7 +5,7 @@
   "source": "@site/docs/setup/index.mdx",
   "sourceDirName": "setup",
   "slug": "/setup/",
-  "permalink": "/docs/setup/",
+  "permalink": "/gabe/docs/setup/",
   "draft": false,
   "unlisted": false,
   "editUrl": "https://github.com/thesomewhatyou/gabe/tree/gh-pages/docs/setup/index.mdx",
@@ -17,6 +17,6 @@
   "sidebar": "tutorialSidebar",
   "previous": {
     "title": "Runtime Compatibility",
-    "permalink": "/docs/runtimes/"
+    "permalink": "/gabe/docs/runtimes/"
   }
 }

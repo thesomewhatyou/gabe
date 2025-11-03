@@ -5,7 +5,7 @@
   "source": "@site/docs/runtimes/index.mdx",
   "sourceDirName": "runtimes",
   "slug": "/runtimes/",
-  "permalink": "/docs/runtimes/",
+  "permalink": "/gabe/docs/runtimes/",
   "draft": false,
   "unlisted": false,
   "editUrl": "https://github.com/thesomewhatyou/gabe/tree/gh-pages/docs/runtimes/index.mdx",
@@ -17,10 +17,10 @@
   "sidebar": "tutorialSidebar",
   "previous": {
     "title": "PostgreSQL",
-    "permalink": "/docs/postgresql/"
+    "permalink": "/gabe/docs/postgresql/"
   },
   "next": {
     "title": "Setup",
-    "permalink": "/docs/setup/"
+    "permalink": "/gabe/docs/setup/"
   }
 }
