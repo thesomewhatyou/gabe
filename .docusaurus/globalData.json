@@ -1,0 +1,68 @@
+{
+  "docusaurus-plugin-content-docs": {
+    "default": {
+      "path": "/docs",
+      "versions": [
+        {
+          "name": "current",
+          "label": "Next",
+          "isLast": true,
+          "path": "/docs",
+          "mainDocId": "commands/index",
+          "docs": [
+            {
+              "id": "commands/index",
+              "path": "/docs/commands/",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "config/index",
+              "path": "/docs/config/",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "containers/index",
+              "path": "/docs/containers/",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "custom-commands/index",
+              "path": "/docs/custom-commands/",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "intro",
+              "path": "/docs/intro",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "postgresql/index",
+              "path": "/docs/postgresql/",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "runtimes/index",
+              "path": "/docs/runtimes/",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "setup/index",
+              "path": "/docs/setup/",
+              "sidebar": "tutorialSidebar"
+            }
+          ],
+          "draftIds": [],
+          "sidebars": {
+            "tutorialSidebar": {
+              "link": {
+                "path": "/docs/commands/",
+                "label": "Gabe Bot Commands Documentation"
+              }
+            }
+          }
+        }
+      ],
+      "breadcrumbs": true
+    }
+  }
+}

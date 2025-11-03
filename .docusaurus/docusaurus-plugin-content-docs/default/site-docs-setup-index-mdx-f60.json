@@ -1,0 +1,22 @@
+{
+  "id": "setup/index",
+  "title": "Setup",
+  "description": "Here are the steps to get Gabe running from source.",
+  "source": "@site/docs/setup/index.mdx",
+  "sourceDirName": "setup",
+  "slug": "/setup/",
+  "permalink": "/docs/setup/",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/thesomewhatyou/gabe/tree/gh-pages/docs/setup/index.mdx",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {
+    "title": "Setup"
+  },
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Runtime Compatibility",
+    "permalink": "/docs/runtimes/"
+  }
+}

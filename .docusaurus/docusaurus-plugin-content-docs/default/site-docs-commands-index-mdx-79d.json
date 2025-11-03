@@ -1,0 +1,22 @@
+{
+  "id": "commands/index",
+  "title": "Gabe Bot Commands Documentation",
+  "description": "Welcome to Gabe's command documentation! Gabe is a multi-functional Discord bot that's your pal, enemy, or both all at once.",
+  "source": "@site/docs/commands/index.mdx",
+  "sourceDirName": "commands",
+  "slug": "/commands/",
+  "permalink": "/docs/commands/",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/thesomewhatyou/gabe/tree/gh-pages/docs/commands/index.mdx",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {
+    "title": "Gabe Bot Commands Documentation"
+  },
+  "sidebar": "tutorialSidebar",
+  "next": {
+    "title": "Config",
+    "permalink": "/docs/config/"
+  }
+}

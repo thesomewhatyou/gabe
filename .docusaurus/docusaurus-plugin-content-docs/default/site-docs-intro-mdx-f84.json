@@ -1,0 +1,27 @@
+{
+  "id": "intro",
+  "title": "Welcome",
+  "description": "High-level overview of Gabe bot documentation.",
+  "source": "@site/docs/intro.mdx",
+  "sourceDirName": ".",
+  "slug": "/intro",
+  "permalink": "/docs/intro",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/thesomewhatyou/gabe/tree/gh-pages/docs/intro.mdx",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {
+    "title": "Welcome",
+    "description": "High-level overview of Gabe bot documentation."
+  },
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Custom Commands",
+    "permalink": "/docs/custom-commands/"
+  },
+  "next": {
+    "title": "PostgreSQL",
+    "permalink": "/docs/postgresql/"
+  }
+}

@@ -1,0 +1,136 @@
+---
+title: Custom Commands
+---
+
+# Custom Commands
+
+Gabe ships with a flexible command loader—adding new commands is as simple as dropping files into the right folder. Use this reference when building your own modules.
+
+## Directory Structure
+
+Commands are grouped into subdirectories under `commands/`:
+
+```text
+commands/
+  fun/
+    cat.js
+    ...
+  general/
+    help.js
+    ping.js
+    ...
+  image-editing/
+    caption.js
+    speed.js
+    ...
+```
+
+Each folder represents a category. Add a new directory for a new category; add a `.js` (or `.ts`) file inside a category to create a command.
+
+:::tip
+The `message` and `user` categories register context menu commands instead of prefixed/slash commands. `message` entries appear when right-clicking messages; `user` entries appear when right-clicking members.
+:::
+
+:::tip
+On Node.js v23.6+, Node.js v22.6+ with `--experimental-strip-types`, Deno, or Bun you can author commands in TypeScript by saving files with a `.ts` extension.
+:::
+
+## Command Structure
+
+Use the `Command` base class from `#cmd-classes/command.js` to access shared helpers and metadata.
+
+```js
+import Command from "#cmd-classes/command.js";
+
+class HelloCommand extends Command {
+  async run() {
+    return "Hello world!";
+  }
+
+  static description = "A simple command example";
+  static aliases = ["helloworld"];
+}
+
+export default HelloCommand;
+```
+
+- Import the base class.
+- Extend it and implement `run`.
+- Provide static metadata (description, aliases, etc.).
+- File name (without extension) becomes the command name.
+
+### Runtime Properties
+
+Inside `run` you can access:
+
+- `this.client` — Oceanic [`Client`](https://docs.oceanic.ws/latest/classes/Client.Client.html) instance.
+- `this.database` — Database client (undefined in stateless mode).
+- `this.origOptions` — Raw handler options.
+- `this.type` — `"classic"` or `"application"`.
+- `this.channel` — [`TextChannel`](https://docs.oceanic.ws/latest/classes/TextChannel.TextChannel.html) context (partial when classic commands are disabled).
+- `this.guild` — [`Guild`](https://docs.oceanic.ws/latest/classes/Guild.Guild.html) context (undefined in DMs).
+- `this.author` — [`User`](https://docs.oceanic.ws/latest/classes/User.User.html) who invoked the command.
+- `this.member` — [`Member`](https://docs.oceanic.ws/latest/classes/Member.Member.html) when run in a guild.
+- `this.permissions` — Bot [`Permission`](https://docs.oceanic.ws/latest/classes/Permission.Permission.html) set for the channel.
+- `this.memberPermissions` — Invoker permissions.
+- `this.locale` — Active locale (`LOCALE` for classic; user locale for interactions).
+- `this.cmdName` — Command name (includes subcommand path like `base64 decode`).
+- `this.options` — Legacy options map. Prefer the helper methods below.
+
+Classic-only helpers:
+
+- `this.message` — [`Message`](https://docs.oceanic.ws/latest/classes/Message.Message.html) that triggered the command.
+- `this.args` — Positional arguments array.
+- `this.content` — Raw message content without prefix/name.
+- `this.reference` — Reply metadata for `channel.createMessage`.
+
+Interaction-only helpers:
+
+- `this.interaction` — [`CommandInteraction`](https://docs.oceanic.ws/latest/classes/CommandInteraction.CommandInteraction.html).
+- `this.success` — Set `false` for ephemeral responses.
+
+### Static Fields
+
+Configure behaviour with static properties:
+
+- `description` — Help text.
+- `aliases` — Additional names.
+- `flags` — Slash argument definitions (objects mirroring Discord option schema).
+- `ephemeral` — Force slash responses to be ephemeral.
+- `slashAllowed` — Toggle slash registration.
+- `directAllowed` — Allow DM usage.
+- `userAllowed` — Allow user-install contexts.
+- `adminOnly` — Restrict to bot owners.
+
+Example `flags` definition:
+
+```js
+static flags = [{
+  name: "argument",
+  type: Constants.ApplicationCommandOptionTypes.STRING,
+  description: "Does a thing",
+  // ...additional Discord option fields
+}];
+```
+
+### Helper Methods
+
+- `this.acknowledge()` — Send typing (classic commands only).
+- `this.getString(key, returnNull?)` — Fetch localized strings.
+- `this.clean(text)` — Sanitize mentions.
+
+Option parsing helpers (use `defaultArg` to fall back to positional arguments for classic commands):
+
+- `this.getOption(key, type, defaultArg?)`
+- `this.getOptionString(key, defaultArg?)`
+- `this.getOptionBoolean(key, defaultArg?)`
+- `this.getOptionNumber(key, defaultArg?)`
+- `this.getOptionInteger(key, defaultArg?)`
+- `this.getOptionUser(key, defaultArg?)`
+- `this.getOptionMember(key, defaultArg?)`
+- `this.getOptionRole(key, defaultArg?)`
+- `this.getOptionAttachment(key)`
+
+## The `run` Function
+
+`run` should resolve to either a string (plain response) or an object (embeds, attachments, etc.). Because most commands need async work, the base class expects an `async run()` that returns a `Promise`.

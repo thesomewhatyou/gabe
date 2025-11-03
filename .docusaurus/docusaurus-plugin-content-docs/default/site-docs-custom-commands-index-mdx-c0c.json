@@ -1,0 +1,26 @@
+{
+  "id": "custom-commands/index",
+  "title": "Custom Commands",
+  "description": "Gabe ships with a flexible command loader—adding new commands is as simple as dropping files into the right folder. Use this reference when building your own modules.",
+  "source": "@site/docs/custom-commands/index.mdx",
+  "sourceDirName": "custom-commands",
+  "slug": "/custom-commands/",
+  "permalink": "/docs/custom-commands/",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/thesomewhatyou/gabe/tree/gh-pages/docs/custom-commands/index.mdx",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {
+    "title": "Custom Commands"
+  },
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Containers",
+    "permalink": "/docs/containers/"
+  },
+  "next": {
+    "title": "Welcome",
+    "permalink": "/docs/intro"
+  }
+}

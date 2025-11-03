@@ -1,0 +1,44 @@
+---
+title: Containers
+---
+
+# Containers
+
+You can run Gabe and its dependencies using Docker or Podman for a smoother setup. Manual installation still offers the most control, but containers reduce the amount of system configuration you need to do yourself.
+
+1. Install your preferred runtime:
+   - [Docker Engine](https://docs.docker.com/engine/install/#server)
+   - [Podman](https://podman.io/docs/installation) (and [podman-compose](https://github.com/containers/podman-compose/blob/main/README.md#installation))
+2. Clone the repository:
+
+```bash
+cd ~
+git clone --recurse-submodules https://github.com/Gabe/Gabe
+cd Gabe
+```
+
+3. [Configure the bot](../setup/#6-configure-the-bot). Leave `DB` at its default value.
+4. Update `config/servers.json` so hostnames target the internal container network, e.g. `lavalink:2333`.
+
+```json5
+{
+  lava: [
+    {
+      name: "localhost",
+      url: "lavalink:2333",
+      auth: "youshallnotpass",
+    },
+  ],
+  // ...
+}
+```
+
+5. Bring the stack online with your runtime of choice:
+
+```bash
+# Podman
+podman-compose up -d
+
+# Docker
+docker compose up -d
+```
