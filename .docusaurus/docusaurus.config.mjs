@@ -4,8 +4,8 @@
  * Modify the docusaurus.config.js file at your site's root instead.
  */
 export default {
-  "title": "Gabe Docs",
-  "tagline": "Documentation for the Gabe Discord bot",
+  "title": "gabe",
+  "tagline": "Doc hub for gabe, the snarky discord bot",
   "favicon": "images/favicon.png",
   "staticDirectories": [
     "assets"
@@ -55,6 +55,7 @@ export default {
         "blog": false,
         "theme": {
           "customCss": "./src/css/custom.css"
+          // pootis css :3
         }
       }
     ]
@@ -67,9 +68,9 @@ export default {
       "disableSwitch": false
     },
     "navbar": {
-      "title": "Gabe Docs",
+      "title": "gabe docs",
       "logo": {
-        "alt": "Gabe bot logo",
+        "alt": "gabe bot logo",
         "src": "gabe.png"
       },
       "items": [
@@ -100,23 +101,6 @@ export default {
           ]
         },
         {
-          "title": "Community",
-          "items": [
-            {
-              "label": "Stack Overflow",
-              "href": "https://stackoverflow.com/questions/tagged/docusaurus"
-            },
-            {
-              "label": "Discord",
-              "href": "https://discordapp.com/invite/docusaurus"
-            },
-            {
-              "label": "X",
-              "href": "https://x.com/docusaurus"
-            }
-          ]
-        },
-        {
           "title": "More",
           "items": [
             {
@@ -126,7 +110,7 @@ export default {
           ]
         }
       ],
-      "copyright": "Copyright © 2025 My Project, Inc. Built with Docusaurus."
+      "copyright": "Gabe. GPL-3.0 Licensed. Made with love, powered by the docs that roar."
     },
     "prism": {
       "theme": {
@@ -380,3 +364,6 @@ export default {
     }
   }
 };
+
+// The way gabe is capitalized is how mailcow does it. 
+// Bad? No. Good? Also no. Just... different.
