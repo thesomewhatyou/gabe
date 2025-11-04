@@ -19,6 +19,6 @@ jobs:
       - name: "Sync repo"
         uses: spyoungtech/mirror-action@master
         with:
-          REMOTE: "https://codeberg.org/esm/Gabe.git"
+          REMOTE: "https://codeberg.org/gabey/gabe.git"
           GIT_USERNAME: ${{ vars.CB_USERNAME }}
           GIT_PASSWORD: ${{ secrets._CB_TOKEN }}
