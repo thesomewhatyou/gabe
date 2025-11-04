@@ -65,7 +65,7 @@ export function textEncode(string: string) {
 // set activity (a.k.a. the gamer code)
 export async function activityChanger(bot: Client) {
   if (!broadcast) {
-    await bot.editStatus("dnd", [
+    await bot.editStatus("online", [
       {
         type: ActivityTypes.GAME,
         name: random(messagesConfig.messages) + (commandsConfig.types.classic ? ` | @${bot.user.username} help` : ""),
@@ -86,7 +86,7 @@ export async function checkBroadcast(bot: Client, db: DatabasePlugin | undefined
 }
 
 export function startBroadcast(bot: Client, message: string) {
-  bot.editStatus("dnd", [
+  bot.editStatus("online", [
     {
       type: ActivityTypes.GAME,
       name: message + (commandsConfig.types.classic ? ` | @${bot.user.username} help` : ""),
@@ -96,7 +96,7 @@ export function startBroadcast(bot: Client, message: string) {
 }
 
 export function endBroadcast(bot: Client) {
-  bot.editStatus("dnd", [
+  bot.editStatus("online", [
     {
       type: ActivityTypes.GAME,
       name: random(messagesConfig.messages) + (commandsConfig.types.classic ? ` | @${bot.user.username} help` : ""),
