@@ -91,6 +91,7 @@
       "wide": "Stretches an image to 19x its width",
       "woow": "Mirrors the top of an image onto the bottom",
       "Select Image": "No description found",
+      "Steal Emoji": "Yoink that emoji for your server (Gabe approves of theft)",
       "ban": "Bans a user from the server (Gabe shows no mercy)",
       "kick": "Kicks a user from the server (out you go!)",
       "timeout": "Times out a user (shut up for a bit)",
@@ -644,6 +645,7 @@
       "wide": "wide",
       "woow": "woow",
       "Select Image": "Select Image",
+      "Steal Emoji": "Steal Emoji",
       "music": "music",
       "tags": "tags"
     },
@@ -956,6 +958,21 @@
         "totalUsage": "Total Memory Usage",
         "unknownVersion": "Runtime Version",
         "version": "Version"
+      },
+      "steal-emoji": {
+        "noEmojis": "Bruh, there are no emojis in that message. What am I supposed to steal, air? 🤷",
+        "pickEmoji": "Found {{count}} emojis! Pick the one you want to yoink:",
+        "selectPlaceholder": "Choose your target...",
+        "stealing": "Yoinking that emoji... hold tight!",
+        "timeout": "Too slow! You took too long to pick. Try again if you still want that emoji.",
+        "downloadFailed": "Oof, I couldn't download that emoji. Maybe it got deleted? Try another one.",
+        "success": "Boom! Successfully stole that emoji: {{emoji}}\nIt's now part of your server's collection. You're welcome. 😎",
+        "tooBig": "Yikes! That emoji is {{size}}KB, but Discord only allows {{maxSize}}KB max.",
+        "noDM": "Can't upload emojis to DMs, genius.",
+        "noPermission": "I don't have permission to manage emojis here. Ask an admin to hook me up with that power!",
+        "uploadFailed": "Couldn't upload to Discord for some reason.",
+        "storedInRAM": "Alright, so here's the deal... {{reason}}\n\nI'm keeping `{{name}}` in my RAM for the next 10 minutes. It's temporary, so if you want to keep it forever, you'll need to fix the issue above. Don't say I didn't warn you! ⚠️",
+        "error": "Something went wrong while stealing that emoji: {{error}}\n\nNot my fault, probably. 🤷"
       },
       "sticker": {
         "apng": "This sticker is an APNG; however, since Discord doesn't allow displaying APNGs outside of stickers, you'll have to save it or open it in your browser to view it.",
