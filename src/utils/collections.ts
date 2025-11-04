@@ -32,6 +32,7 @@ class TimedMap<K, V> extends Map {
 
 export const runningCommands = new TimedMap<string, Date>(5000);
 export const selectedImages = new TimedMap<string, ImageMeta>(180000);
+export const stolenEmojis = new TimedMap<string, { name: string; buffer: Buffer; animated: boolean; guildId?: string; userId: string }>(600000);
 
 class Cache<K, V> extends Map {
   maxValues: number;
