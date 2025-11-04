@@ -8,7 +8,7 @@
 - **Moderation Tools** - Ban, kick, timeout, and ENTER THE PURGE
 - **Music Playback** - Just chill with [Lavalink](https://github.com/lavalink-devs/Lavalink) (It's gonna be a thing you host seperately, though).                
 - **Server Tags** - Save and retrieve your favorite stuff
-- **Performance** - Low RAM and CPU utilization (**gabe** takes naps). If it looks low, that's normal.  <img src="./docs/assets/me.jpg?raw=true" align="right" width="128" height="176">
+- **Performance** - Low RAM and CPU utilization (**gabe** takes naps). If it looks low, that's normal.  <img src="./docs/assets/me.jpg?raw=true" align="right" width="128" height="128">
 - **Dual Command Support** - Slash commands AND prefix-based commands
 - **Database Flexibility** - PostgreSQL and SQLite support (SQLite is preferred, but Postgre works)
 - **Easy to Extend** - Add new commands by just dropping in script files
