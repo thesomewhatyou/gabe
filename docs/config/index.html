@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.9.2">
 <title data-rh="true">4.1. Config | Gabe Docs</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:image" content="https://thesomewhatyou.github.io/gabe/img/docusaurus-social-card.jpg"><meta data-rh="true" name="twitter:image" content="https://thesomewhatyou.github.io/gabe/img/docusaurus-social-card.jpg"><meta data-rh="true" property="og:url" content="https://thesomewhatyou.github.io/gabe/docs/config"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="4.1. Config | Gabe Docs"><meta data-rh="true" name="description" content="Gabe relies on a mix of environment variables and JSON files. This page explains what lives where and how each field is used."><meta data-rh="true" property="og:description" content="Gabe relies on a mix of environment variables and JSON files. This page explains what lives where and how each field is used."><link data-rh="true" rel="icon" href="/gabe/images/favicon.png"><link data-rh="true" rel="canonical" href="https://thesomewhatyou.github.io/gabe/docs/config"><link data-rh="true" rel="alternate" href="https://thesomewhatyou.github.io/gabe/docs/config" hreflang="en"><link data-rh="true" rel="alternate" href="https://thesomewhatyou.github.io/gabe/docs/config" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"4. Setup","item":"https://thesomewhatyou.github.io/gabe/docs/setup"},{"@type":"ListItem","position":2,"name":"4.1. Config","item":"https://thesomewhatyou.github.io/gabe/docs/config"}]}</script><link rel="stylesheet" href="/gabe/assets/css/styles.dec27f1e.css">
-<script src="/gabe/assets/js/runtime~main.0702cc2d.js" defer="defer"></script>
+<script src="/gabe/assets/js/runtime~main.2c270242.js" defer="defer"></script>
 <script src="/gabe/assets/js/main.0b49ab48.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -17,18 +17,18 @@
 <p>Copy <code>.env.example</code> to <code>.env</code> to load settings automatically at startup.</p>
 <h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="required">Required<a href="#required" class="hash-link" aria-label="Direct link to Required" title="Direct link to Required" translate="no">​</a></h3>
 <ul>
-<li class=""><code>NODE_ENV</code> — Tunes the bot for development or production. If unsure, leave the default.</li>
-<li class=""><code>TOKEN</code> — Discord bot token from the <a href="https://discord.com/developers/applications" target="_blank" rel="noopener noreferrer" class="">Developer Portal</a> under <strong>Bot</strong>.</li>
+<li class=""><code>NODE_ENV</code> — Leave as is unless you know what you&#x27;re doing.</li>
+<li class=""><code>TOKEN</code> — Discord bot token from the <a href="https://discord.com/developers/applications" target="_blank" rel="noopener noreferrer" class="">Developer Portal</a> under <strong>Bot</strong> section.</li>
 <li class=""><code>DB</code> — Database connection string. <code>sqlite</code> and <code>postgresql</code> drivers ship by default; drop additional drivers into <code>utils/database/</code> if you need more.</li>
-<li class=""><code>OWNER</code> — Discord user ID(s) allowed to run owner-only commands. Use commas to list multiple IDs (not recommended for security).</li>
-<li class=""><code>PREFIX</code> — Default prefix for legacy commands. Server admins can override it with the <code>prefix</code> command.</li>
+<li class=""><code>OWNER</code> — Discord user ID(s) allowed to run owner-only commands. Commands like <code>exec</code> and <code>eval</code> can be run.</li>
+<li class=""><code>PREFIX</code> — Default prefix for legacy commands. Server admins can override it with the /prefix command.</li>
 <li class=""><code>LOCALE</code> — Default message locale. The matching file must exist in <code>locales/</code>; interaction commands prefer the user’s client language.</li>
 </ul>
 <h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="optional">Optional<a href="#optional" class="hash-link" aria-label="Direct link to Optional" title="Direct link to Optional" translate="no">​</a></h3>
 <p>Enhance the bot with any of the following:</p>
 <ul>
 <li class=""><code>STAYVC</code> — Set to <code>true</code> to keep Gabe in voice chat after playback. Use <code>stop</code> to disconnect.</li>
-<li class=""><code>TENOR</code> — API key from <a href="https://tenor.com/gifapi" target="_blank" rel="noopener noreferrer" class="">Tenor</a> for GIF lookups.</li>
+<li class=""><code>TENOR</code> — API key from Google Cloud. Sometimes, to enable the Tenor API, you may have to wait a certain period of days.</li>
 <li class=""><code>REST_PROXY</code> — Alternate Discord REST endpoint, e.g. a proxy.</li>
 <li class=""><code>SENTRY_DSN</code> — DSN for optional <a href="https://sentry.io" target="_blank" rel="noopener noreferrer" class="">Sentry</a> error monitoring.</li>
 <li class=""><code>OUTPUT</code> — Directory where Markdown help docs are exported.</li>
@@ -37,7 +37,7 @@
 <li class=""><code>THRESHOLD</code> — Max total size (in bytes) stored in <code>TEMPDIR</code> before old files are trimmed.</li>
 <li class=""><code>METRICS</code> — Port used to expose Prometheus-compatible metrics.</li>
 <li class=""><code>API_TYPE</code> — <code>none</code> to process images locally, or <code>ws</code> to use an external image server from <code>config/servers.json</code>.</li>
-<li class=""><code>ADMIN_SERVER</code> — Guild ID that limits owner-only commands (e.g., <code>eval</code>) to a specific server.</li>
+<li class=""><code>ADMIN_SERVER</code> — Guild ID that limits such owner only commands to a server.</li>
 </ul>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="json">JSON<a href="#json" class="hash-link" aria-label="Direct link to JSON" title="Direct link to JSON" translate="no">​</a></h2>
 <p>Configuration JSON files live in <code>config/</code>.</p>
