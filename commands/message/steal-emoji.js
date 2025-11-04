@@ -91,8 +91,10 @@ class StealEmojiCommand extends Command {
       flags: Constants.MessageFlags.EPHEMERAL,
     });
 
+    const responseMessage = (await response.getMessage()) ?? (await this.interaction.getOriginal());
+
     // Set up collector for user selection
-    const collector = new InteractionCollector(this.client, response);
+    const collector = new InteractionCollector(this.client, responseMessage);
     let selected = false;
 
     collector.on("interaction", async (interaction) => {
@@ -127,7 +129,7 @@ class StealEmojiCommand extends Command {
     collector.on("end", async () => {
       if (selected) return; // User made a selection, don't show timeout message
       try {
-        await response.edit({
+        await responseMessage.edit({
           content: this.getString("commands.responses.steal-emoji.timeout"),
           components: [],
         });
@@ -136,7 +138,7 @@ class StealEmojiCommand extends Command {
       }
     });
 
-    collectors.set(response.id, collector);
+    collectors.set(responseMessage.id, collector);
 
     return; // Don't return anything as we've handled the response
   }
