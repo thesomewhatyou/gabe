@@ -10,6 +10,7 @@ import run from "#utils/image-runner.js";
 import { img } from "#utils/imageLib.js";
 import logger from "#utils/logger.js";
 import type { ImageParams } from "#utils/types.js";
+import { stolenEmojis } from "#utils/collections.js";
 
 const formats = Object.keys(img.imageInit());
 
@@ -263,6 +264,21 @@ httpServer.on("request", (req, res) => {
   if (reqUrl.pathname === "/count" && req.method === "GET") {
     log(`Sending job count to ${req.socket.remoteAddress}:${req.socket.remotePort} via HTTP`);
     return res.end(jobs.size.toString());
+  }
+  if (reqUrl.pathname === "/emoji" && req.method === "GET") {
+    const emojiId = reqUrl.searchParams.get("id");
+    if (!emojiId) {
+      res.statusCode = 400;
+      return res.end("400 Bad Request");
+    }
+    if (!stolenEmojis.has(emojiId)) {
+      res.statusCode = 404;
+      return res.end("404 Not Found");
+    }
+    log(`Sending emoji data for ${emojiId} to ${req.socket.remoteAddress}:${req.socket.remotePort} via HTTP`);
+    const emoji = stolenEmojis.get(emojiId);
+    res.setHeader("Content-Type", emoji.animated ? "image/gif" : "image/png");
+    return res.end(emoji.buffer);
   }
   res.statusCode = 404;
   return res.end("404 Not Found");

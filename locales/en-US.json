@@ -971,7 +971,7 @@
         "noDM": "Can't upload emojis to DMs, genius.",
         "noPermission": "I don't have permission to manage emojis here. Ask an admin to hook me up with that power!",
         "uploadFailed": "Couldn't upload to Discord for some reason.",
-        "storedInRAM": "Alright, so here's the deal... {{reason}}\n\nI'm keeping `{{name}}` in my RAM for the next 10 minutes. It's temporary, so if you want to keep it forever, you'll need to fix the issue above. Don't say I didn't warn you! ⚠️",
+        "storedInRAM": "Alright, so here's the deal... {{reason}}\n\nI'm keeping `{{name}}` in my RAM for the next 10 minutes. You can access it here: {{url}}\n\nIt's temporary, so if you want to keep it forever, you'll need to fix the issue above. Don't say I didn't warn you! ⚠️",
         "error": "Something went wrong while stealing that emoji: {{error}}\n\nNot my fault, probably. 🤷"
       },
       "sticker": {
