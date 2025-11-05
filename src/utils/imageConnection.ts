@@ -6,6 +6,7 @@ import logger from "./logger.ts";
 // Network size limits
 const MAX_IMAGE_SIZE = 41943040; // 40MB
 const MAX_JOB_PARAMS_SIZE = 10485760; // 10MB
+const BYTES_TO_MB = 1048576;
 
 const Rerror = 0x01;
 const Tqueue = 0x02;
@@ -155,7 +156,7 @@ class ImageConnection {
     
     // Limit request size to prevent memory issues
     if (str.length > MAX_JOB_PARAMS_SIZE) {
-      throw new Error(`Job object too large (>${MAX_JOB_PARAMS_SIZE / 1048576}MB)`);
+      throw new Error(`Job object too large (>${MAX_JOB_PARAMS_SIZE / BYTES_TO_MB}MB)`);
     }
     
     const buf = Buffer.alloc(8);
@@ -195,7 +196,7 @@ class ImageConnection {
     if (contentLength) {
       const size = Number.parseInt(contentLength);
       if (size > MAX_IMAGE_SIZE) {
-        throw new Error(`Response too large (>${MAX_IMAGE_SIZE / 1048576}MB)`);
+        throw new Error(`Response too large (>${MAX_IMAGE_SIZE / BYTES_TO_MB}MB)`);
       }
     }
     
@@ -226,7 +227,7 @@ class ImageConnection {
     
     // Double-check actual size after download
     if (buffer.byteLength > MAX_IMAGE_SIZE) {
-      throw new Error(`Response too large (>${MAX_IMAGE_SIZE / 1048576}MB)`);
+      throw new Error(`Response too large (>${MAX_IMAGE_SIZE / BYTES_TO_MB}MB)`);
     }
     
     return { buffer, type };

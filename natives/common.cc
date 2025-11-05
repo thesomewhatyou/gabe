@@ -49,9 +49,9 @@ vips::VOption *GetInputOptions(string type, bool sequential, bool sequentialIfAn
   }
 
   // Enable memory-efficient settings for all images
-  // Use disc caching for large images to reduce memory footprint
+  // Use disc caching to reduce memory footprint
   options->set("disc", true);
-  // Relax error handling to improve performance
+  // Skip errors for truncated/damaged images to allow partial processing
   options->set("fail-on", VIPS_FAIL_ON_NONE);
 
   return options;
