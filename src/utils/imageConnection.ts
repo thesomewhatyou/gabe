@@ -3,6 +3,10 @@ import { setTimeout } from "node:timers/promises";
 import WSocket, { type Data, type ErrorEvent } from "ws";
 import logger from "./logger.ts";
 
+// Network size limits
+const MAX_IMAGE_SIZE = 41943040; // 40MB
+const MAX_JOB_PARAMS_SIZE = 10485760; // 10MB
+
 const Rerror = 0x01;
 const Tqueue = 0x02;
 //const Rqueue = 0x03;
@@ -74,7 +78,7 @@ class ImageConnection {
     if (!(msg instanceof Buffer)) return;
     
     // Limit message size to prevent memory issues
-    if (msg.byteLength > 41943040) {
+    if (msg.byteLength > MAX_IMAGE_SIZE) {
       logger.error(`Received oversized message (${msg.byteLength} bytes) from image server ${this.host}`);
       return;
     }
@@ -150,8 +154,8 @@ class ImageConnection {
     const str = JSON.stringify(jobobj);
     
     // Limit request size to prevent memory issues
-    if (str.length > 10485760) { // 10MB limit for job parameters
-      throw new Error("Job object too large (>10MB)");
+    if (str.length > MAX_JOB_PARAMS_SIZE) {
+      throw new Error(`Job object too large (>${MAX_JOB_PARAMS_SIZE / 1048576}MB)`);
     }
     
     const buf = Buffer.alloc(8);
@@ -190,9 +194,8 @@ class ImageConnection {
     const contentLength = req.headers.get("content-length");
     if (contentLength) {
       const size = Number.parseInt(contentLength);
-      // Limit to 40MB to prevent memory issues
-      if (size > 41943040) {
-        throw new Error("Response too large (>40MB)");
+      if (size > MAX_IMAGE_SIZE) {
+        throw new Error(`Response too large (>${MAX_IMAGE_SIZE / 1048576}MB)`);
       }
     }
     
@@ -222,8 +225,8 @@ class ImageConnection {
     const buffer = Buffer.from(await req.arrayBuffer());
     
     // Double-check actual size after download
-    if (buffer.byteLength > 41943040) {
-      throw new Error("Response too large (>40MB)");
+    if (buffer.byteLength > MAX_IMAGE_SIZE) {
+      throw new Error(`Response too large (>${MAX_IMAGE_SIZE / 1048576}MB)`);
     }
     
     return { buffer, type };
