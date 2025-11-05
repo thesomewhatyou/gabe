@@ -44,6 +44,7 @@ ArgumentMap Caption(const string &type, string &outType, const char *bufferdata,
       .gravity(VIPS_COMPASS_DIRECTION_CENTRE, width, text.height() + size, VImage::option()->set("extend", "white"));
 
   vector<VImage> img;
+  img.reserve(nPages);  // Pre-allocate to avoid reallocations
   for (int i = 0; i < nPages; i++) {
     VImage img_frame = nPages > 1 ? in.crop(0, i * pageHeight, width, pageHeight) : in;
     VImage frame = captionImage.join(img_frame, VIPS_DIRECTION_VERTICAL,

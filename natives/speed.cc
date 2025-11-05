@@ -24,6 +24,7 @@ char *vipsRemove(const char *data, size_t length, size_t &dataSize, int speed, s
   int nPages = vips_image_get_n_pages(in.get_image());
 
   vector<VImage> img;
+  img.reserve(nPages);  // Pre-allocate to avoid reallocations
   for (int i = 0; i < nPages; i += speed) {
     VImage img_frame = in.crop(0, i * pageHeight, width, pageHeight);
     img.push_back(img_frame);

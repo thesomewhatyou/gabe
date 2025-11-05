@@ -4,6 +4,9 @@ import { fileURLToPath } from "node:url";
 import { img } from "./imageLib.ts";
 import type { ImageParams } from "./types.ts";
 
+// Maximum image size to prevent memory issues (40MB)
+const MAX_IMAGE_SIZE = 41943040;
+
 export default async function run(object: ImageParams): Promise<{ buffer: Buffer; fileExtension: string }> {
   // Check if command exists
   if (!img.funcs.includes(object.cmd)) {
@@ -33,7 +36,28 @@ export default async function run(object: ImageParams): Promise<{ buffer: Buffer
       });
       clearTimeout(timeout);
       if (res.status === 429) throw "ratelimit";
+      
+      // Check content length to prevent downloading excessively large files
+      const contentLength = res.headers.get("content-length");
+      if (contentLength) {
+        const size = Number.parseInt(contentLength);
+        if (size > MAX_IMAGE_SIZE) {
+          return {
+            buffer: Buffer.alloc(0),
+            fileExtension: "large",
+          };
+        }
+      }
+      
       inputBuffer = await res.arrayBuffer();
+      
+      // Double-check actual size after download
+      if (inputBuffer.byteLength > MAX_IMAGE_SIZE) {
+        return {
+          buffer: Buffer.alloc(0),
+          fileExtension: "large",
+        };
+      }
     } catch (e) {
       if (typeof e !== "string") throw e;
       return {

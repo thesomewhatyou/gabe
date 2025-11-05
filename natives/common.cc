@@ -48,6 +48,35 @@ vips::VOption *GetInputOptions(string type, bool sequential, bool sequentialIfAn
     options->set("access", "sequential");
   }
 
+  // Enable memory-efficient settings for all images
+  // Use disc caching to reduce memory footprint
+  options->set("disc", true);
+  // Skip errors for truncated/damaged images to allow partial processing
+  options->set("fail-on", VIPS_FAIL_ON_NONE);
+
+  return options;
+}
+
+vips::VOption *GetOutputOptions(string type) {
+  vips::VOption *options = vips::VImage::option();
+  
+  // Memory-efficient output settings
+  if (type == "gif") {
+    // Optimize GIF encoding for memory
+    options->set("dither", 0);
+    options->set("reoptimise", 1);
+  } else if (type == "webp") {
+    // Use strip to remove metadata and save memory
+    options->set("strip", true);
+  } else if (type == "jpeg" || type == "jpg") {
+    // Strip metadata for JPEG
+    options->set("strip", true);
+  } else if (type == "png") {
+    // Optimize PNG compression
+    options->set("compression", 6);
+    options->set("strip", true);
+  }
+  
   return options;
 }
 

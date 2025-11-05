@@ -38,6 +38,7 @@ ArgumentMap Bounce(const string &type, string &outType, const char *bufferdata, 
   int halfHeight = pageHeight / 2;
 
   vector<VImage> img;
+  img.reserve(nPages);  // Pre-allocate to avoid reallocations
   for (int i = 0; i < nPages; i++) {
     VImage img_frame = multiPage ? in.crop(0, i * pageHeight, width, pageHeight) : in;
     double height = halfHeight * (-sin(i * mult) + 1);

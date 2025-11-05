@@ -3,6 +3,11 @@ import { setTimeout } from "node:timers/promises";
 import WSocket, { type Data, type ErrorEvent } from "ws";
 import logger from "./logger.ts";
 
+// Network size limits
+const MAX_IMAGE_SIZE = 41943040; // 40MB
+const MAX_JOB_PARAMS_SIZE = 10485760; // 10MB
+const BYTES_TO_MB = 1048576;
+
 const Rerror = 0x01;
 const Tqueue = 0x02;
 //const Rqueue = 0x03;
@@ -72,6 +77,13 @@ class ImageConnection {
 
   onMessage(msg: Data) {
     if (!(msg instanceof Buffer)) return;
+    
+    // Limit message size to prevent memory issues
+    if (msg.byteLength > MAX_IMAGE_SIZE) {
+      logger.error(`Received oversized message (${msg.byteLength} bytes) from image server ${this.host}`);
+      return;
+    }
+    
     const op = msg.readUint8(0);
     logger.debug(`Received message from image server ${this.host} with opcode ${op}`);
     if (op === Rinit) {
@@ -141,6 +153,12 @@ class ImageConnection {
   queue(jobid: bigint, jobobj: object): Promise<void> {
     logger.debug(`Queuing ${jobid} on image server ${this.host}`);
     const str = JSON.stringify(jobobj);
+    
+    // Limit request size to prevent memory issues
+    if (str.length > MAX_JOB_PARAMS_SIZE) {
+      throw new Error(`Job object too large (>${MAX_JOB_PARAMS_SIZE / BYTES_TO_MB}MB)`);
+    }
+    
     const buf = Buffer.alloc(8);
     buf.writeBigUint64LE(jobid);
     return this.do(Tqueue, jobid, Buffer.concat([buf, Buffer.from(str)]));
@@ -172,6 +190,16 @@ class ImageConnection {
           }
         : undefined,
     );
+    
+    // Check content length to prevent downloading excessively large responses
+    const contentLength = req.headers.get("content-length");
+    if (contentLength) {
+      const size = Number.parseInt(contentLength);
+      if (size > MAX_IMAGE_SIZE) {
+        throw new Error(`Response too large (>${MAX_IMAGE_SIZE / BYTES_TO_MB}MB)`);
+      }
+    }
+    
     const contentType = req.headers.get("content-type");
     let type: string;
     switch (contentType) {
@@ -194,7 +222,15 @@ class ImageConnection {
         type = contentType ?? "unknown";
         break;
     }
-    return { buffer: Buffer.from(await req.arrayBuffer()), type };
+    
+    const buffer = Buffer.from(await req.arrayBuffer());
+    
+    // Double-check actual size after download
+    if (buffer.byteLength > MAX_IMAGE_SIZE) {
+      throw new Error(`Response too large (>${MAX_IMAGE_SIZE / BYTES_TO_MB}MB)`);
+    }
+    
+    return { buffer, type };
   }
 
   async getCount() {

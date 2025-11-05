@@ -25,6 +25,7 @@ ArgumentMap Tile(const string &type, string &outType, const char *bufferdata, si
   }
 
   vector<VImage> img;
+  img.reserve(nPages);  // Pre-allocate to avoid reallocations
   int finalHeight = 0;
   for (int i = 0; i < nPages; i++) {
     VImage img_frame = nPages > 1 ? in.crop(0, i * pageHeight, width, pageHeight) : in;
