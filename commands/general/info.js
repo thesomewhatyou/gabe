@@ -1,5 +1,7 @@
 import process from "node:process";
 import Command from "#cmd-classes/command.js";
+import { commands as slashCommands, locales, messageCommands, userCommands } from "#utils/collections.js";
+import logger from "#utils/logger.js";
 import { getServers } from "#utils/misc.js";
 import packageJson from "../../package.json" with { type: "json" };
 
@@ -9,14 +11,72 @@ class InfoCommand extends Command {
       this.success = false;
       return this.getString("permissions.noEmbedLinks");
     }
+
+    await this.acknowledge();
+
     const owners = process.env.OWNER?.split(",") ?? [];
     let owner;
     if (owners.length !== 0) {
       owner = this.client.users.get(owners[0]);
-      if (!owner) owner = await this.client.rest.users.get(owners[0]);
+      if (!owner) {
+        try {
+          owner = await this.client.rest.users.get(owners[0]);
+        } catch (error) {
+          logger.warn(`Failed to fetch owner information: ${error}`);
+        }
+      }
     }
-    const servers = await getServers(this.client);
-    await this.acknowledge();
+
+    let prefix = process.env.PREFIX ?? "&";
+    if (this.guild && this.database) {
+      try {
+        const guildSettings = await this.database.getGuild(this.guild.id);
+        if (guildSettings?.prefix) prefix = guildSettings.prefix;
+      } catch (error) {
+        logger.warn(`Failed to fetch guild prefix for info command: ${error}`);
+      }
+    }
+
+    let servers;
+    try {
+      servers = await getServers(this.client);
+    } catch (error) {
+      logger.warn(`Failed to fetch total server count: ${error}`);
+    }
+
+    let numberFormatter;
+    try {
+      numberFormatter = new Intl.NumberFormat(this.locale);
+    } catch {
+      numberFormatter = null;
+    }
+
+    const formatNumber = (value) => (numberFormatter ? numberFormatter.format(value) : value.toString());
+
+    const serverDisplay =
+      typeof servers === "number"
+        ? formatNumber(servers)
+        : this.getString("commands.responses.info.processOnly", {
+            params: { count: formatNumber(this.client.guilds.size) },
+          });
+
+    const statsLines = [
+      `• **${this.getString("commands.responses.info.totalServers")}** ${serverDisplay}`,
+      `• **${this.getString("commands.responses.info.shardCount")}** ${formatNumber(this.client.shards.size)}`,
+      `• **${this.getString("commands.responses.info.commandTotal")}** ${formatNumber(slashCommands.size)}`,
+      `• **${this.getString("commands.responses.info.contextTotal")}** ${formatNumber(messageCommands.size + userCommands.size)}`,
+      `• **${this.getString("commands.responses.info.languageTotal")}** ${formatNumber(locales.size)}`,
+    ];
+
+    const resourcesLines = [
+      `**${this.getString("commands.responses.info.officialServer")}** ${this.getString("commands.responses.info.noOfficialServer")}`,
+      `**${this.getString("commands.responses.info.sourceCode")}** [${this.getString("commands.responses.info.clickHere")}](https://github.com/gabrielpiss/gabe)`,
+      `**${this.getString("commands.responses.info.translate")}** ${this.getString("commands.responses.info.noTranslations")}`,
+      `**${this.getString("commands.responses.info.privacyPolicy")}** ${this.getString("commands.responses.info.seePrivacyMd")}`,
+      `**${this.getString("commands.responses.info.mastodonLabel")}** ${this.getString("commands.responses.info.noSocials")}`,
+      `**${this.getString("commands.responses.info.blueskyLabel")}** ${this.getString("commands.responses.info.noSocials")}`,
+    ];
+
     return {
       embeds: [
         {
@@ -29,45 +89,29 @@ class InfoCommand extends Command {
           fields: [
             {
               name: `ℹ️ ${this.getString("commands.responses.info.version")}`,
-              value: `v${packageJson.version}${process.env.NODE_ENV === "development" ? `-dev (${process.env.GIT_REV})` : ""}`,
+              value: `v${packageJson.version}${
+                process.env.NODE_ENV === "development" ? `-dev (${process.env.GIT_REV})` : ""
+              }`,
+            },
+            {
+              name: `📊 ${this.getString("commands.responses.info.keyStatsTitle")}`,
+              value: statsLines.join("\n"),
+            },
+            {
+              name: `🔧 ${this.getString("commands.responses.info.prefixTitle")}`,
+              value: this.getString("commands.responses.info.prefixValue", { params: { prefix } }),
+            },
+            {
+              name: `🧠 ${this.getString("commands.responses.info.featuresTitle")}`,
+              value: this.getString("commands.responses.info.featuresList"),
             },
             {
               name: `📝 ${this.getString("commands.responses.info.creditsHeader")}`,
-              value: this.getString("commands.responses.info.credits") + "\n*Themed by Gabriel Piss*",
+              value: `${this.getString("commands.responses.info.credits")}\n*Themed by Gabriel Piss*`,
             },
             {
-              name: `💬 ${this.getString("commands.responses.info.totalServers")}`,
-              value: servers
-                ? servers.toString()
-                : this.getString("commands.responses.info.processOnly", {
-                    params: { count: this.client.guilds.size.toString() },
-                  }),
-            },
-            {
-              name: `✅ ${this.getString("commands.responses.info.officialServer")}`,
-              value: this.getString("commands.responses.info.noOfficialServer"),
-            },
-            {
-              name: `💻 ${this.getString("commands.responses.info.sourceCode")}`,
-              value: `[${this.getString("commands.responses.info.clickHere")}](https://github.com/gabrielpiss/gabe)`,
-            },
-            {
-              name: `🌐 ${this.getString("commands.responses.info.translate")}`,
-              value: this.getString("commands.responses.info.noTranslations"),
-            },
-            {
-              name: `🛡️ ${this.getString("commands.responses.info.privacyPolicy")}`,
-              value: this.getString("commands.responses.info.seePrivacyMd"),
-            },
-            {
-              name: "🐘 Mastodon:",
-              value: this.getString("commands.responses.info.noSocials"),
-              inline: true,
-            },
-            {
-              name: "🦋 Bluesky:",
-              value: this.getString("commands.responses.info.noSocials"),
-              inline: true,
+              name: `🌐 ${this.getString("commands.responses.info.resourcesTitle")}`,
+              value: resourcesLines.join("\n"),
             },
           ],
         },
@@ -75,7 +119,7 @@ class InfoCommand extends Command {
     };
   }
 
-  static description = "Gets some info and credits about Gabe";
+  static description = "Gets detailed info, stats, and credits about Gabe";
   static aliases = ["botinfo", "credits", "about"];
 }
 
