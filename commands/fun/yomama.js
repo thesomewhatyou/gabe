@@ -3,7 +3,7 @@ import Command from "#cmd-classes/command.js";
 class YoMamaCommand extends Command {
   async run() {
     try {
-      const response = await fetch("https://www.yomama-jokes.com/api/v1/jokes/random/");
+      const response = await fetch("https://yomama-jokes.com/api/random");
 
       if (!response.ok) {
         return "❌ Gabe says: The yo mama joke API is down. Even Gabe can't fix that!";

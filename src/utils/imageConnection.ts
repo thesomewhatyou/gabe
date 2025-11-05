@@ -72,6 +72,13 @@ class ImageConnection {
 
   onMessage(msg: Data) {
     if (!(msg instanceof Buffer)) return;
+    
+    // Limit message size to prevent memory issues
+    if (msg.byteLength > 41943040) {
+      logger.error(`Received oversized message (${msg.byteLength} bytes) from image server ${this.host}`);
+      return;
+    }
+    
     const op = msg.readUint8(0);
     logger.debug(`Received message from image server ${this.host} with opcode ${op}`);
     if (op === Rinit) {
@@ -141,6 +148,12 @@ class ImageConnection {
   queue(jobid: bigint, jobobj: object): Promise<void> {
     logger.debug(`Queuing ${jobid} on image server ${this.host}`);
     const str = JSON.stringify(jobobj);
+    
+    // Limit request size to prevent memory issues
+    if (str.length > 10485760) { // 10MB limit for job parameters
+      throw new Error("Job object too large (>10MB)");
+    }
+    
     const buf = Buffer.alloc(8);
     buf.writeBigUint64LE(jobid);
     return this.do(Tqueue, jobid, Buffer.concat([buf, Buffer.from(str)]));
@@ -172,6 +185,17 @@ class ImageConnection {
           }
         : undefined,
     );
+    
+    // Check content length to prevent downloading excessively large responses
+    const contentLength = req.headers.get("content-length");
+    if (contentLength) {
+      const size = Number.parseInt(contentLength);
+      // Limit to 40MB to prevent memory issues
+      if (size > 41943040) {
+        throw new Error("Response too large (>40MB)");
+      }
+    }
+    
     const contentType = req.headers.get("content-type");
     let type: string;
     switch (contentType) {
@@ -194,7 +218,15 @@ class ImageConnection {
         type = contentType ?? "unknown";
         break;
     }
-    return { buffer: Buffer.from(await req.arrayBuffer()), type };
+    
+    const buffer = Buffer.from(await req.arrayBuffer());
+    
+    // Double-check actual size after download
+    if (buffer.byteLength > 41943040) {
+      throw new Error("Response too large (>40MB)");
+    }
+    
+    return { buffer, type };
   }
 
   async getCount() {

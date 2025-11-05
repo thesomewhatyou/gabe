@@ -33,7 +33,29 @@ export default async function run(object: ImageParams): Promise<{ buffer: Buffer
       });
       clearTimeout(timeout);
       if (res.status === 429) throw "ratelimit";
+      
+      // Check content length to prevent downloading excessively large files
+      const contentLength = res.headers.get("content-length");
+      if (contentLength) {
+        const size = Number.parseInt(contentLength);
+        // Limit to 40MB to prevent memory issues
+        if (size > 41943040) {
+          return {
+            buffer: Buffer.alloc(0),
+            fileExtension: "large",
+          };
+        }
+      }
+      
       inputBuffer = await res.arrayBuffer();
+      
+      // Double-check actual size after download
+      if (inputBuffer.byteLength > 41943040) {
+        return {
+          buffer: Buffer.alloc(0),
+          fileExtension: "large",
+        };
+      }
     } catch (e) {
       if (typeof e !== "string") throw e;
       return {
