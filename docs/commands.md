@@ -6,6 +6,7 @@ Welcome to Gabe's command documentation! Gabe is a multi-functional Discord bot 
 
 - [Moderation Commands](#moderation-commands)
 - [Fun Commands](#fun-commands)
+- [Misc Commands](#misc-commands)
 - [Command Permissions](#command-permissions)
 - [Using Commands](#using-commands)
 
@@ -246,6 +247,38 @@ Get a random yo mama joke from Gabe's joke database (via API).
 
 *Courtesy of Gabe's joke database*
 ```
+
+---
+
+## Misc Commands
+
+### Invite
+
+**Command:** `/invite` or `!invite`  
+**Aliases:** `link`, `oauth`, `add`  
+**Usage:** `/invite`
+
+Generate quick OAuth bot invite links with minimal, recommended, and administrator permission sets so you can pick what fits your server.
+
+---
+
+### Languages
+
+**Command:** `/languages` or `!languages`  
+**Aliases:** `locale`, `locales`, `translations`  
+**Usage:** `/languages`
+
+Lists every language pack currently loaded on your Gabe instance, highlights your active locale, and links to the localization guide so you can help translate.
+
+---
+
+### Uptime
+
+**Command:** `/uptime` or `!uptime`  
+**Aliases:** `runtime`, `alive`  
+**Usage:** `/uptime`
+
+Shows Gabe's process uptime, gateway connection uptime, and timestamps for the last restart and reconnect so you know how long the bot has been steady.
 
 ---
 

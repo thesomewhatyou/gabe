@@ -26,7 +26,9 @@
       "image": "Searches for images across the web",
       "imagereload": "Attempts to reconnect to all available image processing servers",
       "imagestats": "Gets some statistics about the image servers",
-      "info": "Gets some info and credits about Gabe",
+      "info": "Gets detailed info, stats, and credits about Gabe",
+      "invite": "Generate quick OAuth invite links for Gabe",
+      "languages": "See which languages Gabe can currently speak",
       "lengthen": "Lengthens a short URL",
       "ping": "Pings Discord's servers (and checks if Gabe's still alive)",
       "prefix": "Checks/changes the server prefix",
@@ -36,6 +38,7 @@
       "snowflake": "Converts a Discord snowflake id into a timestamp",
       "soundreload": "Attempts to reconnect to all available Lavalink nodes",
       "stats": "Gets some statistics about Gabe",
+      "uptime": "Check how long Gabe's been awake and connected",
       "sticker": "Gets a raw sticker image",
       "youtube": "Searches YouTube",
       "blur": "Blurs an image",
@@ -837,20 +840,41 @@
         "noUser": "I can't find that user!"
       },
       "info": {
+        "blueskyLabel": "Bluesky:",
         "clickHere": "Click here!",
+        "commandTotal": "Slash Commands",
+        "contextTotal": "Context Menu Commands",
         "credits": "Bot by **[Essem](https://essem.space)** and **[various contributors](https://github.com/Gabe/Gabe/graphs/contributors)**\nLogo by **[MintBurrow](https://twitter.com/MintBurrow)**",
         "creditsHeader": "Credits:",
+        "featuresList": "• Powerful image & media editing pipeline\n• Moderation, music, and tag utilities built-in\n• Personality-packed responses and quality-of-life tools",
+        "featuresTitle": "Feature Highlights",
+        "keyStatsTitle": "Key Stats",
+        "languageTotal": "Languages",
+        "mastodonLabel": "Mastodon:",
         "noOfficialServer": "No official server (self-hosted)",
         "noSocials": "N/A",
         "noTranslations": "Not available",
         "officialServer": "Official Server:",
+        "prefixTitle": "Command Prefix",
+        "prefixValue": "Default prefix: `{{prefix}}`\nSlash commands are always available with `/`.",
         "privacyPolicy": "Privacy Policy:",
         "processOnly": "{{count}} (for this process only)",
+        "resourcesTitle": "Resources & Links",
         "seePrivacyMd": "See PRIVACY.md",
+        "shardCount": "Shards",
         "sourceCode": "Source Code:",
         "totalServers": "Total Servers:",
         "translate": "Translate:",
         "version": "Version:"
+      },
+      "invite": {
+        "adminLabel": "Administrator Invite",
+        "defaultLabel": "Minimal Permissions",
+        "description": "Choose one of the invite links below to add Gabe to your server.",
+        "footer": "Need different permissions? Generate your own invite from the Discord Developer Portal.",
+        "noApplication": "I couldn't figure out my application ID. Try again later!",
+        "recommendedLabel": "Recommended Permissions",
+        "title": "Invite Gabe"
       },
       "image": {
         "noInput": "You need to provide something to search for!",
@@ -867,6 +891,13 @@
         "header": "Gabe Image Statistics",
         "runningJobs": "Running Jobs: {{count}}",
         "server": "Server {{num}}"
+      },
+      "languages": {
+        "contribute": "Want to help translate Gabe? Check out the localization guide on GitHub: https://github.com/gabrielpiss/gabe",
+        "current": "(current)",
+        "footer": "Total languages: {{count}}",
+        "none": "No language packs are currently loaded.",
+        "title": "Available Languages"
       },
       "lengthen": {
         "noInput": "You need to provide a short URL to lengthen!",
@@ -958,6 +989,15 @@
         "totalUsage": "Total Memory Usage",
         "unknownVersion": "Runtime Version",
         "version": "Version"
+      },
+      "uptime": {
+        "botUptime": "Process Uptime",
+        "connectedAt": "Last Gateway Connect",
+        "connectionUptime": "Gateway Connection",
+        "description": "How long Gabe has been awake and connected.",
+        "notAvailable": "N/A",
+        "startedAt": "Process Started",
+        "title": "Gabe Uptime"
       },
       "steal-emoji": {
         "noEmojis": "Bruh, there are no emojis in that message. What am I supposed to steal, air? 🤷",

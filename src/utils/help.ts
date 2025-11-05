@@ -7,6 +7,7 @@ import type { Param } from "./types.ts";
 
 export const categoryTemplate = {
   general: [],
+  misc: ["> **Handy utility commands for extra bot info.**\n"],
   tags: ["> **Every command in this category is a subcommand of the tag command.**\n"],
   "image-editing": ["> **These commands support the PNG, JPEG, WEBP, AVIF (static only), and GIF formats.**\n"],
 };
