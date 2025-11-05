@@ -10,6 +10,7 @@
 **/data
 **/dist
 **/.cache
+**/writers_log
 
 *.log
 npm-debug.log*
