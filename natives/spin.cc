@@ -31,6 +31,7 @@ ArgumentMap Spin(const string &type, string &outType, const char *bufferdata, si
   }
 
   vector<VImage> img;
+  img.reserve(nPages);  // Pre-allocate to avoid reallocations
   for (int i = 0; i < nPages; i++) {
     VImage img_frame = multiPage ? in.crop(0, i * pageHeight, width, pageHeight) : in;
     double rotation = (double)360 * i / nPages;

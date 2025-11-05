@@ -21,6 +21,7 @@ ArgumentMap Uncaption(const string &type, string &outType, const char *bufferdat
   first.find_trim(&top, &captionWidth, &captionHeight);
 
   vector<VImage> img;
+  img.reserve(nPages);  // Pre-allocate to avoid reallocations
   int newHeight = pageHeight - top;
   if (top == pageHeight) {
     newHeight = pageHeight;

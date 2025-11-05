@@ -51,6 +51,7 @@ ArgumentMap Globe(const string &type, string &outType, const char *bufferdata, s
                      .copy_memory();
 
   vector<VImage> img;
+  img.reserve(nPages);  // Pre-allocate to avoid reallocations
   for (int i = 0; i < nPages; i++) {
     VImage img_frame = multiPage ? in.crop(0, i * pageHeight, width, pageHeight) : in;
     VImage mapped = img_frame.wrap(VImage::option()->set("x", width * i / nPages)->set("y", 0)).mapim(distort);

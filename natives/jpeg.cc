@@ -25,6 +25,7 @@ ArgumentMap Jpeg(const string &type, string &outType, const char *bufferdata, si
 
     if (totalHeight > 65500) {
       vector<VImage> img;
+      img.reserve(nPages);  // Pre-allocate to avoid reallocations
       for (int i = 0; i < nPages; i++) {
         VImage img_frame = in.crop(0, i * pageHeight, width, pageHeight);
         void *jpgBuf;

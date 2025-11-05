@@ -89,6 +89,7 @@ ArgumentMap Watermark(const string &type, string &outType, const char *bufferdat
     final = in.composite2(replicated, VIPS_BLEND_MODE_OVER);
   } else {
     vector<VImage> img;
+    img.reserve(nPages);  // Pre-allocate to avoid reallocations
     int addedHeight = 0;
     VImage contentAlpha;
     VImage frameAlpha;

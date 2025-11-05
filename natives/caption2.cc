@@ -45,6 +45,7 @@ ArgumentMap CaptionTwo(const string &type, string &outType, const char *bufferda
       .embed(width / 25, width / 25, width, text.height() + size, VImage::option()->set("extend", "white"));
 
   vector<VImage> img;
+  img.reserve(nPages);  // Pre-allocate to avoid reallocations
   for (int i = 0; i < nPages; i++) {
     VImage img_frame = nPages > 1 ? in.crop(0, i * pageHeight, width, pageHeight) : in;
     VImage frame = (top ? captionImage : img_frame)

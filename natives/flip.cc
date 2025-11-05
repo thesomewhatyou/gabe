@@ -20,6 +20,7 @@ ArgumentMap Flip(const string &type, string &outType, const char *bufferdata, si
   } else if (nPages > 1) {
     // libvips animation handling is both a blessing and a curse
     vector<VImage> img;
+    img.reserve(nPages);  // Pre-allocate to avoid reallocations
     int pageHeight = vips_image_get_page_height(in.get_image());
     for (int i = 0; i < nPages; i++) {
       VImage img_frame = in.crop(0, i * pageHeight, in.width(), pageHeight);

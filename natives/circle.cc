@@ -54,6 +54,7 @@ ArgumentMap Circle(const string &type, string &outType, const char *bufferdata, 
   VImage gaussmat = VImage::gaussmat(5, 0.2, VImage::option()->set("separable", true)).rot90();
 
   vector<VImage> img;
+  img.reserve(nPages);  // Pre-allocate to avoid reallocations
   for (int i = 0; i < nPages; i++) {
     VImage img_frame = nPages > 1 ? in.crop(0, i * pageHeight, width, pageHeight) : in;
     VImage result = img_frame.mapim(rectIndex)

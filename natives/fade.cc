@@ -40,6 +40,7 @@ ArgumentMap Fade(const string &type, string &outType, const char *bufferdata, si
   if (outType != "webp") outType = "gif";
 
   vector<VImage> img;
+  img.reserve(nPages);  // Pre-allocate to avoid reallocations
   for (int i = 0; i < nPages; i++) {
     VImage img_frame = multiPage ? in.crop(0, i * pageHeight, width, pageHeight) : in;
     double mult = (double)i / (nPages - 1);

@@ -37,6 +37,7 @@ ArgumentMap Spotify(const string &type, string &outType, const char *bufferdata,
   VImage watermark = composited.resize((double)width / (double)composited.width());
 
   vector<VImage> img;
+  img.reserve(nPages);  // Pre-allocate to avoid reallocations
   for (int i = 0; i < nPages; i++) {
     VImage img_frame = nPages > 1 ? in.crop(0, i * pageHeight, width, pageHeight) : in;
     VImage frame = watermark.join(img_frame, VIPS_DIRECTION_VERTICAL, VImage::option()->set("expand", true));

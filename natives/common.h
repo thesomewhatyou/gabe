@@ -32,6 +32,7 @@ uint32_t readUint32LE(unsigned char *buffer);
 void LoadFonts(string basePath);
 vips::VImage NormalizeVips(vips::VImage in, int *width, int *pageHeight, int nPages);
 vips::VOption *GetInputOptions(string type, bool sequential, bool sequentialIfAnim);
+vips::VOption *GetOutputOptions(string type);
 #define MapContainsKey(MAP, KEY) (MAP.find(KEY) != MAP.end())
 
 template <typename T> T GetArgument(ArgumentMap map, string key) {

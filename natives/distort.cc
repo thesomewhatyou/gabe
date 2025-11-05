@@ -25,6 +25,7 @@ ArgumentMap Distort(const string &type, string &outType, const char *bufferdata,
   VImage distortImage = (distort[0] * width).bandjoin(distort[1] * pageHeight);
 
   vector<VImage> img;
+  img.reserve(nPages);  // Pre-allocate to avoid reallocations
   for (int i = 0; i < nPages; i++) {
     VImage img_frame = nPages > 1 ? in.crop(0, i * pageHeight, width, pageHeight) : in;
     VImage mapped = img_frame.mapim(distortImage);

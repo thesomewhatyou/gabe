@@ -38,8 +38,9 @@ ArgumentMap Resize(const string &type, string &outType, const char *bufferdata, 
     out = in.resize(wideAmount, VImage::option()->set("vscale", 1));
     finalHeight = pageHeight;
   } else {
-    // Pain. Pain. Pain. Pain. Pain.
+    // Memory-optimized frame processing
     vector<VImage> img;
+    img.reserve(nPages);  // Pre-allocate to avoid reallocations
     for (int i = 0; i < nPages; i++) {
       VImage img_frame = nPages > 1 ? in.crop(0, i * pageHeight, width, pageHeight) : in;
       VImage resized = img_frame.resize(0.1).resize(10, VImage::option()->set("kernel", VIPS_KERNEL_NEAREST));

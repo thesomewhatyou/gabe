@@ -37,6 +37,7 @@ ArgumentMap Scott(const string &type, string &outType, const char *bufferdata, s
   VImage distortImage = ((distort[1] / 255) * 414).bandjoin((distort[0] / 255) * 233);
 
   vector<VImage> img;
+  img.reserve(nPages);  // Pre-allocate to avoid reallocations
   for (int i = 0; i < nPages; i++) {
     VImage img_frame = nPages > 1 ? in.crop(0, i * pageHeight, width, pageHeight) : in;
     VImage resized = img_frame.resize(415 / (double)width, VImage::option()->set("vscale", 234 / (double)pageHeight));

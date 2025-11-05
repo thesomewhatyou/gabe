@@ -21,6 +21,7 @@ ArgumentMap Gamexplain(const string &type, string &outType, const char *bufferda
   int nPages = type == "avif" ? 1 : vips_image_get_n_pages(in.get_image());
 
   vector<VImage> img;
+  img.reserve(nPages);  // Pre-allocate to avoid reallocations
   for (int i = 0; i < nPages; i++) {
     VImage img_frame = nPages > 1 ? in.crop(0, i * pageHeight, width, pageHeight) : in;
     VImage resized =
