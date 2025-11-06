@@ -140,3 +140,6 @@ dist/
 
 # macOS temp dirs
 **/.DS_Store
+
+# GitHub workflows, templates, etc
+**/.github
