@@ -16,12 +16,14 @@ WORKDIR /app
 
 # Minimal, reliable fonts (libre) + tools you actually use later
 RUN apk add --no-cache \
+      zxing-cpp \
+      vips \
       fontconfig \
-      ttf-liberation \
-      ttf-dejavu \
-      curl \
-      git \
-      ca-certificates \
+      libjpeg-turbo \
+      libpng \
+      libwebp \
+      freetype \
+      libxml2
     && fc-cache -fv
 
 # Enable corepack & activate pnpm from package.json (fallback to latest)
