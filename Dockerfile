@@ -28,9 +28,8 @@ RUN apk add --no-cache \
 # Copy only manifests first to maximize layer cache
 COPY package.json pnpm-lock.yaml* ./
 RUN corepack enable \
- && PM="$(node -e 'try{console.log(require(\"./package.json\").packageManager)}catch(e){console.log(\"pnpm@latest\")}')" \
- && corepack prepare "$PM" --activate \
- && echo "Using package manager: $PM"
+ && corepack prepare pnpm@latest --activate
+
 
 # Now copy the rest of the source
 COPY . .
