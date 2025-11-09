@@ -10,9 +10,10 @@ RUN corepack enable
 COPY . /app
 WORKDIR /app
 RUN apk add --no-cache \
-      fontconfig ttf-liberation ttf-dejavu \
-      noto-fonts noto-fonts-cjk noto-fonts-emoji \
-  && fc-cache -fv
+      fontconfig \
+      ttf-liberation \
+      ttf-dejavu && \
+    fc-cache -fv
 RUN corepack install -g $(jq .packageManager package.json | tr -d '"')
 RUN update-ms-fonts && fc-cache -fv
 RUN mkdir /built
