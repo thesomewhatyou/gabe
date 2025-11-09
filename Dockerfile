@@ -1,84 +1,122 @@
+# syntax=docker/dockerfile:1.7
 # Docker/Podman/Kubernetes file for running the bot
 
-# Enable/disable usage of ImageMagick
+# docker can kiss my shiny ass.
+
+# Enable/disable usage of ImageMagick (1 = with IM build, 0 = without)
 ARG MAGICK="1"
+# Optional: install MS core fonts (slow/flaky). 1 = install, 0 = skip
+ARG MS_FONTS="0"
 
 FROM node:lts-alpine AS base
+
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
-COPY . /app
 WORKDIR /app
+
+# Minimal, reliable fonts (libre) + tools you actually use later
 RUN apk add --no-cache \
       fontconfig \
       ttf-liberation \
-      ttf-dejavu && \
-    fc-cache -fv
-RUN corepack install -g $(jq .packageManager package.json | tr -d '"')
-RUN update-ms-fonts && fc-cache -fv
-RUN mkdir /built
+      ttf-dejavu \
+      curl \
+      git \
+      ca-certificates \
+    && fc-cache -fv
 
-# Path without ImageMagick
+# Enable corepack & activate pnpm from package.json (fallback to latest)
+# Copy only manifests first to maximize layer cache
+COPY package.json pnpm-lock.yaml* ./
+RUN corepack enable \
+ && PM="$(node -e 'try{console.log(require(\"./package.json\").packageManager)}catch(e){console.log(\"pnpm@latest\")}')" \
+ && corepack prepare "$PM" --activate \
+ && echo "Using package manager: $PM"
+
+# Now copy the rest of the source
+COPY . .
+
+# Optional: MS fonts for meme commands (flaky mirrors, so retry)
+RUN if [ "$MS_FONTS" = "1" ]; then \
+      apk add --no-cache msttcorefonts-installer cabextract || true; \
+      for i in 1 2 3; do \
+        update-ms-fonts && break || { echo "update-ms-fonts failed (attempt $i)"; sleep $((i*3)); }; \
+      done; \
+      fc-cache -fv || true; \
+    else \
+      echo "Skipping MS core fonts (set MS_FONTS=1 to enable)"; \
+    fi
+
+RUN mkdir -p /built
+
+# ---------- no-ImageMagick native deps ----------
 FROM base AS native-build-0
-RUN apk add --no-cache git cmake python3 alpine-sdk \
-		fontconfig-dev vips-dev zxing-cpp-dev
+RUN apk add --no-cache \
+      git cmake python3 alpine-sdk \
+      fontconfig-dev vips-dev zxing-cpp-dev
 
-# Path with ImageMagick
+# ---------- with-ImageMagick native deps ----------
 FROM base AS native-build-1
-RUN apk add --no-cache git cmake python3 alpine-sdk \
-    zlib-dev libpng-dev libjpeg-turbo-dev freetype-dev fontconfig-dev \
-    libtool libwebp-dev libxml2-dev \
-		vips-dev libc6-compat zxing-cpp-dev
+RUN apk add --no-cache \
+      git cmake python3 alpine-sdk \
+      zlib-dev libpng-dev libjpeg-turbo-dev freetype-dev fontconfig-dev \
+      libtool libwebp-dev libxml2-dev \
+      vips-dev libc6-compat zxing-cpp-dev
 
-# liblqr needs to be built manually for magick to work
-# and because alpine doesn't have it in their repos
+# Build liblqr (needed for ImageMagick w/ liquid rescale) — only in this stage
 RUN git clone https://github.com/carlobaldassi/liblqr ~/liblqr \
-		&& cd ~/liblqr \
-		&& ./configure --prefix=/built \
-		&& make \
-		&& make install
+ && cd ~/liblqr \
+ && ./configure --prefix=/built \
+ && make -j"$(getconf _NPROCESSORS_ONLN)" \
+ && make install \
+ && cp -a /built/* /usr
 
-RUN cp -a /built/* /usr
-
-# install imagemagick from source rather than using the package
-# since the alpine package does not include liblqr support.
+# Build ImageMagick from source with liblqr
 RUN git clone https://github.com/ImageMagick/ImageMagick.git ~/ImageMagick \
-    && cd ~/ImageMagick \
-    && ./configure \
-		--prefix=/built \
-		--disable-static \
-		--disable-openmp \
-		--with-threads \
-		--with-png \
-		--with-webp \
-		--with-modules \
-		--with-pango \
-		--without-hdri \
-		--with-lqr \
-    && make \
-    && make install
+ && cd ~/ImageMagick \
+ && ./configure \
+      --prefix=/built \
+      --disable-static \
+      --disable-openmp \
+      --with-threads \
+      --with-png \
+      --with-webp \
+      --with-modules \
+      --with-pango \
+      --without-hdri \
+      --with-lqr \
+ && make -j"$(getconf _NPROCESSORS_ONLN)" \
+ && make install \
+ && cp -a /built/* /usr
 
-RUN cp -a /built/* /usr
-
+# ---------- build the app (with or without IM) ----------
 FROM native-build-${MAGICK} AS build
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
-# Detect ImageMagick usage and adjust build accordingly
-RUN if [[ "$MAGICK" -eq "1" ]] ; then pnpm run build --CDWITH_BACKWARD=OFF ; else pnpm run build:no-magick --CDWITH_BACKWARD=OFF ; fi
+# BuildKit cache for pnpm store
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+    pnpm install --frozen-lockfile
+
+# Detect ImageMagick usage and adjust build accordingly (POSIX [ ])
+RUN if [ "$MAGICK" = "1" ]; then \
+      pnpm run build --CDWITH_BACKWARD=OFF; \
+    else \
+      pnpm run build:no-magick --CDWITH_BACKWARD=OFF; \
+    fi
 
 FROM native-build-${MAGICK} AS prod-deps
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+    pnpm install --prod --frozen-lockfile
 
+# ---------- final image ----------
 FROM base
 COPY --from=prod-deps /app/node_modules /app/node_modules
 COPY --from=build /app/build/Release /app/build/Release
 COPY --from=build /app/dist /app/dist
 COPY --from=build /built /usr
-RUN rm -f .env
-RUN rm -rf config src natives
 
-RUN mkdir /app/config && chmod 777 /app/config
-RUN mkdir /app/help && chmod 777 /app/help
-RUN mkdir /app/temp && chmod 777 /app/temp
-RUN mkdir /app/logs && chmod 777 /app/logs
+# scrub dev stuff
+RUN rm -f .env \
+ && rm -rf config src natives \
+ && mkdir -p /app/config /app/help /app/temp /app/logs \
+ && chmod 777 /app/config /app/help /app/temp /app/logs
 
 ENTRYPOINT ["node", "dist/app.js"]
+
