@@ -23,7 +23,7 @@ RUN apk add --no-cache \
       libpng \
       libwebp \
       freetype \
-      libxml2
+      libxml2  \
     && fc-cache -fv
 
 # Enable corepack & activate pnpm from package.json (fallback to latest)
