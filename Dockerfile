@@ -113,9 +113,9 @@ COPY --from=build /built /usr
 
 # scrub dev stuff
 RUN rm -f .env \
- && rm -rf config src natives \
- && mkdir -p /app/config /app/help /app/temp /app/logs \
- && chmod 777 /app/config /app/help /app/temp /app/logs
+ && rm -rf src natives \
+ && mkdir -p /app/help /app/temp /app/logs \
+ && chmod 777 /app/help /app/temp /app/logs
 
 ENTRYPOINT ["node", "dist/app.js"]
 
