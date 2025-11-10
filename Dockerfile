@@ -18,6 +18,7 @@ WORKDIR /app
 RUN apk add --no-cache \
       zxing-cpp \
       vips \
+      vips-cpp \
       fontconfig \
       libjpeg-turbo \
       libpng \
