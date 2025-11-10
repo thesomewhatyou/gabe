@@ -81,6 +81,7 @@ const std::map<std::string, ArgumentMap (*)(const string &type, string &outType,
     {"meme",       &Meme      },
     {"mirror",     &Mirror    },
     {"motivate",   &Motivate  },
+    {"quote",      &Quote     },
 #ifdef ZXING_ENABLED
     {"qrread",     &QrRead    },
 #endif

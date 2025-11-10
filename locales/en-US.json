@@ -93,6 +93,7 @@
       "whisper": "Adds a Whisper style caption to an image",
       "wide": "Stretches an image to 19x its width",
       "woow": "Mirrors the top of an image onto the bottom",
+      "Quote Message": "Turn a message into a shareable quote image",
       "Select Image": "No description found",
       "Steal Emoji": "Yoink that emoji for your server (Gabe approves of theft)",
       "ban": "Bans a user from the server (Gabe shows no mercy)",
@@ -647,6 +648,7 @@
       "whisper": "whisper",
       "wide": "wide",
       "woow": "woow",
+      "Quote Message": "Quote Message",
       "Select Image": "Select Image",
       "Steal Emoji": "Steal Emoji",
       "music": "music",
@@ -928,6 +930,10 @@
         "changed": "The prefix has been changed to `{{prefix}}`.",
         "current": "The current prefix is `{{prefix}}`.",
         "stateless": "Setting a per-guild prefix is not possible on a stateless instance of Gabe!"
+      },
+      "Quote Message": {
+        "avatarError": "I couldn't grab that user's avatar to build the quote image. Try again in a moment?",
+        "noContent": "I can only quote messages that contain some text to show off."
       },
       "raw": {
         "noInput": "You need to provide an image/GIF to get a raw URL!"
