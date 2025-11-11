@@ -59,6 +59,11 @@ libvips/
 .env.test.local
 .env.production.local
 .env.local
+.env.example
+# Had to remove that because I did mv in my GCP instance and it got rid of it and made it .env
+# So technically I renamed it to env because yes, I made local changes, committed locally, and it got rid of the .env.example file.
+# Ok bye :) 
+ 
 
 # Gatsby files
 .cache/
