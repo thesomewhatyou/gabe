@@ -194,10 +194,7 @@ class Command {
 
   getOptionNumber(key: string, defaultArg?: boolean): number | undefined {
     if (this.type === "classic") {
-      const value = defaultArg ? this.args.join(" ").trim() : this.options?.[key];
-      if (value === undefined || value === null || value === "") return undefined;
-      const parsed = Number.parseFloat(value as string);
-      return Number.isNaN(parsed) ? undefined : parsed;
+      return Number.parseFloat((defaultArg ? this.args.join(" ").trim() : this.options?.[key]) as string);
     }
     if (this.type === "application") {
       return this.interaction?.data.options.getNumber(key);
@@ -207,10 +204,7 @@ class Command {
 
   getOptionInteger(key: string, defaultArg?: boolean): number | undefined {
     if (this.type === "classic") {
-      const value = defaultArg ? this.args.join(" ").trim() : this.options?.[key];
-      if (value === undefined || value === null || value === "") return undefined;
-      const parsed = Number.parseInt(value as string);
-      return Number.isNaN(parsed) ? undefined : parsed;
+      return Number.parseInt((defaultArg ? this.args.join(" ").trim() : this.options?.[key]) as string);
     }
     if (this.type === "application") {
       return this.interaction?.data.options.getInteger(key);
@@ -220,13 +214,7 @@ class Command {
 
   getOptionUser(key: string, defaultArg?: boolean): User | undefined {
     if (this.type === "classic") {
-      let id = defaultArg ? this.args.join(" ").trim() : this.options?.[key];
-      if (typeof id === "string") {
-        const mentionMatch = id.match(/^<@!?(\d+)>$/);
-        if (mentionMatch) {
-          id = mentionMatch[1];
-        }
-      }
+      const id = defaultArg ? this.args.join(" ").trim() : this.options?.[key];
       return this.client.users.get(id as string);
     }
     if (this.type === "application") {
@@ -237,13 +225,7 @@ class Command {
 
   getOptionMember(key: string, defaultArg?: boolean): Member | undefined {
     if (this.type === "classic") {
-      let id = defaultArg ? this.args.join(" ").trim() : this.options?.[key];
-      if (typeof id === "string") {
-        const mentionMatch = id.match(/^<@!?(\d+)>$/);
-        if (mentionMatch) {
-          id = mentionMatch[1];
-        }
-      }
+      const id = defaultArg ? this.args.join(" ").trim() : this.options?.[key];
       return this.guild?.members.get(id as string);
     }
     if (this.type === "application") {

@@ -1,4 +1,4 @@
-import { Constants, Permissions } from "oceanic.js";
+import { Constants, Permission } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
 
 class UntimeoutCommand extends Command {
@@ -10,21 +10,26 @@ class UntimeoutCommand extends Command {
     const guild = this.guild;
     const member = this.member;
 
-    if (!member.permissions.has(Permissions.MODERATE_MEMBERS) && this.author.id !== process.env.OWNER) {
+    if (!member.permissions.has(Permission.MODERATE_MEMBERS) && this.author.id !== process.env.OWNER) {
       return "❌ Gabe says: You don't have permission to remove timeouts. Sorry!";
     }
 
-    const user = this.getOptionUser("user", true);
+    const user = this.options.user ?? this.args[0];
     if (!user) return "❌ Gabe says: Who am I supposed to untimeout? Tell me!";
 
-    const reason = this.getOptionString("reason", true) ?? "Gabe's mercy";
+    const reason = this.options.reason ?? this.args.slice(1).join(" ") ?? "Gabe's mercy";
 
     try {
-      const memberToUntimeout = guild.members.get(user.id);
+      const userToUntimeout =
+        typeof user === "string" ? await this.client.rest.users.get(user).catch(() => null) : user;
+
+      if (!userToUntimeout) return "❌ Gabe says: Can't find that user. Check your spelling?";
+
+      const memberToUntimeout = guild.members.get(userToUntimeout.id);
       if (!memberToUntimeout) return "❌ Gabe says: That user isn't in this server.";
 
       const myMember = guild.members.get(this.client.user.id);
-      if (!myMember?.permissions.has(Permissions.MODERATE_MEMBERS)) {
+      if (!myMember?.permissions.has(Permission.MODERATE_MEMBERS)) {
         return "❌ Gabe says: I don't have permission to remove timeouts. Oops!";
       }
 
@@ -40,7 +45,7 @@ class UntimeoutCommand extends Command {
       );
 
       this.success = true;
-      return `✅ **UNTIMEOUT!** ${user.tag} can talk again thanks to Gabe.\n*Reason:* ${reason}`;
+      return `✅ **UNTIMEOUT!** ${userToUntimeout.tag} can talk again thanks to Gabe.\n*Reason:* ${reason}`;
     } catch (error) {
       return `❌ Gabe says: Something broke. ${error.message}`;
     }
