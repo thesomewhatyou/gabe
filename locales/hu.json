@@ -1,40 +1,60 @@
 {
-    "commands": {
-        "descriptions": {
-            "avatar": "Egy felhasználó profilképét nyeri el és küldi be ide",
-            "base64": "Base64 szöveget kódol/dekódol",
-            "count": "Megmutatja, mennyiszer használtak egy adott parancsot",
-            "8ball": "A mágikus 8-as golyó válaszol kérdéseidre",
-            "bird": "Véletlenszerű kép egy madárról",
-            "cat": "Véletlenszerű kép egy macskáról",
-            "dice": "Eldobja a dobókockát",
-            "dog": "Véletlenszerű kép egy kutyáról",
-            "homebrew": "Egy „Homebrew Channel” mémet alkot a szövegeddel",
-            "sonic": "Sonic szövegbuborékában a te szöveged lesz benne",
-            "emote": "Elnyeri az emotikon képét, és ide küldi be",
-            "ping": "A Discord-szerverek pingjét vizsgálja meg",
-            "flip": "Képet fordít meg",
-            "flop": "Képet fordít meg",
-            "freeze": "Meggátolja a GIF-et az ismétléstől",
-            "banner": "Egy felhasználó borítóképét nyeri el és küldi be ide",
-            "donate": "Bővebb információ arról, hogyan támogathatod az Gabe fejleszését",
-            "exec": "Shell-parancsot futtat",
-            "help": "Parancsok listája",
-            "image": "Képkeresés a világhálón",
-            "info": "Tudj meg többet rólam",
-            "raw": "A kép közvetlen internetcímét kéri le (pl.: Tenorhoz hasonló oldalak gifjei)",
-            "explode": "Képet robbant szét",
-            "fade": "Kivilágosítja a képet",
-            "flag": "Képre illeszt egy zászlót"
-        },
-        "flags": {
-            "watermark": {
-                "deviantart": "„DeviantArt”-vízjelet ad a képhez"
-            },
-            "qr": {
-                "create": "QR-kódot generál",
-                "read": "QR-kódot olvas be"
-            }
-        }
+  "commands": {
+    "descriptions": {
+      "avatar": "Egy felhasználó profilképét nyeri el és küldi be ide",
+      "base64": "Base64 szöveget kódol/dekódol",
+      "count": "Megmutatja, mennyiszer használtak egy adott parancsot",
+      "8ball": "A mágikus 8-as golyó válaszol kérdéseidre",
+      "bird": "Véletlenszerű kép egy madárról",
+      "cat": "Véletlenszerű kép egy macskáról",
+      "dice": "Eldobja a dobókockát",
+      "dog": "Véletlenszerű kép egy kutyáról",
+      "homebrew": "Egy „Homebrew Channel” mémet alkot a szövegeddel",
+      "sonic": "Sonic szövegbuborékában a te szöveged lesz benne",
+      "emote": "Elnyeri az emotikon képét, és ide küldi be",
+      "ping": "A Discord-szerverek pingjét vizsgálja meg",
+      "flip": "Képet fordít meg",
+      "flop": "Képet fordít meg",
+      "freeze": "Meggátolja a GIF-et az ismétléstől",
+      "banner": "Egy felhasználó borítóképét nyeri el és küldi be ide",
+      "donate": "Bővebb információ arról, hogyan támogathatod az Gabe fejleszését",
+      "exec": "Shell-parancsot futtat",
+      "help": "Parancsok listája",
+      "image": "Képkeresés a világhálón",
+      "info": "Tudj meg többet rólam",
+      "raw": "A kép közvetlen internetcímét kéri le (pl.: Tenorhoz hasonló oldalak gifjei)",
+      "explode": "Képet robbant szét",
+      "fade": "Kivilágosítja a képet",
+      "flag": "Képre illeszt egy zászlót",
+      "ship": "Find out how compatible two people are (Gabe's love calculator)"
+    },
+    "flags": {
+      "watermark": {
+        "deviantart": "„DeviantArt”-vízjelet ad a képhez"
+      },
+      "qr": {
+        "create": "QR-kódot generál",
+        "read": "QR-kódot olvas be"
+      },
+      "ship": {
+        "user1": "The first person to ship (defaults to you or the first mention)",
+        "user2": "The second person to ship (defaults to the mentioned user)"
+      }
+    },
+    "flagNames": {
+      "ship": {
+        "user1": "user1",
+        "user2": "user2"
+      }
+    },
+    "responses": {
+      "ship": {
+        "fizzle": "Uh oh... the sparks aren't flying yet. Maybe just friends?",
+        "warm": "There's a decent vibe here! A little spark never hurt anyone.",
+        "glow": "These two are glowing together—this could get serious!",
+        "blaze": "Now that's chemistry! Gabe ships it hard!",
+        "destiny": "Soulmate alert! Gabe is already planning the wedding."
+      }
     }
+  }
 }

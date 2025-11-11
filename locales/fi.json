@@ -1,885 +1,901 @@
 {
-    "commands": {
-        "descriptions": {
-            "8ball": "Kysyy taianomaiselta 8-pallolta kysymyksen",
-            "bird": "Löytää satunnaisen kuvan linnusta",
-            "cat": "Löytää satunnaisen kuvan kissasta",
-            "dice": "Heittää noppaa",
-            "dog": "Löytää satunnaisen kuvan koirasta",
-            "homebrew": "Tekee Homebrew Channel editin",
-            "sonic": "Tekee Sonic puhekupla kuvan",
-            "avatar": "Löytää käyttäjän avatarin",
-            "banner": "Löytää käyttäjän bannerin",
-            "base64": "Muuntaa/purkaa Base64 merkkijonon",
-            "channel": "Ottaa/poistaa käytöstä klassisia komentoja kanavalla (käytä palvelinasetuksia kautta komentoihin)",
-            "command": "Ottaa/poistaa käytöstä klassisia komentoja palvelimella (käytä palvelinasetuksia kautta komentoihin)",
-            "count": "Löytää montako kertaa jokaista komentoa on käytetty",
-            "donate": "Opi lisää kuinka voit tukea Gabein kehitystä",
-            "emote": "Tekee emojista kuvan",
-            "eval": "Suoritta JavaScript koodin",
-            "exec": "Suorittaa shell-komennon",
-            "help": "Löytää komentolistan",
-            "image": "Hakee kuvia netistä",
-            "imagereload": "Yrittää yhdistää kaikkiin saatavilla oleviin kuvankäsittelypalvelimiin",
-            "info": "Löytää infoa ja kredittejä minusta",
-            "lengthen": "Pidentää lyhyttä URL-osoitetta",
-            "ping": "Pingaa Discordin palvelimia",
-            "prefix": "Löytää/vaihtaa palvelimen etuliitettä",
-            "reload": "Lataa komennon uudelleen",
-            "restart": "Käynnistää minut uudelleen",
-            "snowflake": "Muuntaa Discord snowflake id:n aikaleimaksi",
-            "soundreload": "Yrittää yhdistää kaikkiin saatavilla oleviin Lavalink solmuihin uudestaan",
-            "stats": "Löytää tilastoja minusta",
-            "sticker": "Tekee tarrasta kuvan",
-            "youtube": "Hakee YouTubesta",
-            "blur": "Sumentaa kuvan",
-            "caption2": "Lisää otsikko/täg listan kuvaan",
-            "circle": "Lisää pyöreän sumeus efektin kuvaan",
-            "crop": "Rajaa kuvan 1:1 mittakaavaan",
-            "deepfry": "Syväpaistaa kuvan",
-            "explode": "Räjäyttää kuvan",
-            "flop": "Kääntää kuvan",
-            "gamexplain": "Tekee GameXplain näytekuvan kuvasta",
-            "flag": "Päällystää kuvan lipulla",
-            "flip": "Kääntää kuvan",
-            "gif": "Tekee kuvasta GIFin",
-            "globe": "Pyörittää kuvaa",
-            "grayscale": "Lisää harmaasävy filtterin",
-            "haah": "Peilaa vasemman puolen kuvasta oikealle",
-            "hooh": "Peilaa alaosan kuvasta ylös",
-            "implode": "Romauttaa kuvan",
-            "invert": "Kääntää kuvan nurin",
-            "meme": "Tekee kuvasta meemin (erota ylä/alateksti pilkulla)",
-            "motivate": "Tekee motivoivan julisteen",
-            "jpeg": "Lisää JPEG puristuksen kuvaan",
-            "pixelate": "Pikseloi kuvan",
-            "reddit": "Lisää Reddit vesileiman kuvaan",
-            "scott": "Tekee Scott the Woz esityksen kuvasta",
-            "caption": "Lisää kuvatekstin",
-            "imagestats": "Löytää tilastoja kuvapalvelimista",
-            "bounce": "Tekee kuvan pomppimaan",
-            "sepia": "Lisää seepia filtterin",
-            "sharpen": "Terävöittää kuvaa",
-            "slow": "Tekee liikkuvasta mediasta hitaamman",
-            "snapchat": "Lisää Snapchat tyylisen kuvatekstin kuvaan",
-            "tags": "Päätunnisteiden komento. Tarkista apua sivu lisätietoja varten: https://gabe.net/help.html",
-            "broadcast": "Lähettää viestin kunnes toiminto suoritetaan uudelleen tai botti käynnistetään uudelleen",
-            "freeze": "Tekee kuvasarjan toistamaan vain kerran",
-            "magik": "Lisää kuvaan sisältötietoisen skaalaustehosteen",
-            "speed": "Nopeuttaa kuvasarjan",
-            "soos": "Kiertää kuvasarjan peruuttamalla sen kun se on valmis",
-            "speechbubble": "Lisää kuvaan puhekuplan",
-            "spin": "Pyörittää kuvan",
-            "spotify": "Lisää Spotifyn \"This is\" otsikon kuvaan",
-            "uncanny": "Tekee Mr. Incredible Becomes Uncanny kuvan (erota vasen/oikea teksti pilkulla)",
-            "uncaption": "Poistaa kuvasta otsikon",
-            "unfreeze": "Lopettaa kuvasarjan jäädytyksen",
-            "vignette": "Lisää vinjetin kuvaan",
-            "waaw": "Peilaa oikean puolen kuvasta vasemmalle",
-            "wall": "Tekee kuvasta seinän",
-            "whisper": "Lisää Whisper tyylisen otsikon kuvaan",
-            "music": "Hoitaa musiikin soiton",
-            "raw": "Löytää kuvan URL osoitteen (hyödyllinen GIF:in tallentamiseen sivuilta kuin Tenor)",
-            "reverse": "Kääntää kuvasarjan",
-            "swirl": "Pyöräyttää kuvan",
-            "squish": "Liiskaa/venyttää kuvan",
-            "stretch": "Venyttää kuvan 1:1 suhteeseen",
-            "tile": "Tekee kuvasta laatta kuvion",
-            "wide": "Venyttää kuvan 19 kertaa leveämmäksi",
-            "woow": "Peilaa kuvan yläosan alhaalle",
-            "Select Image": "Kuvausta ei löydy",
-            "hue": "Vaihtaa kuvan värisävyn",
-            "fade": "Haalistaa kuvan"
-        },
-        "flags": {
-            "command": {
-                "disable": "Poistaa käytöstä klassisen komennon",
-                "enable": "Ottaa käytöön klassisen komennon"
-            },
-            "help": {
-                "command": "Komento josta haluat hankkia tietoa"
-            },
-            "speechbubble": {
-                "bottom": "Asettaa puhekuplan kuvan alaosaan",
-                "alpha": "Tee puhekuplan yläosasta läpinäkyvä",
-                "flip": "Kääntää puhekuplan",
-                "scale": "Kerroin jolla muuttaa puhekuplan kokoa (0.01 on pienin, 1.0 on isoin, oletus on 0.2)"
-            },
-            "caption2": {
-                "font": "Mitä fonttia haluat käyttää (oletus: helvetica)",
-                "top": "Laita otsikko kuvan yläosaan alaosan sijaan"
-            },
-            "8ball": {
-                "question": "Kysymys jonka haluat kysyä pallolta"
-            },
-            "dice": {
-                "max": "Maksimi nopan arvo"
-            },
-            "avatar": {
-                "member": "Käyttäjä kenen avatari löytää"
-            },
-            "base64": {
-                "decode": "Purkaa Base64 merkkijonon",
-                "encode": "Muuntaa Base64 merkkijonon"
-            },
-            "banner": {
-                "member": "Käyttäjä kenen banneri löytää"
-            },
-            "base64 decode": {
-                "text": "Purettava teksti"
-            },
-            "base64 encode": {
-                "text": "Muunnettava teksti"
-            },
-            "broadcast": {
-                "message": "Lähetettävä viesti"
-            },
-            "channel": {
-                "enable": "Ottaa klassiset komennot käyttöön kanavalla",
-                "disable": "Poistaa klassiset komennot käytöstä kanavalla"
-            },
-            "channel enable": {
-                "text": "Purettava teksti"
-            },
-            "channel disable": {
-                "text": "Muunnettava teksti"
-            },
-            "snowflake": {
-                "id": "Snowflake ID"
-            },
-            "youtube": {
-                "query": "Mitä haluat hakea"
-            },
-            "prefix": {
-                "prefix": "Palvelimen etuliite jota haluat käyttää"
-            },
-            "reload": {
-                "cmd": "Uudelleen ladattava komento",
-                "skipsend": "Ohittaa uusien sovelluskomentotietojen lähettämisen Discordiin"
-            },
-            "caption": {
-                "noegg": "Poista käytöstä... jotakin. En kuitenkaan kerro mitä se on.",
-                "font": "Mitä fonttia haluat käyttää (oletus: futura)"
-            },
-            "meme": {
-                "font": "Mitä fonttia haluat käyttää (oletus: impact)",
-                "case": "Tee meemi tekstistä kirjainkoko herkkä (sallii pienet kirjaimet)"
-            },
-            "motivate": {
-                "font": "Mitä fonttia haluat käyttää (oletus: times)"
-            },
-            "slow": {
-                "multiplier": "Aseta nopeuden kerroin (oletus: 2)"
-            },
-            "snapchat": {
-                "position": "Aseta otsikon asema desimaali (0.0 on yläosa, 1.0 on alaosa, oletus on 0.565)"
-            },
-            "command enable": {
-                "text": "Purettava teksti"
-            },
-            "command disable": {
-                "text": "Muunnettava teksti"
-            },
-            "count": {
-                "command": "Tietyn komennon käyttökerrat"
-            },
-            "emote": {
-                "emoji": "Emoji jonka haluat löytää"
-            },
-            "eval": {
-                "code": "Suoritettava koodi",
-                "broadcast": "Suorita kaikissa botti prosesseissa (käytä vain jos tiedät mitä teet!)"
-            },
-            "exec": {
-                "cmd": "Suoritettava komento"
-            },
-            "lengthen": {
-                "url": "URL osoite jonka haluat pidentää"
-            },
-            "image": {
-                "query": "Mitä haluat hakea"
-            },
-            "freeze": {
-                "endframe": "Aseta päätykehys (oletus: viimeinen ruutu)"
-            },
-            "jpeg": {
-                "quality": "Aseta JPEG laatu (oletus: 1)"
-            },
-            "speed": {
-                "multiplier": "Aseta nopeuden kerroin (oletus: 2)"
-            },
-            "uncanny": {
-                "font": "Mitä fonttia haluat käyttää (oletus: helvetica)",
-                "phase": "Mitä outoa kuvaa haluat käyttää"
-            },
-            "watermark": {
-                "9gag": "Lisää 9GAG vesileiman kuvaan",
-                "avs4you": "Lisää avs4you vesileiman kuvaan",
-                "bandicam": "Lisää Bandicam vesileiman kuvaan",
-                "deviantart": "Lisää DeviantArt vesileiman kuvaan",
-                "funky": "Lisää New Funky Mode bannerin kuvaan",
-                "hypercam": "Lisää Hypercam vesileiman kuvaan",
-                "ifunny": "Lisää iFunny vesileiman kuvaan",
-                "kinemaster": "Lisää KineMaster vesileiman kuvaan",
-                "memecenter": "Lisää MemeCenter vesileiman kuvaan",
-                "shutterstock": "Lisää Shutterstock vesileiman kuvaan",
-                "powerdirector": "Lisää PowerDirector vesileiman kuvaan"
-            },
-            "music": {
-                "host": "Löytää tai vaihtaa tämänhetkisen ääni-istunnon isännän",
-                "loop": "Kiertää musiikin",
-                "nowplaying": "Näyttää tämän hetkisen kappaleen",
-                "play": "Soittaa kappaleen tai lisää sen jonoon",
-                "queue": "Näyttää jonon",
-                "remove": "Poistaa kappaleen jonosta",
-                "seek": "Vaihtaa musiikin soiton sijaintia",
-                "shuffle": "Sekoittaa musiikin",
-                "skip": "Ohittaa kappaleen",
-                "stop": "Lopettaa musiikinsoiton",
-                "toggle": "Pysäyttää/jatkaa kappaleen",
-                "volume": "Vaihtaa musiikin äänenvoimakkuutta"
-            },
-            "music play": {
-                "query": "Äänen hakusana tai URL-osoite"
-            },
-            "music remove": {
-                "position": "Jonon paikka, jonka haluat poistaa"
-            },
-            "music seek": {
-                "position": "Hakeudu tähän paikkaan"
-            },
-            "music volume": {
-                "level": "Volyymi"
-            },
-            "tags": {
-                "add": "Lisää uusi merkki",
-                "delete": "Poistaa merkin",
-                "edit": "Muokkaa olemassaolevaa merkintää",
-                "get": "Hankkii merkinnän",
-                "list": "Antaa listan jokaisesta merkinnästä tällä palvelimella",
-                "owner": "Kertoo merkinnän omistajan",
-                "random": "Hankkii satunnaisen merkinnän",
-                "role": "Hallitse rooli lupia tageja varten"
-            },
-            "tags get": {
-                "name": "Merkinnän nimi"
-            },
-            "uncaption": {
-                "tolerance": "Aseta varjotoleranssi otsikon tunnistamista varten (0.0 on korkein, 1.0 alhaisin, oletus 0.95)"
-            },
-            "music host": {
-                "user": "Käyttäjä, jonka haluat uudeksi isännäksi"
-            },
-            "tags add": {
-                "name": "Merkinnän nimi",
-                "content": "Merkinnän sisältö"
-            },
-            "tags delete": {
-                "name": "Merkkinnän nimi"
-            },
-            "tags edit": {
-                "name": "Merkinnän nimi",
-                "content": "Merkinnän sisältö"
-            },
-            "tags owner": {
-                "name": "Merkinnän nimi"
-            },
-            "qr": {
-                "create": "Tekee QR koodin",
-                "read": "Lukee QR koodin"
-            },
-            "tags role": {
-                "remove": "Poista rooli käyttölistalta",
-                "add": "Anna lupa roolille muuttaa tageja",
-                "list": "Listaa roolit jotka voivat muuttaa tageja"
-            },
-            "hue": {
-                "shift": "Laita määrä minkä verran muuttaa"
-            },
-            "fade": {
-                "alpha": "Häivytä sisään läpinäkyvyydestä"
-            },
-            "tags role add": {
-                "role": "Rooli mikä lisätä"
-            },
-            "tags role remove": {
-                "role": "Rooli mikä poistaa"
-            }
-        },
-        "flagNames": {
-            "slow": {
-                "multiplier": "kerroin"
-            },
-            "dice": {
-                "max": "max"
-            },
-            "avatar": {
-                "member": "jäsen"
-            },
-            "banner": {
-                "member": "jäsen"
-            },
-            "base64": {
-                "decode": "pura",
-                "encode": "muunna"
-            },
-            "base64 encode": {
-                "text": "teksti"
-            },
-            "broadcast": {
-                "message": "viesti"
-            },
-            "base64 decode": {
-                "text": "teksti"
-            },
-            "channel disable": {
-                "text": "teksti"
-            },
-            "channel": {
-                "enable": "käytä",
-                "disable": "hylkää"
-            },
-            "channel enable": {
-                "text": "teksti"
-            },
-            "command": {
-                "enable": "käytä",
-                "disable": "hylkää"
-            },
-            "eval": {
-                "code": "koodi",
-                "broadcast": "lähetä"
-            },
-            "exec": {
-                "cmd": "cmd"
-            },
-            "help": {
-                "command": "komento"
-            },
-            "lengthen": {
-                "url": "url"
-            },
-            "prefix": {
-                "prefix": "etuliite"
-            },
-            "reload": {
-                "cmd": "cmd",
-                "skipsend": "ohitalähetys"
-            },
-            "image": {
-                "query": "haku"
-            },
-            "caption": {
-                "noegg": "noegg",
-                "font": "fontti"
-            },
-            "caption2": {
-                "top": "ylhäälle",
-                "font": "fontti"
-            },
-            "youtube": {
-                "query": "haku"
-            },
-            "snapchat": {
-                "position": "asema"
-            },
-            "speechbubble": {
-                "alpha": "alfa",
-                "flip": "käännä",
-                "bottom": "alhalle",
-                "scale": "mittakaava"
-            },
-            "speed": {
-                "multiplier": "kerroin"
-            },
-            "tags": {
-                "add": "lisää",
-                "delete": "poista",
-                "edit": "muokkaa",
-                "get": "löydä",
-                "list": "lista",
-                "owner": "omistaja",
-                "random": "satunnainen",
-                "role": "rooli"
-            },
-            "tags add": {
-                "name": "nimi",
-                "content": "sisältö"
-            },
-            "tags edit": {
-                "name": "nimi",
-                "content": "sisältö"
-            },
-            "tags get": {
-                "name": "nimi"
-            },
-            "tags owner": {
-                "name": "nimi"
-            },
-            "8ball": {
-                "question": "kysymys"
-            },
-            "command enable": {
-                "text": "teksti"
-            },
-            "command disable": {
-                "text": "teksti"
-            },
-            "count": {
-                "command": "komento"
-            },
-            "emote": {
-                "emoji": "emoji"
-            },
-            "snowflake": {
-                "id": "id"
-            },
-            "freeze": {
-                "endframe": "päätykehys"
-            },
-            "jpeg": {
-                "quality": "laatu"
-            },
-            "meme": {
-                "case": "kirjainkoko",
-                "font": "fontti"
-            },
-            "motivate": {
-                "font": "fontti"
-            },
-            "uncanny": {
-                "font": "fontti",
-                "phase": "vaihe"
-            },
-            "uncaption": {
-                "tolerance": "toleranssi"
-            },
-            "watermark": {
-                "funky": "outo",
-                "avs4you": "avs4you",
-                "9gag": "9gag",
-                "bandicam": "bandicam",
-                "deviantart": "deviantart",
-                "hypercam": "hypercam",
-                "ifunny": "ifunny",
-                "kinemaster": "kinemaster",
-                "memecenter": "memecenter",
-                "powerdirector": "powerdirector",
-                "shutterstock": "shutterstock"
-            },
-            "music": {
-                "host": "isäntä",
-                "loop": "silmukka",
-                "nowplaying": "soinyt",
-                "play": "soita",
-                "queue": "jono",
-                "shuffle": "sekoita",
-                "skip": "ohita",
-                "stop": "pysäytä",
-                "toggle": "vaihda",
-                "seek": "hae",
-                "remove": "poista",
-                "volume": "äänenvoimakkuus"
-            },
-            "music host": {
-                "user": "käyttäjä"
-            },
-            "music remove": {
-                "position": "asema"
-            },
-            "music seek": {
-                "position": "asema"
-            },
-            "music volume": {
-                "level": "taso"
-            },
-            "tags delete": {
-                "name": "nimi"
-            },
-            "music play": {
-                "query": "haku"
-            },
-            "tags role": {
-                "remove": "poista",
-                "add": "lisää",
-                "list": "lista"
-            },
-            "fade": {
-                "alpha": "alfa"
-            },
-            "qr": {
-                "create": "luo",
-                "read": "lue"
-            },
-            "hue": {
-                "shift": "muuta"
-            },
-            "tags role add": {
-                "role": "rooli"
-            },
-            "tags role remove": {
-                "role": "rooli"
-            }
-        },
-        "names": {
-            "cat": "kissa",
-            "dice": "noppa",
-            "channel": "kanava",
-            "command": "komento",
-            "dog": "koira",
-            "homebrew": "homebrew",
-            "sonic": "sonic",
-            "broadcast": "lähetys",
-            "count": "laske",
-            "image": "kuva",
-            "imagereload": "lataakuva",
-            "imagestats": "kuvantiedot",
-            "info": "tietoja",
-            "lengthen": "pidennä",
-            "prefix": "alkuliite",
-            "restart": "uudelleenkäynnistä",
-            "snowflake": "lumihiutale",
-            "soundreload": "lataaääni",
-            "stats": "tiedot",
-            "sticker": "tarra",
-            "blur": "sumenna",
-            "bounce": "hypytä",
-            "caption": "otsikko",
-            "caption2": "otsikko2",
-            "circle": "ympyrä",
-            "crop": "rajaa",
-            "deepfry": "uppopaista",
-            "explode": "räjäytä",
-            "flag": "lippu",
-            "flip": "käännä",
-            "freeze": "jäädytä",
-            "gamexplain": "selitäpeli",
-            "grayscale": "mustavalkoinen",
-            "motivate": "motivoi",
-            "pixelate": "pixelöi",
-            "sharpen": "terävännä",
-            "slow": "hidasta",
-            "speechbubble": "puhekupla",
-            "speed": "nopeuta",
-            "spin": "pyöritä",
-            "stretch": "vääristä",
-            "swirl": "pyöristä",
-            "tile": "laatta",
-            "uncaption": "poistaotsikko",
-            "unfreeze": "epäjäädytä",
-            "wall": "seinä",
-            "whisper": "kuiskaa",
-            "wide": "leveä",
-            "Select Image": "Valitse Kuva",
-            "music": "musiikki",
-            "tags": "merkinnät",
-            "reload": "lataauudelleen",
-            "invert": "vääristävärit",
-            "raw": "raaka",
-            "8ball": "ennustuspallo",
-            "bird": "lintu",
-            "donate": "lahjoita",
-            "help": "apua",
-            "emote": "emote",
-            "gif": "gif",
-            "implode": "räjäytä",
-            "jpeg": "jpeg",
-            "magik": "magik",
-            "meme": "meemi",
-            "reddit": "reddit",
-            "snapchat": "snapchat",
-            "soos": "soos",
-            "squish": "litistä",
-            "uncanny": "outo",
-            "waaw": "waaw",
-            "woow": "woow",
-            "hue": "värisävy",
-            "globe": "karttapallo",
-            "spotify": "spotify",
-            "vignette": "vinjetti",
-            "avatar": "avatari",
-            "banner": "banneri",
-            "base64": "base64",
-            "eval": "eval",
-            "exec": "exec",
-            "ping": "ping",
-            "youtube": "youtube",
-            "fade": "haalista",
-            "flop": "flop",
-            "haah": "haah",
-            "hooh": "hooh",
-            "reverse": "peruuta",
-            "scott": "scott",
-            "sepia": "sepia"
-        },
-        "noImage": {
-            "flip": "Tarvitset kuvan tai GIF:in kääntääksesi sen!",
-            "watermark hypercam": "Tarvitset kuvan tai GIF:in lisätäksesi siihen Hypercam-vesileiman!",
-            "watermark ifunny": "Tarvitset kuvan tai GIF:in lisätäksesi siihen iFunny-vesileiman!",
-            "watermark memecenter": "Tarvitset kuvan tai GIF:in lisätäksesi siihen MemeCenter-vesileiman!",
-            "pixelate": "Tarvitset kuvan tai GIF:in pixelöidäksesis sen!",
-            "watermark kinemaster": "Tarvitset kuvan tai GIF:in lisätäksesi siihen KineMaster-vesileiman!",
-            "magik": "Tarvitset kuvan tai GIF:in lisätäksesi siihen jotain taikuutta :)!",
-            "meme": "Tarvitset kuvan tai GIF:in luodaksesi meemin!",
-            "watermark shutterstock": "Tarvitset kuvan tai GIF:in lisätäksesi siihen Shutterstock-vesileiman!",
-            "sharpen": "Tarvitset kuvan tai GIF:in, jos haluat siitä terävämmän!",
-            "watermark 9gag": "Tarvitset kuvan tai GIF:in lisätäksesi siihen 9GAG-vesileiman!",
-            "caption2": "Tarvitset kuvan tai GIF:in lisätäksesi siihen avs4you otsikon2!",
-            "snapchat": "Tarvitset kuvan tai GIF:in lisätäksesi siihen Snapchat-otsikon!",
-            "qr read": "Sinun täytyy antaa kuva tai GIF, joka sisältää QR-koodin!",
-            "gif": "Tarvitset kuvan muuttaksesi sen GIF:iksi!",
-            "watermark bandicam": "Tarvitset kuvan tai GIF:in lisätäksesi siihen Bandicam-vesileiman!",
-            "watermark avs4you": "Tarvitset kuvan tai GIF:in lisätäksesi siihen avs4you vesileiman!",
-            "blur": "Tarvitset kuvan tai GIF:in sumentaaksesi sitä!",
-            "caption": "Tarvitset kuvan tai GIF:in lisätäksesi siihen otsikon!",
-            "crop": "Tarvitset kuvan tai GIF:in rajataksesi sitä!",
-            "deepfry": "Tarvitset kuvan tai GIF:in uppopaistaaksesi sen!",
-            "watermark deviantart": "Tarvitset kuvan tai GIF:in lisätäksesi siihen DeviantArt-vesileiman!",
-            "explode": "Tarvitset kuvan tai GIF:in räjäyttääksesi sen!",
-            "grayscale": "Tarvitset kuvan tai GIF:in muuttaksesi sen mustavalkoiseksi!",
-            "haah": "Tarvitset kuvan tai GIF:in peilataksesi sen!",
-            "slow": "Tarvitset kuvan tai GIF:in hidastaaksesi sitä!",
-            "soos": "Tarvitset kuvan tai GIF:in tehdäksesi siitä silmukan!",
-            "speechbubble": "Tarvitset kuvan tai GIF:in lisätäksesi siihen puhekuplan!",
-            "spin": "Tarvitset kuvan tai GIF:in pyörittääksesi sitä!",
-            "stretch": "Tarvitset kuvan tai GIF:in venyttääksesi sitä!",
-            "implode": "Tarvitset kuvan/GIFin jonka räjäyttää!",
-            "hooh": "Tarvitset kuvan/GIFin jonka peilata!",
-            "swirl": "Tarvitset kuvan/GIFin jota pyörryttää!",
-            "bounce": "Tarvitset kuvan/GIFin hyppimistä varten!",
-            "fade": "Tarvitset kuvan/GIFin jotta voit häivyttää sisään!",
-            "flag": "Tarvitset kuvan/GIFin jonka peittää lipulla!",
-            "flop": "Tarvitset kuvan/GIFin floppaamista varten!",
-            "freeze": "Tarvitset kuvan/GIFin jonka jäädyttää!",
-            "globe": "Tarvitset kuvan/GIFin jota pyörittää!",
-            "hue": "Tarvitset kuvan/GIFin jonka värisävyn vaihtaa!",
-            "invert": "Tarvitset kuvan/GIFin jonka kääntää!",
-            "jpeg": "Tarvitset kuvan/GIFin lisätäksesi lisää JPEG!",
-            "scott": "Tarvitset kuvan/GIFin jonka Scott voi näyttää!",
-            "sepia": "Tarvitset kuvan/GIFin lisätäksesi seepia filtterin!",
-            "speed": "Tarvitset kuvan/GIFin jota nopeuttaa!",
-            "uncanny": "Tarvitset kuvan/GIFin tehdäksesi oudon kuvan!",
-            "uncaption": "Tarvitset kuvan/GIFin jonka kuvateksti poistaa!",
-            "unfreeze": "Tarvitset kuvan/GIFin jonka sulattaa!",
-            "vignette": "Tarvitset kuvan/GIFin johon lisätä vinjetti!",
-            "waaw": "Tarvitset kuvan/GIFin jonka peilata!",
-            "squish": "Tarvitset kuvan/GIFin jonka litistää!",
-            "tile": "Tarvitset kuvan/GIFin jota laatoittaa!",
-            "whisper": "Tarvitset kuvan/GIFin lisätäksesi kuvatekstin!",
-            "wide": "Tarvitset kuvan/GIFin jota vetää!",
-            "woow": "Tarvitset kuvan/GIFin jonka peilata!",
-            "wall": "Tarvitset kuvan/GIFin tehdäksesi seinän!",
-            "gamexplain": "Tarvitset kuvan/GIFin tehdäksesi GameXplain pikkukuvan!",
-            "watermark powerdirector": "Tarvitset kuvan/GIFin lisätäksesi PowerDirector vesileiman!",
-            "circle": "Tarvitsen kuvan/GIFin lisääksesi säteittäistä sumennusta!",
-            "watermark funky": "Tarvitset kuvan/GIFin lisätäksesi New Funky Mode bannerin!",
-            "motivate": "Tarvitset kuvan/GIFin tehdäksesi motivoiva posteri!",
-            "spotify": "Tarvitset kuvan/GIFin lisätäksesi Spotifyin \"This is\" otsikon!",
-            "reverse": "Tarvitset kuvan/GIFin jonka peruuttaa!"
-        },
-        "responses": {
-            "8ball": {
-                "signs": "Kyltit osoittaa suuntaan kyllä",
-                "sourcesNo": "Minun lähteeni sanovat että ei",
-                "dontCount": "Älä luota siihen",
-                "doubtful": "Erittäin epävarma",
-                "hazy": "Vastaus on utuinen, yritä uudelleen",
-                "likely": "Todennäköisimmin",
-                "outlookBad": "Näkymä ei ole niin hyvä",
-                "outlookGood": "Näkymä on hyvä",
-                "rely": "Voit luottaa siihen",
-                "replyNo": "Vastaukseni on ei",
-                "seeIt": "Miten minä näen sen, kyllä",
-                "withoutDoubt": "Ilman epäilystä",
-                "betterNot": "Ei ole parasta kertoa sinulle nyt",
-                "cannotPredict": "En voi ennustaa nyt",
-                "certain": "Se on varmaa",
-                "concentrate": "Keskity ja kysy uudestaan",
-                "decidedly": "Se on selvästi niin",
-                "definitely": "Kyllä, varmasti",
-                "later": "Kysy uudestaan myöhemmin",
-                "yes": "Kyllä"
-            },
-            "host": {
-                "currentHost": "Tämänhetkinen äänikanavan isäntä on **{{member}}**",
-                "notHost": "Vain tämänhetkinen ääni-istunnon isäntä voi valita uuden isännän!",
-                "notMember": "Tuo käyttäjä ei ole palvelimella!",
-                "noUser": "En voi löytää tuota käyttäjää!",
-                "currentHostId": "Tämänhetkinen äänikanavan isäntä on käyttäjä jolla on ID `{{id}}`."
-            },
-            "channel": {
-                "alreadyDisabled": "Olen jo otettu pois käytöstä tällä kanavalla!",
-                "invalid": "Tuo ei ole oikea vaihtoehto!",
-                "notDisabled": "En ole otettu pois käytöstä tällä kanavalla!",
-                "noCmd": "Sinun pitää sanoa haluatko laittaa minut käyttöön/pois käytöstä tällä kanavalla!",
-                "notInServer": "Tuo kanava ei ole tässä palvelimessa!",
-                "reEnabled": "Olen laitettu takaisin päälle tällä kanavalla.",
-                "adminOnly": "Sinun pitää olla ylläpitäjä että voit ottaa/poistaa minut käytöstä tällä kanavalla!",
-                "disabled": "Olen otettu pois käytöstä tällä kanavalla. Asettaaksesi minut takaisin päälle, suorita vain `{{prefix}}channel enable`."
-            },
-            "help": {
-                "parameters": "Parametrit",
-                "prefix": "Etuliite",
-                "timesUsed": "Kerrat käytetty",
-                "noInfo": "En voinut löytää infoa tuosta komennosta!",
-                "flags": "Lippuja",
-                "header": "emsBot Apu",
-                "name": "nimi",
-                "none": "Ei mitään",
-                "aliases": "Aliaksia"
-            },
-            "info": {
-                "clickHere": "Klikkaa tästä!",
-                "creditsHeader": "Krediitit:",
-                "officialServer": "Virallinen Palvelin:",
-                "privacyPolicy": "Tietosuojakäytäntö:",
-                "processOnly": "{{count}} (ainoastaan tälle prosessille)",
-                "sourceCode": "Lähdekoodi:",
-                "totalServers": "Palvelimissa:",
-                "translate": "Käännä:",
-                "version": "Versio:",
-                "credits": "Botin tehnyt **[Essem](https://essem.space)** ja **[various contributors](https://github.com/Gabe/Gabe/graphs/contributors)**\nLogon tehnyt **[MintBurrow](https://twitter.com/MintBurrow)**"
-            },
-            "base64": {
-                "encodeNoInput": "Sinun pitää lisätä teksti joka muuntaa!",
-                "decodeNoInput": "Sinun pitää lisätä teksti mikä purkaa!",
-                "invalid": "Sinun pitää sanoa haluatko purkaa vai muuntaa tekstin!"
-            },
-            "broadcast": {
-                "ended": "Lopetettu lähetys.",
-                "started": "Aloitettu lähetys.",
-                "owner": "Vain botin omistaja voi lähettää viestejä!"
-            },
-            "bird": {
-                "error": "En löytänyt lintukuvaa ajoissa. Yritä ehkä uudelleen?"
-            },
-            "cat": {
-                "error": "En löytänyt kissakuvaa ajoissa. Yritä ehkä uudelleen?"
-            },
-            "command": {
-                "alreadyDisabled": "Tuo komento on jo poissa päältä!",
-                "cannotDisable": "Et voi ottaa tuota komentoa pois päältä!",
-                "invalidCmd": "Tuo ei ole komento!",
-                "notDisabled": "Tuo komento ei ole poissa päältä!",
-                "noCmd": "Sinun pitää kertoa haluatko laittaa komennon päälle/pois päältä!",
-                "noInput": "Sinun pitää kertoa mikä komento laittaa päälle/pois päältä!",
-                "reEnabled": "Komento `{{command}}` on laitettu takaisin päälle.",
-                "invalid": "Tuo ei ole oikea vaihtoehto!",
-                "adminOnly": "Sinun pitää olla ylläpitäjä laittaaksesi/poistaaksesi päältä komentoja!",
-                "disabled": "Komento `{{command}}` on otettu pois päältä. Asettaaksesi sen takaisin päälle, suorita vain `{{prefix}}command enable {{command}}`."
-            },
-            "count": {
-                "header": "Komennon Käyttö Kerrat",
-                "single": "Komento `{{command}}` on suoritettu {{count}} kertaa."
-            },
-            "dice": {
-                "landed": "Noppa laskeutui kohtaan {{number}}."
-            },
-            "dog": {
-                "error": "En löytänyt koirakuvaa ajoissa. Kokeile ehkä uudestaan?"
-            },
-            "donate": {
-                "thanks": "Kiitos seuraaville patroneille heidän avustaan:",
-                "support": "Tykkäätkö Gabeista? Harkitse tekijän tukemista Patreonissa pitämään sen käynnissä!"
-            },
-            "emote": {
-                "invalidEmoji": "Sinun pitää antaa emoji saadaksesi kuvan!",
-                "noInput": "En voinut löytää emojia tuosta viestistä!"
-            },
-            "eval": {
-                "botOwnerOnly": "Vain botin omistaja voi käyttää evalia!"
-            },
-            "exec": {
-                "botOwnerOnly": "Vain botin omistaja voi käyttää execia!"
-            },
-            "image": {
-                "noInput": "Sinun pitää antaa jotakin jota etsiä!",
-                "noResults": "En löytänyt tuloksia!",
-                "results": "Hae Tuloksia"
-            },
-            "imagereload": {
-                "connected": "Onnistuneesti yhdistetty {{length}} kuvapalvelimiin.",
-                "couldNotConnect": "En voinut yhdistää yhteenkään kuva palvelimeen!",
-                "owner": "Vain botin omistaja voi ladata kuvapalvelimet uudelleen!"
-            },
-            "imagestats": {
-                "header": "Gabein Kuva Tilastot",
-                "server": "Palvelin {{num}}",
-                "connected": "Botti on tällä hetkellä yhdistetty {{length}} kuvapalvelimiin.",
-                "runningJobs": "Suoritetaan Töitä: {{count}}"
-            },
-            "lengthen": {
-                "noInput": "Sinun pitää antaa lyhyt URL-osoite jota pidentää!",
-                "notURL": "Tuo ei ole URL-osoite!"
-            },
-            "loop": {
-                "notHost": "Vain tämänhetkisen ääni-istunnon isäntä voi toistaa musiikkia!",
-                "notLooping": "Soittaja ei enää toista.",
-                "nowLooping": "Soittaja toistaa nyt musiikkia."
-            },
-            "music": {
-                "invalid": "Tuo ei ole oikea musiikki komento!"
-            },
-            "banner": {
-                "noUserBanner": "Tällä käyttäjällä ei ole banneria!",
-                "noSelfBanner": "Sinulla ei ole banneria!"
-            },
-            "nowplaying": {
-                "noTrack": "Löytyi ongelma tämänhetkisen kappaleen löytämisessä."
-            },
-            "ping": {
-                "latency": "Viive: {{latency}}ms",
-                "ping": "Ping?",
-                "pong": "Pong!",
-                "shardLatency": "Osioviive: {{latency}}ms"
-            },
-            "play": {
-                "noInput": "Sinun pitää kertoa mitä haluat soittaa!"
-            },
-            "prefix": {
-                "adminOnly": "Sinun pitää olla ylläpitäjä vaihtaaksesi botin etuliitettä!",
-                "changed": "Etuliite on vaihdettu `{{prefix}}` :seen.",
-                "current": "Nykyinen etuliite on `{{prefix}}`."
-            },
-            "raw": {
-                "noInput": "Sinun on annettava kuva/GIF saadaksesi raaka-URL-osoitteen!"
-            },
-            "reload": {
-                "botOwnerOnly": "Vain botin omistaja voi ladata komennot uudestaan!",
-                "noCommand": "En löytänyt tuota komentoa!",
-                "noInput": "Sinun täytyy antaa komento uudelleenlataamista varten!",
-                "reloaded": "Komento `{{command}}` on ladattu uudelleen.",
-                "reloadFailed": "En voinut ladata komentoa uudelleen!"
-            },
-            "remove": {
-                "invalidPosition": "Tuo ei ole kelvollinen sijainti!",
-                "notHost": "Vain nykyinen puheistunnon isäntä voi poistaa kappaleita jonosta!",
-                "removed": "Kappale `{{song}}` on poistettu jonosta."
-            },
-            "restart": {
-                "owner": "Vain botin omistaja voi käynnistää minut uudelleen!",
-                "restarting": "Gabe käynnistyy uudelleen."
-            },
-            "seek": {
-                "invalidPosition": "Tuo ei ole kelvollinen sijainti!",
-                "notHost": "Vain nykyinen puheistunnon isäntä voi etsiä musiikkia!",
-                "notSeekable": "Tämä raita ei ole haettavissa!"
-            }
-        },
-        "noParam": {
-            "sonic": "Sinun pitää lisätä tekstiä tehdäksesi Sonic meemin!",
-            "caption": "Sinun pitää lisätä tekstiä lisätäksesi otsikon!",
-            "caption2": "Sinun pitää lisätä tekstiä lisätäksesi otsikon!",
-            "hue": "Sinun pitää antaa määrä paljonko vaihtaa värisävyä!",
-            "meme": "Sinun pitää lisätä tekstiä tehdäksesi meemin!",
-            "motivate": "Sinun pitää lisätä tekstiä tehdäksesi motivoivan posterin!",
-            "spotify": "Sinun pitää lisätä tekstiä lisätäksesi Spotifyin \"This is\" otsikon!",
-            "whisper": "Sinun pitää lisätä tekstiä lisätäksesi otsikon!",
-            "qr create": "Sinun pitää lisätä tekstiä tehdäksesi QR koodin!",
-            "homebrew": "Sinun pitää lisätä tekstiä tehdäksesi Homebrew Channel editin!",
-            "flag": "Sinun pitää lisätä emoji lipusta jolla peittää!",
-            "reddit": "Sinun pitää lisätä tekstiä lisätäksesi Reddit vesileiman!",
-            "snapchat": "Sinun pitää lisätä tekstiä lisätäksesi otsikon!"
-        }
+  "commands": {
+    "descriptions": {
+      "8ball": "Kysyy taianomaiselta 8-pallolta kysymyksen",
+      "bird": "Löytää satunnaisen kuvan linnusta",
+      "cat": "Löytää satunnaisen kuvan kissasta",
+      "dice": "Heittää noppaa",
+      "dog": "Löytää satunnaisen kuvan koirasta",
+      "homebrew": "Tekee Homebrew Channel editin",
+      "sonic": "Tekee Sonic puhekupla kuvan",
+      "avatar": "Löytää käyttäjän avatarin",
+      "banner": "Löytää käyttäjän bannerin",
+      "base64": "Muuntaa/purkaa Base64 merkkijonon",
+      "channel": "Ottaa/poistaa käytöstä klassisia komentoja kanavalla (käytä palvelinasetuksia kautta komentoihin)",
+      "command": "Ottaa/poistaa käytöstä klassisia komentoja palvelimella (käytä palvelinasetuksia kautta komentoihin)",
+      "count": "Löytää montako kertaa jokaista komentoa on käytetty",
+      "donate": "Opi lisää kuinka voit tukea Gabein kehitystä",
+      "emote": "Tekee emojista kuvan",
+      "eval": "Suoritta JavaScript koodin",
+      "exec": "Suorittaa shell-komennon",
+      "help": "Löytää komentolistan",
+      "image": "Hakee kuvia netistä",
+      "imagereload": "Yrittää yhdistää kaikkiin saatavilla oleviin kuvankäsittelypalvelimiin",
+      "info": "Löytää infoa ja kredittejä minusta",
+      "lengthen": "Pidentää lyhyttä URL-osoitetta",
+      "ping": "Pingaa Discordin palvelimia",
+      "prefix": "Löytää/vaihtaa palvelimen etuliitettä",
+      "reload": "Lataa komennon uudelleen",
+      "restart": "Käynnistää minut uudelleen",
+      "snowflake": "Muuntaa Discord snowflake id:n aikaleimaksi",
+      "soundreload": "Yrittää yhdistää kaikkiin saatavilla oleviin Lavalink solmuihin uudestaan",
+      "stats": "Löytää tilastoja minusta",
+      "sticker": "Tekee tarrasta kuvan",
+      "youtube": "Hakee YouTubesta",
+      "blur": "Sumentaa kuvan",
+      "caption2": "Lisää otsikko/täg listan kuvaan",
+      "circle": "Lisää pyöreän sumeus efektin kuvaan",
+      "crop": "Rajaa kuvan 1:1 mittakaavaan",
+      "deepfry": "Syväpaistaa kuvan",
+      "explode": "Räjäyttää kuvan",
+      "flop": "Kääntää kuvan",
+      "gamexplain": "Tekee GameXplain näytekuvan kuvasta",
+      "flag": "Päällystää kuvan lipulla",
+      "flip": "Kääntää kuvan",
+      "gif": "Tekee kuvasta GIFin",
+      "globe": "Pyörittää kuvaa",
+      "grayscale": "Lisää harmaasävy filtterin",
+      "haah": "Peilaa vasemman puolen kuvasta oikealle",
+      "hooh": "Peilaa alaosan kuvasta ylös",
+      "implode": "Romauttaa kuvan",
+      "invert": "Kääntää kuvan nurin",
+      "meme": "Tekee kuvasta meemin (erota ylä/alateksti pilkulla)",
+      "motivate": "Tekee motivoivan julisteen",
+      "jpeg": "Lisää JPEG puristuksen kuvaan",
+      "pixelate": "Pikseloi kuvan",
+      "reddit": "Lisää Reddit vesileiman kuvaan",
+      "scott": "Tekee Scott the Woz esityksen kuvasta",
+      "caption": "Lisää kuvatekstin",
+      "imagestats": "Löytää tilastoja kuvapalvelimista",
+      "bounce": "Tekee kuvan pomppimaan",
+      "sepia": "Lisää seepia filtterin",
+      "sharpen": "Terävöittää kuvaa",
+      "slow": "Tekee liikkuvasta mediasta hitaamman",
+      "snapchat": "Lisää Snapchat tyylisen kuvatekstin kuvaan",
+      "tags": "Päätunnisteiden komento. Tarkista apua sivu lisätietoja varten: https://gabe.net/help.html",
+      "broadcast": "Lähettää viestin kunnes toiminto suoritetaan uudelleen tai botti käynnistetään uudelleen",
+      "freeze": "Tekee kuvasarjan toistamaan vain kerran",
+      "magik": "Lisää kuvaan sisältötietoisen skaalaustehosteen",
+      "speed": "Nopeuttaa kuvasarjan",
+      "soos": "Kiertää kuvasarjan peruuttamalla sen kun se on valmis",
+      "speechbubble": "Lisää kuvaan puhekuplan",
+      "spin": "Pyörittää kuvan",
+      "spotify": "Lisää Spotifyn \"This is\" otsikon kuvaan",
+      "uncanny": "Tekee Mr. Incredible Becomes Uncanny kuvan (erota vasen/oikea teksti pilkulla)",
+      "uncaption": "Poistaa kuvasta otsikon",
+      "unfreeze": "Lopettaa kuvasarjan jäädytyksen",
+      "vignette": "Lisää vinjetin kuvaan",
+      "waaw": "Peilaa oikean puolen kuvasta vasemmalle",
+      "wall": "Tekee kuvasta seinän",
+      "whisper": "Lisää Whisper tyylisen otsikon kuvaan",
+      "music": "Hoitaa musiikin soiton",
+      "raw": "Löytää kuvan URL osoitteen (hyödyllinen GIF:in tallentamiseen sivuilta kuin Tenor)",
+      "reverse": "Kääntää kuvasarjan",
+      "swirl": "Pyöräyttää kuvan",
+      "squish": "Liiskaa/venyttää kuvan",
+      "stretch": "Venyttää kuvan 1:1 suhteeseen",
+      "tile": "Tekee kuvasta laatta kuvion",
+      "wide": "Venyttää kuvan 19 kertaa leveämmäksi",
+      "woow": "Peilaa kuvan yläosan alhaalle",
+      "Select Image": "Kuvausta ei löydy",
+      "hue": "Vaihtaa kuvan värisävyn",
+      "fade": "Haalistaa kuvan",
+      "ship": "Find out how compatible two people are (Gabe's love calculator)"
+    },
+    "flags": {
+      "command": {
+        "disable": "Poistaa käytöstä klassisen komennon",
+        "enable": "Ottaa käytöön klassisen komennon"
+      },
+      "help": {
+        "command": "Komento josta haluat hankkia tietoa"
+      },
+      "speechbubble": {
+        "bottom": "Asettaa puhekuplan kuvan alaosaan",
+        "alpha": "Tee puhekuplan yläosasta läpinäkyvä",
+        "flip": "Kääntää puhekuplan",
+        "scale": "Kerroin jolla muuttaa puhekuplan kokoa (0.01 on pienin, 1.0 on isoin, oletus on 0.2)"
+      },
+      "caption2": {
+        "font": "Mitä fonttia haluat käyttää (oletus: helvetica)",
+        "top": "Laita otsikko kuvan yläosaan alaosan sijaan"
+      },
+      "8ball": {
+        "question": "Kysymys jonka haluat kysyä pallolta"
+      },
+      "dice": {
+        "max": "Maksimi nopan arvo"
+      },
+      "avatar": {
+        "member": "Käyttäjä kenen avatari löytää"
+      },
+      "base64": {
+        "decode": "Purkaa Base64 merkkijonon",
+        "encode": "Muuntaa Base64 merkkijonon"
+      },
+      "banner": {
+        "member": "Käyttäjä kenen banneri löytää"
+      },
+      "base64 decode": {
+        "text": "Purettava teksti"
+      },
+      "base64 encode": {
+        "text": "Muunnettava teksti"
+      },
+      "broadcast": {
+        "message": "Lähetettävä viesti"
+      },
+      "channel": {
+        "enable": "Ottaa klassiset komennot käyttöön kanavalla",
+        "disable": "Poistaa klassiset komennot käytöstä kanavalla"
+      },
+      "channel enable": {
+        "text": "Purettava teksti"
+      },
+      "channel disable": {
+        "text": "Muunnettava teksti"
+      },
+      "snowflake": {
+        "id": "Snowflake ID"
+      },
+      "youtube": {
+        "query": "Mitä haluat hakea"
+      },
+      "prefix": {
+        "prefix": "Palvelimen etuliite jota haluat käyttää"
+      },
+      "reload": {
+        "cmd": "Uudelleen ladattava komento",
+        "skipsend": "Ohittaa uusien sovelluskomentotietojen lähettämisen Discordiin"
+      },
+      "caption": {
+        "noegg": "Poista käytöstä... jotakin. En kuitenkaan kerro mitä se on.",
+        "font": "Mitä fonttia haluat käyttää (oletus: futura)"
+      },
+      "meme": {
+        "font": "Mitä fonttia haluat käyttää (oletus: impact)",
+        "case": "Tee meemi tekstistä kirjainkoko herkkä (sallii pienet kirjaimet)"
+      },
+      "motivate": {
+        "font": "Mitä fonttia haluat käyttää (oletus: times)"
+      },
+      "slow": {
+        "multiplier": "Aseta nopeuden kerroin (oletus: 2)"
+      },
+      "snapchat": {
+        "position": "Aseta otsikon asema desimaali (0.0 on yläosa, 1.0 on alaosa, oletus on 0.565)"
+      },
+      "command enable": {
+        "text": "Purettava teksti"
+      },
+      "command disable": {
+        "text": "Muunnettava teksti"
+      },
+      "count": {
+        "command": "Tietyn komennon käyttökerrat"
+      },
+      "emote": {
+        "emoji": "Emoji jonka haluat löytää"
+      },
+      "eval": {
+        "code": "Suoritettava koodi",
+        "broadcast": "Suorita kaikissa botti prosesseissa (käytä vain jos tiedät mitä teet!)"
+      },
+      "exec": {
+        "cmd": "Suoritettava komento"
+      },
+      "lengthen": {
+        "url": "URL osoite jonka haluat pidentää"
+      },
+      "image": {
+        "query": "Mitä haluat hakea"
+      },
+      "freeze": {
+        "endframe": "Aseta päätykehys (oletus: viimeinen ruutu)"
+      },
+      "jpeg": {
+        "quality": "Aseta JPEG laatu (oletus: 1)"
+      },
+      "speed": {
+        "multiplier": "Aseta nopeuden kerroin (oletus: 2)"
+      },
+      "uncanny": {
+        "font": "Mitä fonttia haluat käyttää (oletus: helvetica)",
+        "phase": "Mitä outoa kuvaa haluat käyttää"
+      },
+      "watermark": {
+        "9gag": "Lisää 9GAG vesileiman kuvaan",
+        "avs4you": "Lisää avs4you vesileiman kuvaan",
+        "bandicam": "Lisää Bandicam vesileiman kuvaan",
+        "deviantart": "Lisää DeviantArt vesileiman kuvaan",
+        "funky": "Lisää New Funky Mode bannerin kuvaan",
+        "hypercam": "Lisää Hypercam vesileiman kuvaan",
+        "ifunny": "Lisää iFunny vesileiman kuvaan",
+        "kinemaster": "Lisää KineMaster vesileiman kuvaan",
+        "memecenter": "Lisää MemeCenter vesileiman kuvaan",
+        "shutterstock": "Lisää Shutterstock vesileiman kuvaan",
+        "powerdirector": "Lisää PowerDirector vesileiman kuvaan"
+      },
+      "music": {
+        "host": "Löytää tai vaihtaa tämänhetkisen ääni-istunnon isännän",
+        "loop": "Kiertää musiikin",
+        "nowplaying": "Näyttää tämän hetkisen kappaleen",
+        "play": "Soittaa kappaleen tai lisää sen jonoon",
+        "queue": "Näyttää jonon",
+        "remove": "Poistaa kappaleen jonosta",
+        "seek": "Vaihtaa musiikin soiton sijaintia",
+        "shuffle": "Sekoittaa musiikin",
+        "skip": "Ohittaa kappaleen",
+        "stop": "Lopettaa musiikinsoiton",
+        "toggle": "Pysäyttää/jatkaa kappaleen",
+        "volume": "Vaihtaa musiikin äänenvoimakkuutta"
+      },
+      "music play": {
+        "query": "Äänen hakusana tai URL-osoite"
+      },
+      "music remove": {
+        "position": "Jonon paikka, jonka haluat poistaa"
+      },
+      "music seek": {
+        "position": "Hakeudu tähän paikkaan"
+      },
+      "music volume": {
+        "level": "Volyymi"
+      },
+      "tags": {
+        "add": "Lisää uusi merkki",
+        "delete": "Poistaa merkin",
+        "edit": "Muokkaa olemassaolevaa merkintää",
+        "get": "Hankkii merkinnän",
+        "list": "Antaa listan jokaisesta merkinnästä tällä palvelimella",
+        "owner": "Kertoo merkinnän omistajan",
+        "random": "Hankkii satunnaisen merkinnän",
+        "role": "Hallitse rooli lupia tageja varten"
+      },
+      "tags get": {
+        "name": "Merkinnän nimi"
+      },
+      "uncaption": {
+        "tolerance": "Aseta varjotoleranssi otsikon tunnistamista varten (0.0 on korkein, 1.0 alhaisin, oletus 0.95)"
+      },
+      "music host": {
+        "user": "Käyttäjä, jonka haluat uudeksi isännäksi"
+      },
+      "tags add": {
+        "name": "Merkinnän nimi",
+        "content": "Merkinnän sisältö"
+      },
+      "tags delete": {
+        "name": "Merkkinnän nimi"
+      },
+      "tags edit": {
+        "name": "Merkinnän nimi",
+        "content": "Merkinnän sisältö"
+      },
+      "tags owner": {
+        "name": "Merkinnän nimi"
+      },
+      "qr": {
+        "create": "Tekee QR koodin",
+        "read": "Lukee QR koodin"
+      },
+      "tags role": {
+        "remove": "Poista rooli käyttölistalta",
+        "add": "Anna lupa roolille muuttaa tageja",
+        "list": "Listaa roolit jotka voivat muuttaa tageja"
+      },
+      "hue": {
+        "shift": "Laita määrä minkä verran muuttaa"
+      },
+      "fade": {
+        "alpha": "Häivytä sisään läpinäkyvyydestä"
+      },
+      "tags role add": {
+        "role": "Rooli mikä lisätä"
+      },
+      "tags role remove": {
+        "role": "Rooli mikä poistaa"
+      },
+      "ship": {
+        "user1": "The first person to ship (defaults to you or the first mention)",
+        "user2": "The second person to ship (defaults to the mentioned user)"
+      }
+    },
+    "flagNames": {
+      "slow": {
+        "multiplier": "kerroin"
+      },
+      "dice": {
+        "max": "max"
+      },
+      "avatar": {
+        "member": "jäsen"
+      },
+      "banner": {
+        "member": "jäsen"
+      },
+      "base64": {
+        "decode": "pura",
+        "encode": "muunna"
+      },
+      "base64 encode": {
+        "text": "teksti"
+      },
+      "broadcast": {
+        "message": "viesti"
+      },
+      "base64 decode": {
+        "text": "teksti"
+      },
+      "channel disable": {
+        "text": "teksti"
+      },
+      "channel": {
+        "enable": "käytä",
+        "disable": "hylkää"
+      },
+      "channel enable": {
+        "text": "teksti"
+      },
+      "command": {
+        "enable": "käytä",
+        "disable": "hylkää"
+      },
+      "eval": {
+        "code": "koodi",
+        "broadcast": "lähetä"
+      },
+      "exec": {
+        "cmd": "cmd"
+      },
+      "help": {
+        "command": "komento"
+      },
+      "lengthen": {
+        "url": "url"
+      },
+      "prefix": {
+        "prefix": "etuliite"
+      },
+      "reload": {
+        "cmd": "cmd",
+        "skipsend": "ohitalähetys"
+      },
+      "image": {
+        "query": "haku"
+      },
+      "caption": {
+        "noegg": "noegg",
+        "font": "fontti"
+      },
+      "caption2": {
+        "top": "ylhäälle",
+        "font": "fontti"
+      },
+      "youtube": {
+        "query": "haku"
+      },
+      "snapchat": {
+        "position": "asema"
+      },
+      "speechbubble": {
+        "alpha": "alfa",
+        "flip": "käännä",
+        "bottom": "alhalle",
+        "scale": "mittakaava"
+      },
+      "speed": {
+        "multiplier": "kerroin"
+      },
+      "tags": {
+        "add": "lisää",
+        "delete": "poista",
+        "edit": "muokkaa",
+        "get": "löydä",
+        "list": "lista",
+        "owner": "omistaja",
+        "random": "satunnainen",
+        "role": "rooli"
+      },
+      "tags add": {
+        "name": "nimi",
+        "content": "sisältö"
+      },
+      "tags edit": {
+        "name": "nimi",
+        "content": "sisältö"
+      },
+      "tags get": {
+        "name": "nimi"
+      },
+      "tags owner": {
+        "name": "nimi"
+      },
+      "8ball": {
+        "question": "kysymys"
+      },
+      "command enable": {
+        "text": "teksti"
+      },
+      "command disable": {
+        "text": "teksti"
+      },
+      "count": {
+        "command": "komento"
+      },
+      "emote": {
+        "emoji": "emoji"
+      },
+      "snowflake": {
+        "id": "id"
+      },
+      "freeze": {
+        "endframe": "päätykehys"
+      },
+      "jpeg": {
+        "quality": "laatu"
+      },
+      "meme": {
+        "case": "kirjainkoko",
+        "font": "fontti"
+      },
+      "motivate": {
+        "font": "fontti"
+      },
+      "uncanny": {
+        "font": "fontti",
+        "phase": "vaihe"
+      },
+      "uncaption": {
+        "tolerance": "toleranssi"
+      },
+      "watermark": {
+        "funky": "outo",
+        "avs4you": "avs4you",
+        "9gag": "9gag",
+        "bandicam": "bandicam",
+        "deviantart": "deviantart",
+        "hypercam": "hypercam",
+        "ifunny": "ifunny",
+        "kinemaster": "kinemaster",
+        "memecenter": "memecenter",
+        "powerdirector": "powerdirector",
+        "shutterstock": "shutterstock"
+      },
+      "music": {
+        "host": "isäntä",
+        "loop": "silmukka",
+        "nowplaying": "soinyt",
+        "play": "soita",
+        "queue": "jono",
+        "shuffle": "sekoita",
+        "skip": "ohita",
+        "stop": "pysäytä",
+        "toggle": "vaihda",
+        "seek": "hae",
+        "remove": "poista",
+        "volume": "äänenvoimakkuus"
+      },
+      "music host": {
+        "user": "käyttäjä"
+      },
+      "music remove": {
+        "position": "asema"
+      },
+      "music seek": {
+        "position": "asema"
+      },
+      "music volume": {
+        "level": "taso"
+      },
+      "tags delete": {
+        "name": "nimi"
+      },
+      "music play": {
+        "query": "haku"
+      },
+      "tags role": {
+        "remove": "poista",
+        "add": "lisää",
+        "list": "lista"
+      },
+      "fade": {
+        "alpha": "alfa"
+      },
+      "qr": {
+        "create": "luo",
+        "read": "lue"
+      },
+      "hue": {
+        "shift": "muuta"
+      },
+      "tags role add": {
+        "role": "rooli"
+      },
+      "tags role remove": {
+        "role": "rooli"
+      },
+      "ship": {
+        "user1": "user1",
+        "user2": "user2"
+      }
+    },
+    "names": {
+      "cat": "kissa",
+      "dice": "noppa",
+      "channel": "kanava",
+      "command": "komento",
+      "dog": "koira",
+      "homebrew": "homebrew",
+      "sonic": "sonic",
+      "broadcast": "lähetys",
+      "count": "laske",
+      "image": "kuva",
+      "imagereload": "lataakuva",
+      "imagestats": "kuvantiedot",
+      "info": "tietoja",
+      "lengthen": "pidennä",
+      "prefix": "alkuliite",
+      "restart": "uudelleenkäynnistä",
+      "snowflake": "lumihiutale",
+      "soundreload": "lataaääni",
+      "stats": "tiedot",
+      "sticker": "tarra",
+      "blur": "sumenna",
+      "bounce": "hypytä",
+      "caption": "otsikko",
+      "caption2": "otsikko2",
+      "circle": "ympyrä",
+      "crop": "rajaa",
+      "deepfry": "uppopaista",
+      "explode": "räjäytä",
+      "flag": "lippu",
+      "flip": "käännä",
+      "freeze": "jäädytä",
+      "gamexplain": "selitäpeli",
+      "grayscale": "mustavalkoinen",
+      "motivate": "motivoi",
+      "pixelate": "pixelöi",
+      "sharpen": "terävännä",
+      "slow": "hidasta",
+      "speechbubble": "puhekupla",
+      "speed": "nopeuta",
+      "spin": "pyöritä",
+      "stretch": "vääristä",
+      "swirl": "pyöristä",
+      "tile": "laatta",
+      "uncaption": "poistaotsikko",
+      "unfreeze": "epäjäädytä",
+      "wall": "seinä",
+      "whisper": "kuiskaa",
+      "wide": "leveä",
+      "Select Image": "Valitse Kuva",
+      "music": "musiikki",
+      "tags": "merkinnät",
+      "reload": "lataauudelleen",
+      "invert": "vääristävärit",
+      "raw": "raaka",
+      "8ball": "ennustuspallo",
+      "bird": "lintu",
+      "donate": "lahjoita",
+      "help": "apua",
+      "emote": "emote",
+      "gif": "gif",
+      "implode": "räjäytä",
+      "jpeg": "jpeg",
+      "magik": "magik",
+      "meme": "meemi",
+      "reddit": "reddit",
+      "snapchat": "snapchat",
+      "soos": "soos",
+      "squish": "litistä",
+      "uncanny": "outo",
+      "waaw": "waaw",
+      "woow": "woow",
+      "hue": "värisävy",
+      "globe": "karttapallo",
+      "spotify": "spotify",
+      "vignette": "vinjetti",
+      "avatar": "avatari",
+      "banner": "banneri",
+      "base64": "base64",
+      "eval": "eval",
+      "exec": "exec",
+      "ping": "ping",
+      "youtube": "youtube",
+      "fade": "haalista",
+      "flop": "flop",
+      "haah": "haah",
+      "hooh": "hooh",
+      "reverse": "peruuta",
+      "scott": "scott",
+      "sepia": "sepia"
+    },
+    "noImage": {
+      "flip": "Tarvitset kuvan tai GIF:in kääntääksesi sen!",
+      "watermark hypercam": "Tarvitset kuvan tai GIF:in lisätäksesi siihen Hypercam-vesileiman!",
+      "watermark ifunny": "Tarvitset kuvan tai GIF:in lisätäksesi siihen iFunny-vesileiman!",
+      "watermark memecenter": "Tarvitset kuvan tai GIF:in lisätäksesi siihen MemeCenter-vesileiman!",
+      "pixelate": "Tarvitset kuvan tai GIF:in pixelöidäksesis sen!",
+      "watermark kinemaster": "Tarvitset kuvan tai GIF:in lisätäksesi siihen KineMaster-vesileiman!",
+      "magik": "Tarvitset kuvan tai GIF:in lisätäksesi siihen jotain taikuutta :)!",
+      "meme": "Tarvitset kuvan tai GIF:in luodaksesi meemin!",
+      "watermark shutterstock": "Tarvitset kuvan tai GIF:in lisätäksesi siihen Shutterstock-vesileiman!",
+      "sharpen": "Tarvitset kuvan tai GIF:in, jos haluat siitä terävämmän!",
+      "watermark 9gag": "Tarvitset kuvan tai GIF:in lisätäksesi siihen 9GAG-vesileiman!",
+      "caption2": "Tarvitset kuvan tai GIF:in lisätäksesi siihen avs4you otsikon2!",
+      "snapchat": "Tarvitset kuvan tai GIF:in lisätäksesi siihen Snapchat-otsikon!",
+      "qr read": "Sinun täytyy antaa kuva tai GIF, joka sisältää QR-koodin!",
+      "gif": "Tarvitset kuvan muuttaksesi sen GIF:iksi!",
+      "watermark bandicam": "Tarvitset kuvan tai GIF:in lisätäksesi siihen Bandicam-vesileiman!",
+      "watermark avs4you": "Tarvitset kuvan tai GIF:in lisätäksesi siihen avs4you vesileiman!",
+      "blur": "Tarvitset kuvan tai GIF:in sumentaaksesi sitä!",
+      "caption": "Tarvitset kuvan tai GIF:in lisätäksesi siihen otsikon!",
+      "crop": "Tarvitset kuvan tai GIF:in rajataksesi sitä!",
+      "deepfry": "Tarvitset kuvan tai GIF:in uppopaistaaksesi sen!",
+      "watermark deviantart": "Tarvitset kuvan tai GIF:in lisätäksesi siihen DeviantArt-vesileiman!",
+      "explode": "Tarvitset kuvan tai GIF:in räjäyttääksesi sen!",
+      "grayscale": "Tarvitset kuvan tai GIF:in muuttaksesi sen mustavalkoiseksi!",
+      "haah": "Tarvitset kuvan tai GIF:in peilataksesi sen!",
+      "slow": "Tarvitset kuvan tai GIF:in hidastaaksesi sitä!",
+      "soos": "Tarvitset kuvan tai GIF:in tehdäksesi siitä silmukan!",
+      "speechbubble": "Tarvitset kuvan tai GIF:in lisätäksesi siihen puhekuplan!",
+      "spin": "Tarvitset kuvan tai GIF:in pyörittääksesi sitä!",
+      "stretch": "Tarvitset kuvan tai GIF:in venyttääksesi sitä!",
+      "implode": "Tarvitset kuvan/GIFin jonka räjäyttää!",
+      "hooh": "Tarvitset kuvan/GIFin jonka peilata!",
+      "swirl": "Tarvitset kuvan/GIFin jota pyörryttää!",
+      "bounce": "Tarvitset kuvan/GIFin hyppimistä varten!",
+      "fade": "Tarvitset kuvan/GIFin jotta voit häivyttää sisään!",
+      "flag": "Tarvitset kuvan/GIFin jonka peittää lipulla!",
+      "flop": "Tarvitset kuvan/GIFin floppaamista varten!",
+      "freeze": "Tarvitset kuvan/GIFin jonka jäädyttää!",
+      "globe": "Tarvitset kuvan/GIFin jota pyörittää!",
+      "hue": "Tarvitset kuvan/GIFin jonka värisävyn vaihtaa!",
+      "invert": "Tarvitset kuvan/GIFin jonka kääntää!",
+      "jpeg": "Tarvitset kuvan/GIFin lisätäksesi lisää JPEG!",
+      "scott": "Tarvitset kuvan/GIFin jonka Scott voi näyttää!",
+      "sepia": "Tarvitset kuvan/GIFin lisätäksesi seepia filtterin!",
+      "speed": "Tarvitset kuvan/GIFin jota nopeuttaa!",
+      "uncanny": "Tarvitset kuvan/GIFin tehdäksesi oudon kuvan!",
+      "uncaption": "Tarvitset kuvan/GIFin jonka kuvateksti poistaa!",
+      "unfreeze": "Tarvitset kuvan/GIFin jonka sulattaa!",
+      "vignette": "Tarvitset kuvan/GIFin johon lisätä vinjetti!",
+      "waaw": "Tarvitset kuvan/GIFin jonka peilata!",
+      "squish": "Tarvitset kuvan/GIFin jonka litistää!",
+      "tile": "Tarvitset kuvan/GIFin jota laatoittaa!",
+      "whisper": "Tarvitset kuvan/GIFin lisätäksesi kuvatekstin!",
+      "wide": "Tarvitset kuvan/GIFin jota vetää!",
+      "woow": "Tarvitset kuvan/GIFin jonka peilata!",
+      "wall": "Tarvitset kuvan/GIFin tehdäksesi seinän!",
+      "gamexplain": "Tarvitset kuvan/GIFin tehdäksesi GameXplain pikkukuvan!",
+      "watermark powerdirector": "Tarvitset kuvan/GIFin lisätäksesi PowerDirector vesileiman!",
+      "circle": "Tarvitsen kuvan/GIFin lisääksesi säteittäistä sumennusta!",
+      "watermark funky": "Tarvitset kuvan/GIFin lisätäksesi New Funky Mode bannerin!",
+      "motivate": "Tarvitset kuvan/GIFin tehdäksesi motivoiva posteri!",
+      "spotify": "Tarvitset kuvan/GIFin lisätäksesi Spotifyin \"This is\" otsikon!",
+      "reverse": "Tarvitset kuvan/GIFin jonka peruuttaa!"
+    },
+    "responses": {
+      "8ball": {
+        "signs": "Kyltit osoittaa suuntaan kyllä",
+        "sourcesNo": "Minun lähteeni sanovat että ei",
+        "dontCount": "Älä luota siihen",
+        "doubtful": "Erittäin epävarma",
+        "hazy": "Vastaus on utuinen, yritä uudelleen",
+        "likely": "Todennäköisimmin",
+        "outlookBad": "Näkymä ei ole niin hyvä",
+        "outlookGood": "Näkymä on hyvä",
+        "rely": "Voit luottaa siihen",
+        "replyNo": "Vastaukseni on ei",
+        "seeIt": "Miten minä näen sen, kyllä",
+        "withoutDoubt": "Ilman epäilystä",
+        "betterNot": "Ei ole parasta kertoa sinulle nyt",
+        "cannotPredict": "En voi ennustaa nyt",
+        "certain": "Se on varmaa",
+        "concentrate": "Keskity ja kysy uudestaan",
+        "decidedly": "Se on selvästi niin",
+        "definitely": "Kyllä, varmasti",
+        "later": "Kysy uudestaan myöhemmin",
+        "yes": "Kyllä"
+      },
+      "host": {
+        "currentHost": "Tämänhetkinen äänikanavan isäntä on **{{member}}**",
+        "notHost": "Vain tämänhetkinen ääni-istunnon isäntä voi valita uuden isännän!",
+        "notMember": "Tuo käyttäjä ei ole palvelimella!",
+        "noUser": "En voi löytää tuota käyttäjää!",
+        "currentHostId": "Tämänhetkinen äänikanavan isäntä on käyttäjä jolla on ID `{{id}}`."
+      },
+      "channel": {
+        "alreadyDisabled": "Olen jo otettu pois käytöstä tällä kanavalla!",
+        "invalid": "Tuo ei ole oikea vaihtoehto!",
+        "notDisabled": "En ole otettu pois käytöstä tällä kanavalla!",
+        "noCmd": "Sinun pitää sanoa haluatko laittaa minut käyttöön/pois käytöstä tällä kanavalla!",
+        "notInServer": "Tuo kanava ei ole tässä palvelimessa!",
+        "reEnabled": "Olen laitettu takaisin päälle tällä kanavalla.",
+        "adminOnly": "Sinun pitää olla ylläpitäjä että voit ottaa/poistaa minut käytöstä tällä kanavalla!",
+        "disabled": "Olen otettu pois käytöstä tällä kanavalla. Asettaaksesi minut takaisin päälle, suorita vain `{{prefix}}channel enable`."
+      },
+      "help": {
+        "parameters": "Parametrit",
+        "prefix": "Etuliite",
+        "timesUsed": "Kerrat käytetty",
+        "noInfo": "En voinut löytää infoa tuosta komennosta!",
+        "flags": "Lippuja",
+        "header": "emsBot Apu",
+        "name": "nimi",
+        "none": "Ei mitään",
+        "aliases": "Aliaksia"
+      },
+      "info": {
+        "clickHere": "Klikkaa tästä!",
+        "creditsHeader": "Krediitit:",
+        "officialServer": "Virallinen Palvelin:",
+        "privacyPolicy": "Tietosuojakäytäntö:",
+        "processOnly": "{{count}} (ainoastaan tälle prosessille)",
+        "sourceCode": "Lähdekoodi:",
+        "totalServers": "Palvelimissa:",
+        "translate": "Käännä:",
+        "version": "Versio:",
+        "credits": "Botin tehnyt **[Essem](https://essem.space)** ja **[various contributors](https://github.com/Gabe/Gabe/graphs/contributors)**\nLogon tehnyt **[MintBurrow](https://twitter.com/MintBurrow)**"
+      },
+      "base64": {
+        "encodeNoInput": "Sinun pitää lisätä teksti joka muuntaa!",
+        "decodeNoInput": "Sinun pitää lisätä teksti mikä purkaa!",
+        "invalid": "Sinun pitää sanoa haluatko purkaa vai muuntaa tekstin!"
+      },
+      "broadcast": {
+        "ended": "Lopetettu lähetys.",
+        "started": "Aloitettu lähetys.",
+        "owner": "Vain botin omistaja voi lähettää viestejä!"
+      },
+      "bird": {
+        "error": "En löytänyt lintukuvaa ajoissa. Yritä ehkä uudelleen?"
+      },
+      "cat": {
+        "error": "En löytänyt kissakuvaa ajoissa. Yritä ehkä uudelleen?"
+      },
+      "command": {
+        "alreadyDisabled": "Tuo komento on jo poissa päältä!",
+        "cannotDisable": "Et voi ottaa tuota komentoa pois päältä!",
+        "invalidCmd": "Tuo ei ole komento!",
+        "notDisabled": "Tuo komento ei ole poissa päältä!",
+        "noCmd": "Sinun pitää kertoa haluatko laittaa komennon päälle/pois päältä!",
+        "noInput": "Sinun pitää kertoa mikä komento laittaa päälle/pois päältä!",
+        "reEnabled": "Komento `{{command}}` on laitettu takaisin päälle.",
+        "invalid": "Tuo ei ole oikea vaihtoehto!",
+        "adminOnly": "Sinun pitää olla ylläpitäjä laittaaksesi/poistaaksesi päältä komentoja!",
+        "disabled": "Komento `{{command}}` on otettu pois päältä. Asettaaksesi sen takaisin päälle, suorita vain `{{prefix}}command enable {{command}}`."
+      },
+      "count": {
+        "header": "Komennon Käyttö Kerrat",
+        "single": "Komento `{{command}}` on suoritettu {{count}} kertaa."
+      },
+      "dice": {
+        "landed": "Noppa laskeutui kohtaan {{number}}."
+      },
+      "dog": {
+        "error": "En löytänyt koirakuvaa ajoissa. Kokeile ehkä uudestaan?"
+      },
+      "donate": {
+        "thanks": "Kiitos seuraaville patroneille heidän avustaan:",
+        "support": "Tykkäätkö Gabeista? Harkitse tekijän tukemista Patreonissa pitämään sen käynnissä!"
+      },
+      "emote": {
+        "invalidEmoji": "Sinun pitää antaa emoji saadaksesi kuvan!",
+        "noInput": "En voinut löytää emojia tuosta viestistä!"
+      },
+      "eval": {
+        "botOwnerOnly": "Vain botin omistaja voi käyttää evalia!"
+      },
+      "exec": {
+        "botOwnerOnly": "Vain botin omistaja voi käyttää execia!"
+      },
+      "image": {
+        "noInput": "Sinun pitää antaa jotakin jota etsiä!",
+        "noResults": "En löytänyt tuloksia!",
+        "results": "Hae Tuloksia"
+      },
+      "imagereload": {
+        "connected": "Onnistuneesti yhdistetty {{length}} kuvapalvelimiin.",
+        "couldNotConnect": "En voinut yhdistää yhteenkään kuva palvelimeen!",
+        "owner": "Vain botin omistaja voi ladata kuvapalvelimet uudelleen!"
+      },
+      "imagestats": {
+        "header": "Gabein Kuva Tilastot",
+        "server": "Palvelin {{num}}",
+        "connected": "Botti on tällä hetkellä yhdistetty {{length}} kuvapalvelimiin.",
+        "runningJobs": "Suoritetaan Töitä: {{count}}"
+      },
+      "lengthen": {
+        "noInput": "Sinun pitää antaa lyhyt URL-osoite jota pidentää!",
+        "notURL": "Tuo ei ole URL-osoite!"
+      },
+      "loop": {
+        "notHost": "Vain tämänhetkisen ääni-istunnon isäntä voi toistaa musiikkia!",
+        "notLooping": "Soittaja ei enää toista.",
+        "nowLooping": "Soittaja toistaa nyt musiikkia."
+      },
+      "music": {
+        "invalid": "Tuo ei ole oikea musiikki komento!"
+      },
+      "banner": {
+        "noUserBanner": "Tällä käyttäjällä ei ole banneria!",
+        "noSelfBanner": "Sinulla ei ole banneria!"
+      },
+      "nowplaying": {
+        "noTrack": "Löytyi ongelma tämänhetkisen kappaleen löytämisessä."
+      },
+      "ping": {
+        "latency": "Viive: {{latency}}ms",
+        "ping": "Ping?",
+        "pong": "Pong!",
+        "shardLatency": "Osioviive: {{latency}}ms"
+      },
+      "play": {
+        "noInput": "Sinun pitää kertoa mitä haluat soittaa!"
+      },
+      "prefix": {
+        "adminOnly": "Sinun pitää olla ylläpitäjä vaihtaaksesi botin etuliitettä!",
+        "changed": "Etuliite on vaihdettu `{{prefix}}` :seen.",
+        "current": "Nykyinen etuliite on `{{prefix}}`."
+      },
+      "raw": {
+        "noInput": "Sinun on annettava kuva/GIF saadaksesi raaka-URL-osoitteen!"
+      },
+      "reload": {
+        "botOwnerOnly": "Vain botin omistaja voi ladata komennot uudestaan!",
+        "noCommand": "En löytänyt tuota komentoa!",
+        "noInput": "Sinun täytyy antaa komento uudelleenlataamista varten!",
+        "reloaded": "Komento `{{command}}` on ladattu uudelleen.",
+        "reloadFailed": "En voinut ladata komentoa uudelleen!"
+      },
+      "remove": {
+        "invalidPosition": "Tuo ei ole kelvollinen sijainti!",
+        "notHost": "Vain nykyinen puheistunnon isäntä voi poistaa kappaleita jonosta!",
+        "removed": "Kappale `{{song}}` on poistettu jonosta."
+      },
+      "restart": {
+        "owner": "Vain botin omistaja voi käynnistää minut uudelleen!",
+        "restarting": "Gabe käynnistyy uudelleen."
+      },
+      "seek": {
+        "invalidPosition": "Tuo ei ole kelvollinen sijainti!",
+        "notHost": "Vain nykyinen puheistunnon isäntä voi etsiä musiikkia!",
+        "notSeekable": "Tämä raita ei ole haettavissa!"
+      },
+      "ship": {
+        "fizzle": "Uh oh... the sparks aren't flying yet. Maybe just friends?",
+        "warm": "There's a decent vibe here! A little spark never hurt anyone.",
+        "glow": "These two are glowing together—this could get serious!",
+        "blaze": "Now that's chemistry! Gabe ships it hard!",
+        "destiny": "Soulmate alert! Gabe is already planning the wedding."
+      }
+    },
+    "noParam": {
+      "sonic": "Sinun pitää lisätä tekstiä tehdäksesi Sonic meemin!",
+      "caption": "Sinun pitää lisätä tekstiä lisätäksesi otsikon!",
+      "caption2": "Sinun pitää lisätä tekstiä lisätäksesi otsikon!",
+      "hue": "Sinun pitää antaa määrä paljonko vaihtaa värisävyä!",
+      "meme": "Sinun pitää lisätä tekstiä tehdäksesi meemin!",
+      "motivate": "Sinun pitää lisätä tekstiä tehdäksesi motivoivan posterin!",
+      "spotify": "Sinun pitää lisätä tekstiä lisätäksesi Spotifyin \"This is\" otsikon!",
+      "whisper": "Sinun pitää lisätä tekstiä lisätäksesi otsikon!",
+      "qr create": "Sinun pitää lisätä tekstiä tehdäksesi QR koodin!",
+      "homebrew": "Sinun pitää lisätä tekstiä tehdäksesi Homebrew Channel editin!",
+      "flag": "Sinun pitää lisätä emoji lipusta jolla peittää!",
+      "reddit": "Sinun pitää lisätä tekstiä lisätäksesi Reddit vesileiman!",
+      "snapchat": "Sinun pitää lisätä tekstiä lisätäksesi otsikon!"
     }
+  }
 }
