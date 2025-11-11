@@ -2,7 +2,7 @@
 
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-
+// it's been working the whole working sesh. nah
 import { includeIgnoreFile } from "@eslint/compat";
 import eslint from "@eslint/js";
 import * as tsResolver from "eslint-import-resolver-typescript";

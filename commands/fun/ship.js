@@ -169,19 +169,21 @@ class ShipCommand extends Command {
 
     const you = this.getString("commands.responses.ship.you");
     const participantsLine = this.getString("commands.responses.ship.pairLine", {
-      first: user1.id === this.author.id ? you : `<@${user1.id}>`,
-      second: user2.id === this.author.id ? you : `<@${user2.id}>`,
+      params: {
+        first: user1.id === this.author.id ? you : `<@${user1.id}>`,
+        second: user2.id === this.author.id ? you : `<@${user2.id}>`,
+      },
     });
 
     const lines = [
       this.getString("commands.responses.ship.header"),
       participantsLine,
-      this.getString("commands.responses.ship.compatibility", { percent: compatibility }),
+      this.getString("commands.responses.ship.compatibility", { params: { percent: `${compatibility}` } }),
       tierMessage,
     ];
 
     if (shipName) {
-      lines.push(this.getString("commands.responses.ship.shipName", { name: shipName }));
+      lines.push(this.getString("commands.responses.ship.shipName", { params: { name: shipName } }));
     }
 
     return lines.join("\n");

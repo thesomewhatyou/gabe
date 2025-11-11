@@ -77,6 +77,19 @@ export default async function run(object: ImageParams): Promise<{ buffer: Buffer
     object.input.type = fileExtension;
   }
   object.params.basePath = path.join(path.dirname(fileURLToPath(import.meta.url)), "../../");
+
+  // Ensure input.data is an ArrayBuffer (native bindings expect ArrayBuffer, not Buffer/TypedArray)
+  if (object.input?.data) {
+    const rawData = object.input.data as unknown;
+    if (Buffer.isBuffer(rawData)) {
+      const buf = rawData as Buffer;
+      object.input.data = buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength) as ArrayBuffer;
+    } else if (ArrayBuffer.isView(rawData as ArrayBufferView)) {
+      const view = rawData as ArrayBufferView;
+      object.input.data = view.buffer.slice(view.byteOffset, view.byteOffset + view.byteLength) as ArrayBuffer;
+    }
+  }
+
   const { data, type } = await img.image(object.cmd, object.params, object.input ?? {});
   return {
     buffer: data,

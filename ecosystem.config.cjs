@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "esmBot-manager",
+      name: "gabe manager.",
       script: "dist/pm2/ext.js",
       autorestart: true,
       exp_backoff_restart_delay: 1000,
