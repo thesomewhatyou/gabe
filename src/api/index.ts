@@ -6,11 +6,11 @@ import process from "node:process";
 import { DiscordHTTPError, DiscordRESTError, type RawMessage } from "oceanic.js";
 import type WSocket from "ws";
 import { WebSocketServer, type ErrorEvent } from "ws";
+import { stolenEmojis } from "#utils/collections.js";
 import run from "#utils/image-runner.js";
 import { img } from "#utils/imageLib.js";
 import logger from "#utils/logger.js";
 import type { ImageParams } from "#utils/types.js";
-import { stolenEmojis } from "#utils/collections.js";
 
 const formats = Object.keys(img.imageInit());
 

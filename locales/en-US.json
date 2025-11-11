@@ -102,7 +102,8 @@
       "untimeout": "Removes a timeout from a user (you can talk again)",
       "purge": "Deletes multiple messages at once (cleanup time)",
       "music": "Handles music playback",
-      "tags": "The main tags command. Check the help page for more info: https://gabe.net/help.html"
+      "tags": "The main tags command. Check the help page for more info: https://gabe.net/help.html",
+      "ship": "Find out how compatible two people are (Gabe's love calculator)"
     },
     "flagNames": {
       "8ball": {
@@ -344,6 +345,10 @@
       "qr": {
         "create": "create",
         "read": "read"
+      },
+      "ship": {
+        "user1": "user1",
+        "user2": "user2"
       }
     },
     "flags": {
@@ -551,7 +556,7 @@
         "remove": "Remove a role from the allowlist"
       },
       "tags role add": {
-        "role":  "The role to add"
+        "role": "The role to add"
       },
       "tags role remove": {
         "role": "The role to remove"
@@ -559,6 +564,10 @@
       "qr": {
         "create": "Generates a QR code",
         "read": "Reads a QR code"
+      },
+      "ship": {
+        "user1": "The first person to ship (defaults to you or the first mention)",
+        "user2": "The second person to ship (defaults to the mentioned user)"
       }
     },
     "names": {
@@ -1067,6 +1076,19 @@
       "youtube": {
         "noInput": "You need to provide something to search for!",
         "noResults": "I couldn't find any results!"
+      },
+      "ship": {
+        "fizzle": "Uh oh... the sparks aren't flying yet. Maybe just friends?",
+        "warm": "There's a decent vibe here! A little spark never hurt anyone.",
+        "glow": "These two are glowing together—this could get serious!",
+        "blaze": "Now that's chemistry! Gabe ships it hard!",
+        "destiny": "Soulmate alert! Gabe is already planning the wedding.",
+        "header": "💘 **Gabe's Compatibility Report**",
+        "pairLine": "{{first}} ❤ {{second}}",
+        "you": "You",
+        "compatibility": "**Compatibility:** {{percent}}%",
+        "shipName": "**Ship Name:** {{name}}",
+        "needsTwo": "❌ Gabe says: I need two people to ship! Try tagging them or using the flags."
       }
     }
   },

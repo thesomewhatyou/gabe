@@ -4,7 +4,7 @@ import process from "node:process";
 const [major] = process.versions.node.split(".").map(Number);
 if (major < 22) {
   console.error(`You are currently running Node.js version ${process.versions.node}.
-I need at least Node.js 22.X or more. Just try 22. Use nvm install 22 to install Node 22.`)
+I need at least Node.js 22.X or more. Just try 22. Use nvm install 22 to install Node 22.`);
   process.exit(1);
 }
 if (process.platform === "win32") {
@@ -87,9 +87,7 @@ gabe. ${packageJson.version}
 `);
 
 if (!commandConfig.types.classic && !commandConfig.types.application) {
-  logger.error(
-    "Bruh. Both classic and application commands are disabled.",
-  );
+  logger.error("Bruh. Both classic and application commands are disabled.");
   process.exit(1);
 }
 

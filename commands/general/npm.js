@@ -46,13 +46,20 @@ class NpmCommand extends Command {
 
     const author =
       (verMeta?.author && (typeof verMeta.author === "string" ? verMeta.author : verMeta.author.name)) ||
-      (Array.isArray(verMeta?.maintainers) ? verMeta.maintainers.map((m) => (typeof m === "string" ? m : m.name)).slice(0, 3).join(", ") : undefined);
+      (Array.isArray(verMeta?.maintainers)
+        ? verMeta.maintainers
+            .map((m) => (typeof m === "string" ? m : m.name))
+            .slice(0, 3)
+            .join(", ")
+        : undefined);
 
     let repo = verMeta?.repository?.url || verMeta?.repository || data.repository?.url || data.repository;
     if (typeof repo === "string") {
       repo = repo.replace(/^git\+/, "").replace(/\.git$/, "");
     } else if (repo?.url) {
-      repo = String(repo.url).replace(/^git\+/, "").replace(/\.git$/, "");
+      repo = String(repo.url)
+        .replace(/^git\+/, "")
+        .replace(/\.git$/, "");
     } else {
       repo = undefined;
     }

@@ -1,11 +1,39 @@
 {
-    "commands": {
-        "descriptions": {
-            "8ball": "Zadaj ósemce pytanie",
-            "bird": "Podaje losowe zdjęcie ptaka",
-            "cat": "Podaje losowe zdjęcie kota",
-            "dice": "Rzuca kością",
-            "dog": "Podaje losowe zdjęcie psa"
-        }
+  "commands": {
+    "descriptions": {
+      "8ball": "Zadaj ósemce pytanie",
+      "bird": "Podaje losowe zdjęcie ptaka",
+      "cat": "Podaje losowe zdjęcie kota",
+      "dice": "Rzuca kością",
+      "dog": "Podaje losowe zdjęcie psa",
+      "ship": "Find out how compatible two people are (Gabe's love calculator)"
+    },
+    "flagNames": {
+      "ship": {
+        "user1": "user1",
+        "user2": "user2"
+      }
+    },
+    "flags": {
+      "ship": {
+        "user1": "The first person to ship (defaults to you or the first mention)",
+        "user2": "The second person to ship (defaults to the mentioned user)"
+      }
+    },
+    "responses": {
+      "ship": {
+        "fizzle": "Uh oh... the sparks aren't flying yet. Maybe just friends?",
+        "warm": "There's a decent vibe here! A little spark never hurt anyone.",
+        "glow": "These two are glowing together—this could get serious!",
+        "blaze": "Now that's chemistry! Gabe ships it hard!",
+        "destiny": "Soulmate alert! Gabe is already planning the wedding.",
+        "header": "💘 **Gabe's Compatibility Report**",
+        "pairLine": "{{first}} ❤ {{second}}",
+        "you": "You",
+        "compatibility": "**Compatibility:** {{percent}}%",
+        "shipName": "**Ship Name:** {{name}}",
+        "needsTwo": "❌ Gabe says: I need two people to ship! Try tagging them or using the flags."
+      }
     }
+  }
 }

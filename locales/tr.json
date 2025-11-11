@@ -1,26 +1,54 @@
 {
-    "commands": {
-        "descriptions": {
-            "bird": "Rastgele bir kuş resmi gönderir",
-            "cat": "Rastgele bir kedi resmi gönderir",
-            "dice": "Zar atar",
-            "dog": "Rastgele bir köpek resmi gönderir",
-            "avatar": "Bir kullanıcının avatar'ını gösterir",
-            "base64": "Bir Base64 dizesini encode veya decode eder",
-            "command": "Bir sunucuda, klasik komutları aktif/pasif hale getirir (eğik çizgi komutları için sunucu ayarları)",
-            "count": "Kaç defa command komutunun kullandığını gösterir",
-            "donate": "Gabe'un geliştirilmesine nasıl destek olabileceğinizle ilgili daha fazla bilgi edinin",
-            "help": "Komut listesini gösterir",
-            "image": "İnternette görseli aratır",
-            "imagereload": "Erişilebilir tüm resim işleme sunucularına tekrardan bağlanmayı dener",
-            "info": "Benim hakkımda bazı bilgileri ve katkıda bulunanları gösterir",
-            "lengthen": "Kısa bir URL'i uzatır",
-            "imagestats": "Resim işleme sunucuları ile ilgili bazı istatistikleri verir",
-            "sonic": "Sonic konuşma balonu resmi oluşturur",
-            "banner": "Bir kullanıcının profil kapağını gösterir",
-            "channel": "Bir kanalda, klasik komutları aktif/pasif hale getirir (eğik çizgi komutları için sunucu ayarları)",
-            "eval": "JavaScript kodu çalıştırır",
-            "exec": "Bir shell komutu çalıştırır"
-        }
+  "commands": {
+    "descriptions": {
+      "bird": "Rastgele bir kuş resmi gönderir",
+      "cat": "Rastgele bir kedi resmi gönderir",
+      "dice": "Zar atar",
+      "dog": "Rastgele bir köpek resmi gönderir",
+      "avatar": "Bir kullanıcının avatar'ını gösterir",
+      "base64": "Bir Base64 dizesini encode veya decode eder",
+      "command": "Bir sunucuda, klasik komutları aktif/pasif hale getirir (eğik çizgi komutları için sunucu ayarları)",
+      "count": "Kaç defa command komutunun kullandığını gösterir",
+      "donate": "Gabe'un geliştirilmesine nasıl destek olabileceğinizle ilgili daha fazla bilgi edinin",
+      "help": "Komut listesini gösterir",
+      "image": "İnternette görseli aratır",
+      "imagereload": "Erişilebilir tüm resim işleme sunucularına tekrardan bağlanmayı dener",
+      "info": "Benim hakkımda bazı bilgileri ve katkıda bulunanları gösterir",
+      "lengthen": "Kısa bir URL'i uzatır",
+      "imagestats": "Resim işleme sunucuları ile ilgili bazı istatistikleri verir",
+      "sonic": "Sonic konuşma balonu resmi oluşturur",
+      "banner": "Bir kullanıcının profil kapağını gösterir",
+      "channel": "Bir kanalda, klasik komutları aktif/pasif hale getirir (eğik çizgi komutları için sunucu ayarları)",
+      "eval": "JavaScript kodu çalıştırır",
+      "exec": "Bir shell komutu çalıştırır",
+      "ship": "Find out how compatible two people are (Gabe's love calculator)"
+    },
+    "flagNames": {
+      "ship": {
+        "user1": "user1",
+        "user2": "user2"
+      }
+    },
+    "flags": {
+      "ship": {
+        "user1": "The first person to ship (defaults to you or the first mention)",
+        "user2": "The second person to ship (defaults to the mentioned user)"
+      }
+    },
+    "responses": {
+      "ship": {
+        "fizzle": "Uh oh... the sparks aren't flying yet. Maybe just friends?",
+        "warm": "There's a decent vibe here! A little spark never hurt anyone.",
+        "glow": "These two are glowing together—this could get serious!",
+        "blaze": "Now that's chemistry! Gabe ships it hard!",
+        "destiny": "Soulmate alert! Gabe is already planning the wedding.",
+        "header": "💘 **Gabe's Compatibility Report**",
+        "pairLine": "{{first}} ❤ {{second}}",
+        "you": "You",
+        "compatibility": "**Compatibility:** {{percent}}%",
+        "shipName": "**Ship Name:** {{name}}",
+        "needsTwo": "❌ Gabe says: I need two people to ship! Try tagging them or using the flags."
+      }
     }
+  }
 }

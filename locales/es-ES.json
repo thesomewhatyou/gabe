@@ -1,252 +1,274 @@
 {
-    "commands": {
-        "descriptions": {
-            "bounce": "Hace rebotar una imagen",
-            "caption": "Añade una leyenda a una imagen",
-            "8ball": "Hágale un pregunta a la mágica bola 8",
-            "bird": "Obtener una foto aleatoria de un pájaro",
-            "cat": "Obtener una foto aleatoria de un gato",
-            "dice": "Lanza el dado",
-            "dog": "Obtener una foto aleatoria de un perro",
-            "avatar": "Obtener el avatar de usuario",
-            "banner": "Obtener el banner de usuario",
-            "base64": "Codificar/decodificar una cadena en Base64",
-            "count": "Obtener cuántas veces fue usado cada comando",
-            "donate": "Más información sobre cómo puede apoyar al desarrollo de Gabe",
-            "eval": "Ejecutar código de JavaScript",
-            "help": "Obtener una lista de comandos",
-            "image": "Buscar imágenes en la web",
-            "info": "Obtener información y créditos acerca de mi",
-            "ping": "Hacer ping a los servidores de Discord",
-            "reload": "Recargar un comando",
-            "restart": "Reiníciame",
-            "stats": "Obtener estadísticas acerca de mi",
-            "youtube": "Buscar en YouTube",
-            "blur": "Difuminar una imagen",
-            "flip": "Voltear una imagen",
-            "circle": "Aplicar un efecto de difuminado radial en una imagen",
-            "crop": "Recortar una imagen a 1:1",
-            "gif": "Convertir una imagen a GIF",
-            "invert": "Invertir una imagen",
-            "pixelate": "Pixelar una imagen",
-            "soundreload": "Intentar reconectar a todos los nodos disponibles de Lavalink",
-            "motivate": "Generar un póster motivacional",
-            "homebrew": "Crea una edición de el Canal Homebrew",
-            "sonic": "Crea una imagen de Burbuja de texto de Sonic",
-            "channel": "Habilitar/deshabilitar comandos clásicos en un canal (use los ajustes del servidor para los comandos con slash)"
-        },
-        "flagNames": {
-            "caption": {
-                "font": "fuente",
-                "noegg": "sinhuevo"
-            },
-            "base64": {
-                "decode": "decodificar",
-                "encode": "codificar"
-            },
-            "avatar": {
-                "member": "miembro"
-            },
-            "base64 decode": {
-                "text": "texti"
-            },
-            "base64 encode": {
-                "text": "texto"
-            },
-            "broadcast": {
-                "message": "mensaje"
-            },
-            "channel": {
-                "enable": "habilitar",
-                "disable": "deshabilitar"
-            },
-            "channel enable": {
-                "text": "texto"
-            },
-            "channel disable": {
-                "text": "texto"
-            },
-            "command": {
-                "enable": "habilitar",
-                "disable": "dehabilitar"
-            },
-            "command enable": {
-                "text": "texto"
-            },
-            "command disable": {
-                "text": "texto"
-            },
-            "count": {
-                "command": "comando"
-            },
-            "emote": {
-                "emoji": "emoji"
-            },
-            "help": {
-                "command": "comando"
-            },
-            "lengthen": {
-                "url": "url"
-            },
-            "meme": {
-                "font": "fuente"
-            },
-            "caption2": {
-                "font": "fuente"
-            },
-            "jpeg": {
-                "quality": "calidad"
-            },
-            "motivate": {
-                "font": "fuente"
-            },
-            "snapchat": {
-                "position": "posición"
-            },
-            "speechbubble": {
-                "scale": "escala"
-            },
-            "uncanny": {
-                "font": "fuente",
-                "phase": "fase"
-            },
-            "uncaption": {
-                "tolerance": "tolerancia"
-            },
-            "music host": {
-                "user": "usuario"
-            },
-            "music remove": {
-                "position": "posición"
-            },
-            "music seek": {
-                "position": "posición"
-            },
-            "music volume": {
-                "level": "nivel"
-            },
-            "tags": {
-                "add": "agregar",
-                "delete": "eliminar",
-                "edit": "editar",
-                "get": "obtener",
-                "list": "listar",
-                "owner": "propietario",
-                "random": "aleatorio"
-            },
-            "tags add": {
-                "name": "nombre",
-                "content": "contenido"
-            },
-            "tags delete": {
-                "name": "nombre"
-            },
-            "tags edit": {
-                "name": "nombre",
-                "content": "contenido"
-            },
-            "tags get": {
-                "name": "nombre"
-            },
-            "tags owner": {
-                "name": "nombre"
-            }
-        },
-        "flags": {
-            "caption": {
-                "font": "Elige qué fuente usar (por defecto: futura)",
-                "noegg": "Desactiva... algo. Pero no te diré qué."
-            },
-            "8ball": {
-                "question": "La pregunta que quiere hacer a la bola"
-            },
-            "dice": {
-                "max": "El valor máximo del dado"
-            },
-            "base64": {
-                "decode": "Decodifica una cadena en Base64",
-                "encode": "Codifica una cadena en Base64"
-            },
-            "base64 decode": {
-                "text": "El texto para decodificar"
-            },
-            "base64 encode": {
-                "text": "El texto para codificar"
-            },
-            "watermark": {
-                "9gag": "Agregar marca de agua 9GAG a una imagen",
-                "avs4you": "Agregar marca de agua avs4you a una imagen",
-                "bandicam": "Agregar marca de agua Bandicam a una imagen",
-                "deviantart": "Agregar marca de agua DevianArt a una imagenn"
-            },
-            "qr": {
-                "create": "Genera un código QR",
-                "read": "Leer un código QR"
-            }
-        },
-        "names": {
-            "bounce": "rebotar",
-            "caption": "leyenda",
-            "Select Image": "Seleccionar imagen"
-        },
-        "noImage": {
-            "bounce": "¡Necesitas subir una imagen o GIF para que rebote!",
-            "caption": "¡Necesitas subir una imagen o GIF para añadirle una leyenda!"
-        },
-        "noParam": {
-            "caption": "¡Necesitas incluir un texto para añadirlo como leyenda!"
-        },
-        "responses": {
-            "image": {
-                "results": "Resultados de Búsqueda",
-                "noResults": "¡No pude encontrar ningún resultado!"
-            }
-        }
+  "commands": {
+    "descriptions": {
+      "bounce": "Hace rebotar una imagen",
+      "caption": "Añade una leyenda a una imagen",
+      "8ball": "Hágale un pregunta a la mágica bola 8",
+      "bird": "Obtener una foto aleatoria de un pájaro",
+      "cat": "Obtener una foto aleatoria de un gato",
+      "dice": "Lanza el dado",
+      "dog": "Obtener una foto aleatoria de un perro",
+      "avatar": "Obtener el avatar de usuario",
+      "banner": "Obtener el banner de usuario",
+      "base64": "Codificar/decodificar una cadena en Base64",
+      "count": "Obtener cuántas veces fue usado cada comando",
+      "donate": "Más información sobre cómo puede apoyar al desarrollo de Gabe",
+      "eval": "Ejecutar código de JavaScript",
+      "help": "Obtener una lista de comandos",
+      "image": "Buscar imágenes en la web",
+      "info": "Obtener información y créditos acerca de mi",
+      "ping": "Hacer ping a los servidores de Discord",
+      "reload": "Recargar un comando",
+      "restart": "Reiníciame",
+      "stats": "Obtener estadísticas acerca de mi",
+      "youtube": "Buscar en YouTube",
+      "blur": "Difuminar una imagen",
+      "flip": "Voltear una imagen",
+      "circle": "Aplicar un efecto de difuminado radial en una imagen",
+      "crop": "Recortar una imagen a 1:1",
+      "gif": "Convertir una imagen a GIF",
+      "invert": "Invertir una imagen",
+      "pixelate": "Pixelar una imagen",
+      "soundreload": "Intentar reconectar a todos los nodos disponibles de Lavalink",
+      "motivate": "Generar un póster motivacional",
+      "homebrew": "Crea una edición de el Canal Homebrew",
+      "sonic": "Crea una imagen de Burbuja de texto de Sonic",
+      "channel": "Habilitar/deshabilitar comandos clásicos en un canal (use los ajustes del servidor para los comandos con slash)",
+      "ship": "Find out how compatible two people are (Gabe's love calculator)"
     },
-    "error": "¡Ups! Encontré un error al ejecutar ese comando. Por favor, envía el contenido del archivo adjunto en el siguiente link o en el servidor de soporte de Gabe:",
-    "image": {
-        "badurl": "¡Esa URL no es válida!",
-        "couldNotFind": "¡No encontré una imagen en ese mensaje!",
-        "empty": "¡El resultado está vacío!",
-        "flagNames": {
-            "ephemeral": "efímero",
-            "image": "imagen",
-            "text": "texto",
-            "togif": "agif"
-        },
-        "flags": {
-            "ephemeral": "Intenta enviar el resultado como una respuesta temporaria/efímera",
-            "image": "Una imagen o GIF adjunto",
-            "link": "Una URL de una imagen o GIF",
-            "spoiler": "Intenta enviar el resultado como un spoiler",
-            "text": "El texto que irá en la imagen",
-            "togif": "Forzar un GIF como resultado"
-        },
-        "frames": "¡Ese GIF tiene demasiados fotogramas (más de 1000)!",
-        "jobEnded": "Sucedió algo en los servidores y no recibí la imagen. Intenta correr el comando de nuevo.",
-        "large": "¡Esa imagen es demasiado grande (>= 40MB)! Intenta subir una imagen más pequeña.",
-        "nocmd": "Ese comando no tiene soporte en esta instancia de Gabe.",
-        "noanim": "Esa imagen no está en un formato animado (GIF or WEBP)!",
-        "noImage": "¡Necesitas subir una imagen o GIF!",
-        "noResult": "No recibí respuesta del servidor de imágenes. Por favor inténtalo de nuevo.",
-        "noServers": "No me pude conectar a los servidores de imágenes, puede que estén caídos o que se estén reiniciando. Por favor espera.",
-        "noTempServer": "La imagen que resultó del comando pesa más de 25MB, así que no la puedo subir.",
-        "noParam": "¡Necesitas incluir un texto!",
-        "processing": "Procesando... Puede que esto tarde",
-        "ratelimit": "El servidor en el que está subida tu imagen está bloqueándome temporariamente. Intenta subir tu imagen a otro lado.",
-        "selected": "Se he seleccionado la imagen para tu siguiente comando.",
-        "slowDown": "Por favor, ve más despacio.",
-        "tempImageSent": "¡Aquí está tu imagen!",
-        "tempSite": "La imagen que resultó del comando pesa más de 25MB, así que se subió a una página externa.",
-        "tenor": "Tenor está bloqueándome temporariamente. Intenta subir tu GIF a otro lado.",
-        "timeout": "Recuperar la imagen del servidor tardó demasiado. Por favor intenta de nuevo, sube tu imagen a otro lado, o usa otra imagen.",
-        "tip": "(Consejo: intenta hacer click derecho/mantener presionado un mensaje y presionar Aplicaciones -> Seleccionar imagen, e intentálo de nuevo.)",
-        "tooLarge": "El archivo que resultó es demasiado grande. Si es posible, intenta subir una imagen más pequeña.",
-        "tooLong": "La imagen tardó demasiado en ser procesada (>=10 minutes), así que se canceló el trabajo. Intenta subir una imagen más pequeña.",
-        "tryAgain": "Este trabajo de imagen no se pudo completar porque el servidor en el que corría se apagó. Intenta correr el comando de nuevo.",
-        "unknown": "La imagen que resultó no estaba en un formato reconocible. Por favor inténtalo de nuevo."
+    "flagNames": {
+      "caption": {
+        "font": "fuente",
+        "noegg": "sinhuevo"
+      },
+      "base64": {
+        "decode": "decodificar",
+        "encode": "codificar"
+      },
+      "avatar": {
+        "member": "miembro"
+      },
+      "base64 decode": {
+        "text": "texti"
+      },
+      "base64 encode": {
+        "text": "texto"
+      },
+      "broadcast": {
+        "message": "mensaje"
+      },
+      "channel": {
+        "enable": "habilitar",
+        "disable": "deshabilitar"
+      },
+      "channel enable": {
+        "text": "texto"
+      },
+      "channel disable": {
+        "text": "texto"
+      },
+      "command": {
+        "enable": "habilitar",
+        "disable": "dehabilitar"
+      },
+      "command enable": {
+        "text": "texto"
+      },
+      "command disable": {
+        "text": "texto"
+      },
+      "count": {
+        "command": "comando"
+      },
+      "emote": {
+        "emoji": "emoji"
+      },
+      "help": {
+        "command": "comando"
+      },
+      "lengthen": {
+        "url": "url"
+      },
+      "meme": {
+        "font": "fuente"
+      },
+      "caption2": {
+        "font": "fuente"
+      },
+      "jpeg": {
+        "quality": "calidad"
+      },
+      "motivate": {
+        "font": "fuente"
+      },
+      "snapchat": {
+        "position": "posición"
+      },
+      "speechbubble": {
+        "scale": "escala"
+      },
+      "uncanny": {
+        "font": "fuente",
+        "phase": "fase"
+      },
+      "uncaption": {
+        "tolerance": "tolerancia"
+      },
+      "music host": {
+        "user": "usuario"
+      },
+      "music remove": {
+        "position": "posición"
+      },
+      "music seek": {
+        "position": "posición"
+      },
+      "music volume": {
+        "level": "nivel"
+      },
+      "tags": {
+        "add": "agregar",
+        "delete": "eliminar",
+        "edit": "editar",
+        "get": "obtener",
+        "list": "listar",
+        "owner": "propietario",
+        "random": "aleatorio"
+      },
+      "tags add": {
+        "name": "nombre",
+        "content": "contenido"
+      },
+      "tags delete": {
+        "name": "nombre"
+      },
+      "tags edit": {
+        "name": "nombre",
+        "content": "contenido"
+      },
+      "tags get": {
+        "name": "nombre"
+      },
+      "tags owner": {
+        "name": "nombre"
+      },
+      "ship": {
+        "user1": "user1",
+        "user2": "user2"
+      }
     },
-    "permissions": {
-        "noAttachFiles": "¡No tengo el permiso `Adjuntar archivos` activado!"
+    "flags": {
+      "caption": {
+        "font": "Elige qué fuente usar (por defecto: futura)",
+        "noegg": "Desactiva... algo. Pero no te diré qué."
+      },
+      "8ball": {
+        "question": "La pregunta que quiere hacer a la bola"
+      },
+      "dice": {
+        "max": "El valor máximo del dado"
+      },
+      "base64": {
+        "decode": "Decodifica una cadena en Base64",
+        "encode": "Codifica una cadena en Base64"
+      },
+      "base64 decode": {
+        "text": "El texto para decodificar"
+      },
+      "base64 encode": {
+        "text": "El texto para codificar"
+      },
+      "watermark": {
+        "9gag": "Agregar marca de agua 9GAG a una imagen",
+        "avs4you": "Agregar marca de agua avs4you a una imagen",
+        "bandicam": "Agregar marca de agua Bandicam a una imagen",
+        "deviantart": "Agregar marca de agua DevianArt a una imagenn"
+      },
+      "qr": {
+        "create": "Genera un código QR",
+        "read": "Leer un código QR"
+      },
+      "ship": {
+        "user1": "The first person to ship (defaults to you or the first mention)",
+        "user2": "The second person to ship (defaults to the mentioned user)"
+      }
+    },
+    "names": {
+      "bounce": "rebotar",
+      "caption": "leyenda",
+      "Select Image": "Seleccionar imagen"
+    },
+    "noImage": {
+      "bounce": "¡Necesitas subir una imagen o GIF para que rebote!",
+      "caption": "¡Necesitas subir una imagen o GIF para añadirle una leyenda!"
+    },
+    "noParam": {
+      "caption": "¡Necesitas incluir un texto para añadirlo como leyenda!"
+    },
+    "responses": {
+      "image": {
+        "results": "Resultados de Búsqueda",
+        "noResults": "¡No pude encontrar ningún resultado!"
+      },
+      "ship": {
+        "fizzle": "Uh oh... the sparks aren't flying yet. Maybe just friends?",
+        "warm": "There's a decent vibe here! A little spark never hurt anyone.",
+        "glow": "These two are glowing together—this could get serious!",
+        "blaze": "Now that's chemistry! Gabe ships it hard!",
+        "destiny": "Soulmate alert! Gabe is already planning the wedding.",
+        "header": "💘 **Gabe's Compatibility Report**",
+        "pairLine": "{{first}} ❤ {{second}}",
+        "you": "You",
+        "compatibility": "**Compatibility:** {{percent}}%",
+        "shipName": "**Ship Name:** {{name}}",
+        "needsTwo": "❌ Gabe says: I need two people to ship! Try tagging them or using the flags."
+      }
     }
+  },
+  "error": "¡Ups! Encontré un error al ejecutar ese comando. Por favor, envía el contenido del archivo adjunto en el siguiente link o en el servidor de soporte de Gabe:",
+  "image": {
+    "badurl": "¡Esa URL no es válida!",
+    "couldNotFind": "¡No encontré una imagen en ese mensaje!",
+    "empty": "¡El resultado está vacío!",
+    "flagNames": {
+      "ephemeral": "efímero",
+      "image": "imagen",
+      "text": "texto",
+      "togif": "agif"
+    },
+    "flags": {
+      "ephemeral": "Intenta enviar el resultado como una respuesta temporaria/efímera",
+      "image": "Una imagen o GIF adjunto",
+      "link": "Una URL de una imagen o GIF",
+      "spoiler": "Intenta enviar el resultado como un spoiler",
+      "text": "El texto que irá en la imagen",
+      "togif": "Forzar un GIF como resultado"
+    },
+    "frames": "¡Ese GIF tiene demasiados fotogramas (más de 1000)!",
+    "jobEnded": "Sucedió algo en los servidores y no recibí la imagen. Intenta correr el comando de nuevo.",
+    "large": "¡Esa imagen es demasiado grande (>= 40MB)! Intenta subir una imagen más pequeña.",
+    "nocmd": "Ese comando no tiene soporte en esta instancia de Gabe.",
+    "noanim": "Esa imagen no está en un formato animado (GIF or WEBP)!",
+    "noImage": "¡Necesitas subir una imagen o GIF!",
+    "noResult": "No recibí respuesta del servidor de imágenes. Por favor inténtalo de nuevo.",
+    "noServers": "No me pude conectar a los servidores de imágenes, puede que estén caídos o que se estén reiniciando. Por favor espera.",
+    "noTempServer": "La imagen que resultó del comando pesa más de 25MB, así que no la puedo subir.",
+    "noParam": "¡Necesitas incluir un texto!",
+    "processing": "Procesando... Puede que esto tarde",
+    "ratelimit": "El servidor en el que está subida tu imagen está bloqueándome temporariamente. Intenta subir tu imagen a otro lado.",
+    "selected": "Se he seleccionado la imagen para tu siguiente comando.",
+    "slowDown": "Por favor, ve más despacio.",
+    "tempImageSent": "¡Aquí está tu imagen!",
+    "tempSite": "La imagen que resultó del comando pesa más de 25MB, así que se subió a una página externa.",
+    "tenor": "Tenor está bloqueándome temporariamente. Intenta subir tu GIF a otro lado.",
+    "timeout": "Recuperar la imagen del servidor tardó demasiado. Por favor intenta de nuevo, sube tu imagen a otro lado, o usa otra imagen.",
+    "tip": "(Consejo: intenta hacer click derecho/mantener presionado un mensaje y presionar Aplicaciones -> Seleccionar imagen, e intentálo de nuevo.)",
+    "tooLarge": "El archivo que resultó es demasiado grande. Si es posible, intenta subir una imagen más pequeña.",
+    "tooLong": "La imagen tardó demasiado en ser procesada (>=10 minutes), así que se canceló el trabajo. Intenta subir una imagen más pequeña.",
+    "tryAgain": "Este trabajo de imagen no se pudo completar porque el servidor en el que corría se apagó. Intenta correr el comando de nuevo.",
+    "unknown": "La imagen que resultó no estaba en un formato reconocible. Por favor inténtalo de nuevo."
+  },
+  "permissions": {
+    "noAttachFiles": "¡No tengo el permiso `Adjuntar archivos` activado!"
+  }
 }

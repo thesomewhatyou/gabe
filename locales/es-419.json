@@ -1,140 +1,164 @@
 {
-    "commands": {
-        "descriptions": {
-            "bounce": "Hace rebotar una imagen",
-            "caption": "Añade un encabezado a una imagen",
-            "8ball": "Le hace una pregunta a la bola 8 mágica",
-            "bird": "Obtiene una foto de un pájaro al azar",
-            "cat": "Obtiene una foto de un gato al azar",
-            "dice": "Tira el dado",
-            "dog": "Obtiene una foto de un perro al azar",
-            "homebrew": "Crea un edit del Homebrew Channel (Canal Homebrew) de la Nintendo Wii",
-            "avatar": "Obtiene el avatar (ícono) de un usuario",
-            "banner": "Obtiene el banner de un usuario",
-            "base64": "Codifica/decodifica una cadena de caracteres (frase) en Base64",
-            "channel": "Habilita/deshabilita comandos clásicos en un canal (use ajustes del servidor para comandos de barra)",
-            "command": "Habilita/deshabilita un comando clásico para un server (use ajustes del servidor para cmds de barra)",
-            "count": "Obtiene cuántas veces fue utilizado cada comando",
-            "donate": "Aprende más acerca de cómo puedes apoyar el desarrollo de Gabe",
-            "emote": "Obtiene la imagen cruda (completa) de un emote (emoji)",
-            "eval": "Ejecuta código de JavaScript",
-            "exec": "Ejecuta un comando de terminal (shell)",
-            "help": "Obtiene una lista de comandos",
-            "image": "Busca por imágenes a lo largo y ancho de la web",
-            "info": "Obtiene alguna información y créditos acerca de mí",
-            "lengthen": "Alarga una dirección URL corta",
-            "ping": "Pingea a los servidores de Discord",
-            "prefix": "Verifica/cambia el prefijo del servidor",
-            "raw": "Obtiene una dirección URL directa de una imagen (útil para guardar GIFs de sitios como Tenor)",
-            "reload": "Recarga un comando",
-            "restart": "Me reinicia",
-            "soundreload": "Intenta reconectar a todos los nodos de Lavalink disponibles",
-            "stats": "Obtiene algunas estadísticas acerca de mí",
-            "sticker": "Obtiene la imagen cruda (completa) de un sticker",
-            "youtube": "Busca en YouTube",
-            "blur": "Difumina una imagen",
-            "caption2": "Añade un epígrafe/lista de etiquetas a una imagen",
-            "circle": "Aplica un efecto de difuminado radial a una imagen",
-            "crop": "Recorta una imagen a 1:1",
-            "deepfry": "Fríe profundamente (deep-fries) una imagen",
-            "explode": "Explota una imagen",
-            "flag": "Sobrepone una bandera a una imagen",
-            "flip": "Da vuelta una imagen",
-            "flop": "Da vuelta una imagen",
-            "gamexplain": "Fabrica una miniatura de GameXplain con una imagen",
-            "gif": "Convierte una imagen en un GIF",
-            "globe": "Hace girar a una imagen",
-            "grayscale": "Añade un filtro de escala de grises",
-            "haah": "Espeja el lado izquierdo de una imagen hacia el derecho",
-            "hooh": "Espeja la mitad baja de una imagen hacia la mitad alta",
-            "imagestats": "Obtiene algunas estadísticas acerca de los servidores de imágenes",
-            "imagereload": "Intenta reconectar a todos los servidores de procesamiento de imágenes disponibles",
-            "snowflake": "Convierte una id de Snowflake de Discord a una marca horaria",
-            "freeze": "Hace que una secuencia de imágenes (GIF) se reproduzca solo una vez",
-            "sonic": "Crea una imagen de Sonic con una burbuja de texto",
-            "broadcast": "Transmite un mensaje en reproducción hasta que el comando se vuelva a ejecutar o el bot se reinicie"
-        },
-        "flagNames": {
-            "caption": {
-                "font": "fuente",
-                "noegg": "sinhuevo"
-            }
-        },
-        "flags": {
-            "caption": {
-                "font": "Elige qué fuente usar (por defecto: futura)",
-                "noegg": "Desactiva... algo. Pero no te diré qué."
-            },
-            "watermark": {
-                "9gag": "Añade la marca de agua de 9GAG a una imagen",
-                "avs4you": "Añade la marca de agua de avs4you a una imagen",
-                "bandicam": "Añade la marca de agua de Bandicam a una imagen",
-                "deviantart": "Añade una marca de agua de DeviantArt a una imagen",
-                "funky": "Añade el banner New Funky Mode (de Donkey Kong) a una imagen",
-                "hypercam": "Añade la marca de agua de Hypercam a una imagen"
-            },
-            "qr": {
-                "create": "Genera un código QR",
-                "read": "Lee un código QR"
-            }
-        },
-        "names": {
-            "bounce": "rebotar",
-            "caption": "encabezado",
-            "Select Image": "Seleccionar imágen"
-        },
-        "noImage": {
-            "bounce": "¡Necesitas subir una imágen o GIF para que rebote!",
-            "caption": "¡Necesitas subir una imágen o GIF para añadirle un encabezado!"
-        },
-        "noParam": {
-            "caption": "¡Necesitas incluir un texto para añadirlo como encabezado!"
-        }
+  "commands": {
+    "descriptions": {
+      "bounce": "Hace rebotar una imagen",
+      "caption": "Añade un encabezado a una imagen",
+      "8ball": "Le hace una pregunta a la bola 8 mágica",
+      "bird": "Obtiene una foto de un pájaro al azar",
+      "cat": "Obtiene una foto de un gato al azar",
+      "dice": "Tira el dado",
+      "dog": "Obtiene una foto de un perro al azar",
+      "homebrew": "Crea un edit del Homebrew Channel (Canal Homebrew) de la Nintendo Wii",
+      "avatar": "Obtiene el avatar (ícono) de un usuario",
+      "banner": "Obtiene el banner de un usuario",
+      "base64": "Codifica/decodifica una cadena de caracteres (frase) en Base64",
+      "channel": "Habilita/deshabilita comandos clásicos en un canal (use ajustes del servidor para comandos de barra)",
+      "command": "Habilita/deshabilita un comando clásico para un server (use ajustes del servidor para cmds de barra)",
+      "count": "Obtiene cuántas veces fue utilizado cada comando",
+      "donate": "Aprende más acerca de cómo puedes apoyar el desarrollo de Gabe",
+      "emote": "Obtiene la imagen cruda (completa) de un emote (emoji)",
+      "eval": "Ejecuta código de JavaScript",
+      "exec": "Ejecuta un comando de terminal (shell)",
+      "help": "Obtiene una lista de comandos",
+      "image": "Busca por imágenes a lo largo y ancho de la web",
+      "info": "Obtiene alguna información y créditos acerca de mí",
+      "lengthen": "Alarga una dirección URL corta",
+      "ping": "Pingea a los servidores de Discord",
+      "prefix": "Verifica/cambia el prefijo del servidor",
+      "raw": "Obtiene una dirección URL directa de una imagen (útil para guardar GIFs de sitios como Tenor)",
+      "reload": "Recarga un comando",
+      "restart": "Me reinicia",
+      "soundreload": "Intenta reconectar a todos los nodos de Lavalink disponibles",
+      "stats": "Obtiene algunas estadísticas acerca de mí",
+      "sticker": "Obtiene la imagen cruda (completa) de un sticker",
+      "youtube": "Busca en YouTube",
+      "blur": "Difumina una imagen",
+      "caption2": "Añade un epígrafe/lista de etiquetas a una imagen",
+      "circle": "Aplica un efecto de difuminado radial a una imagen",
+      "crop": "Recorta una imagen a 1:1",
+      "deepfry": "Fríe profundamente (deep-fries) una imagen",
+      "explode": "Explota una imagen",
+      "flag": "Sobrepone una bandera a una imagen",
+      "flip": "Da vuelta una imagen",
+      "flop": "Da vuelta una imagen",
+      "gamexplain": "Fabrica una miniatura de GameXplain con una imagen",
+      "gif": "Convierte una imagen en un GIF",
+      "globe": "Hace girar a una imagen",
+      "grayscale": "Añade un filtro de escala de grises",
+      "haah": "Espeja el lado izquierdo de una imagen hacia el derecho",
+      "hooh": "Espeja la mitad baja de una imagen hacia la mitad alta",
+      "imagestats": "Obtiene algunas estadísticas acerca de los servidores de imágenes",
+      "imagereload": "Intenta reconectar a todos los servidores de procesamiento de imágenes disponibles",
+      "snowflake": "Convierte una id de Snowflake de Discord a una marca horaria",
+      "freeze": "Hace que una secuencia de imágenes (GIF) se reproduzca solo una vez",
+      "sonic": "Crea una imagen de Sonic con una burbuja de texto",
+      "broadcast": "Transmite un mensaje en reproducción hasta que el comando se vuelva a ejecutar o el bot se reinicie",
+      "ship": "Find out how compatible two people are (Gabe's love calculator)"
     },
-    "error": "¡Ups! Encontré un error al correr ese comando. Por favor, envía el contenido del archivo adjunto en el siguiente link o en el servidor de soporte de Gabe:",
-    "image": {
-        "badurl": "¡Esa URL no es válida!",
-        "couldNotFind": "¡No encontré una imágen en ese mensaje!",
-        "empty": "¡El resultado está vacío!",
-        "flagNames": {
-            "ephemeral": "efímero",
-            "image": "imagen",
-            "text": "texto",
-            "togif": "agif"
-        },
-        "flags": {
-            "ephemeral": "Intenta enviar el resultado como una respuesta temporaria/efímera",
-            "image": "Una imágen o GIF adjunto",
-            "link": "Una URL de una imágen o GIF",
-            "spoiler": "Intenta enviar el resultado como un spoiler",
-            "text": "El texto que irá en la imágen",
-            "togif": "Forzar un GIF como resultado"
-        },
-        "frames": "¡Ese GIF tiene demasiados frames (más de 1000)!",
-        "jobEnded": "Sucedió algo en los servidores y no recibí la imágen. Intenta correr el comando de nuevo.",
-        "large": "¡Esa imágen es demasiado grande (>= 40MB)! Intenta subir una imágen más pequeña.",
-        "nocmd": "Ese comando no tiene soporte en esta instancia de Gabe.",
-        "noanim": "¡Eso no es un GIF!",
-        "noImage": "¡Necesitas subir una imágen o GIF!",
-        "noResult": "No recibí respuesta del servidor de imágenes. Por favor inténtalo de nuevo.",
-        "noServers": "No me pude conectar a los servidores de imágenes, puede que estén caídos o que se estén reiniciando. Por favor espera.",
-        "noTempServer": "La imágen que resultó del comando pesa más de 25MB, así que no la puedo subir.",
-        "noParam": "¡Necesitas incluir un texto!",
-        "processing": "Procesando... Puede que esto tarde",
-        "ratelimit": "El servidor en el que está subida tu imágen está bloqueándome temporariamente. Intenta subir tu imágen a otro lado.",
-        "selected": "Se he seleccionado la imágen para tu siguiente comando.",
-        "slowDown": "Por favor, ve más despacio.",
-        "tempImageSent": "¡Aquí está tu imágen!",
-        "tempSite": "La imágen que resultó del comando pesa más de 25MB, así que se subió a una página externa.",
-        "tenor": "Tenor está bloqueándome temporariamente. Intenta subir tu GIF a otro lado.",
-        "timeout": "Recuperar la imágen del servidor tardó demasiado. Por favor intenta de nuevo, sube tu imágen a otro lado, o usa otra imágen.",
-        "tip": "(Consejo: intenta hacer click derecho/mantener presionado un mensaje y presionar Apps -> Seleccionar imágen, e intentálo de nuevo.)",
-        "tooLarge": "El archivo que resultó es demasiado grande. Si es posible, intenta subir una imágen más pequeña.",
-        "tooLong": "La imágen tardó demasiado en ser procesada (>=10 minutes), así que se canceló el trabajo. Intenta subir una imágen más pequeña.",
-        "tryAgain": "Este trabajo de imágen no se pudo completar porque el servidor en el que corría se apagó. Intenta correr el comando de nuevo.",
-        "unknown": "La imágen que resultó no estaba en un formato reconocible. Por favor inténtalo de nuevo."
+    "flagNames": {
+      "caption": {
+        "font": "fuente",
+        "noegg": "sinhuevo"
+      },
+      "ship": {
+        "user1": "user1",
+        "user2": "user2"
+      }
     },
-    "permissions": {
-        "noAttachFiles": "¡No tengo el permiso `Adjuntar archivos` activado!"
+    "flags": {
+      "caption": {
+        "font": "Elige qué fuente usar (por defecto: futura)",
+        "noegg": "Desactiva... algo. Pero no te diré qué."
+      },
+      "watermark": {
+        "9gag": "Añade la marca de agua de 9GAG a una imagen",
+        "avs4you": "Añade la marca de agua de avs4you a una imagen",
+        "bandicam": "Añade la marca de agua de Bandicam a una imagen",
+        "deviantart": "Añade una marca de agua de DeviantArt a una imagen",
+        "funky": "Añade el banner New Funky Mode (de Donkey Kong) a una imagen",
+        "hypercam": "Añade la marca de agua de Hypercam a una imagen"
+      },
+      "qr": {
+        "create": "Genera un código QR",
+        "read": "Lee un código QR"
+      },
+      "ship": {
+        "user1": "The first person to ship (defaults to you or the first mention)",
+        "user2": "The second person to ship (defaults to the mentioned user)"
+      }
+    },
+    "names": {
+      "bounce": "rebotar",
+      "caption": "encabezado",
+      "Select Image": "Seleccionar imágen"
+    },
+    "noImage": {
+      "bounce": "¡Necesitas subir una imágen o GIF para que rebote!",
+      "caption": "¡Necesitas subir una imágen o GIF para añadirle un encabezado!"
+    },
+    "noParam": {
+      "caption": "¡Necesitas incluir un texto para añadirlo como encabezado!"
+    },
+    "responses": {
+      "ship": {
+        "fizzle": "Uh oh... the sparks aren't flying yet. Maybe just friends?",
+        "warm": "There's a decent vibe here! A little spark never hurt anyone.",
+        "glow": "These two are glowing together—this could get serious!",
+        "blaze": "Now that's chemistry! Gabe ships it hard!",
+        "destiny": "Soulmate alert! Gabe is already planning the wedding.",
+        "header": "💘 **Gabe's Compatibility Report**",
+        "pairLine": "{{first}} ❤ {{second}}",
+        "you": "You",
+        "compatibility": "**Compatibility:** {{percent}}%",
+        "shipName": "**Ship Name:** {{name}}",
+        "needsTwo": "❌ Gabe says: I need two people to ship! Try tagging them or using the flags."
+      }
     }
+  },
+  "error": "¡Ups! Encontré un error al correr ese comando. Por favor, envía el contenido del archivo adjunto en el siguiente link o en el servidor de soporte de Gabe:",
+  "image": {
+    "badurl": "¡Esa URL no es válida!",
+    "couldNotFind": "¡No encontré una imágen en ese mensaje!",
+    "empty": "¡El resultado está vacío!",
+    "flagNames": {
+      "ephemeral": "efímero",
+      "image": "imagen",
+      "text": "texto",
+      "togif": "agif"
+    },
+    "flags": {
+      "ephemeral": "Intenta enviar el resultado como una respuesta temporaria/efímera",
+      "image": "Una imágen o GIF adjunto",
+      "link": "Una URL de una imágen o GIF",
+      "spoiler": "Intenta enviar el resultado como un spoiler",
+      "text": "El texto que irá en la imágen",
+      "togif": "Forzar un GIF como resultado"
+    },
+    "frames": "¡Ese GIF tiene demasiados frames (más de 1000)!",
+    "jobEnded": "Sucedió algo en los servidores y no recibí la imágen. Intenta correr el comando de nuevo.",
+    "large": "¡Esa imágen es demasiado grande (>= 40MB)! Intenta subir una imágen más pequeña.",
+    "nocmd": "Ese comando no tiene soporte en esta instancia de Gabe.",
+    "noanim": "¡Eso no es un GIF!",
+    "noImage": "¡Necesitas subir una imágen o GIF!",
+    "noResult": "No recibí respuesta del servidor de imágenes. Por favor inténtalo de nuevo.",
+    "noServers": "No me pude conectar a los servidores de imágenes, puede que estén caídos o que se estén reiniciando. Por favor espera.",
+    "noTempServer": "La imágen que resultó del comando pesa más de 25MB, así que no la puedo subir.",
+    "noParam": "¡Necesitas incluir un texto!",
+    "processing": "Procesando... Puede que esto tarde",
+    "ratelimit": "El servidor en el que está subida tu imágen está bloqueándome temporariamente. Intenta subir tu imágen a otro lado.",
+    "selected": "Se he seleccionado la imágen para tu siguiente comando.",
+    "slowDown": "Por favor, ve más despacio.",
+    "tempImageSent": "¡Aquí está tu imágen!",
+    "tempSite": "La imágen que resultó del comando pesa más de 25MB, así que se subió a una página externa.",
+    "tenor": "Tenor está bloqueándome temporariamente. Intenta subir tu GIF a otro lado.",
+    "timeout": "Recuperar la imágen del servidor tardó demasiado. Por favor intenta de nuevo, sube tu imágen a otro lado, o usa otra imágen.",
+    "tip": "(Consejo: intenta hacer click derecho/mantener presionado un mensaje y presionar Apps -> Seleccionar imágen, e intentálo de nuevo.)",
+    "tooLarge": "El archivo que resultó es demasiado grande. Si es posible, intenta subir una imágen más pequeña.",
+    "tooLong": "La imágen tardó demasiado en ser procesada (>=10 minutes), así que se canceló el trabajo. Intenta subir una imágen más pequeña.",
+    "tryAgain": "Este trabajo de imágen no se pudo completar porque el servidor en el que corría se apagó. Intenta correr el comando de nuevo.",
+    "unknown": "La imágen que resultó no estaba en un formato reconocible. Por favor inténtalo de nuevo."
+  },
+  "permissions": {
+    "noAttachFiles": "¡No tengo el permiso `Adjuntar archivos` activado!"
+  }
 }

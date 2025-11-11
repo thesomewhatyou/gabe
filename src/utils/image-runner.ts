@@ -36,7 +36,7 @@ export default async function run(object: ImageParams): Promise<{ buffer: Buffer
       });
       clearTimeout(timeout);
       if (res.status === 429) throw "ratelimit";
-      
+
       // Check content length to prevent downloading excessively large files
       const contentLength = res.headers.get("content-length");
       if (contentLength) {
@@ -48,9 +48,9 @@ export default async function run(object: ImageParams): Promise<{ buffer: Buffer
           };
         }
       }
-      
+
       inputBuffer = await res.arrayBuffer();
-      
+
       // Double-check actual size after download
       if (inputBuffer.byteLength > MAX_IMAGE_SIZE) {
         return {
