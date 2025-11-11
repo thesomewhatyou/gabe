@@ -21,7 +21,13 @@
         "warm": "There's a decent vibe here! A little spark never hurt anyone.",
         "glow": "These two are glowing together—this could get serious!",
         "blaze": "Now that's chemistry! Gabe ships it hard!",
-        "destiny": "Soulmate alert! Gabe is already planning the wedding."
+        "destiny": "Soulmate alert! Gabe is already planning the wedding.",
+        "header": "💘 **Gabe's Compatibility Report**",
+        "pairLine": "{{first}} ❤ {{second}}",
+        "you": "You",
+        "compatibility": "**Compatibility:** {{percent}}%",
+        "shipName": "**Ship Name:** {{name}}",
+        "needsTwo": "❌ Gabe says: I need two people to ship! Try tagging them or using the flags."
       }
     }
   }

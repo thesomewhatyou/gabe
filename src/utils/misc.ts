@@ -2,7 +2,14 @@ import process from "node:process";
 import util from "node:util";
 
 import { type DotenvParseOutput, config } from "dotenv";
-import { ActivityTypes, type AnyChannel, type AnyPrivateChannel, type Client, type CommandInteraction, type Message } from "oceanic.js";
+import {
+  ActivityTypes,
+  type AnyChannel,
+  type AnyPrivateChannel,
+  type Client,
+  type CommandInteraction,
+  type Message,
+} from "oceanic.js";
 
 import commandsConfig from "#config/commands.json" with { type: "json" };
 import messagesConfig from "#config/messages.json" with { type: "json" };

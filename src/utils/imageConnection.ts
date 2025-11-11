@@ -77,13 +77,13 @@ class ImageConnection {
 
   onMessage(msg: Data) {
     if (!(msg instanceof Buffer)) return;
-    
+
     // Limit message size to prevent memory issues
     if (msg.byteLength > MAX_IMAGE_SIZE) {
       logger.error(`Received oversized message (${msg.byteLength} bytes) from image server ${this.host}`);
       return;
     }
-    
+
     const op = msg.readUint8(0);
     logger.debug(`Received message from image server ${this.host} with opcode ${op}`);
     if (op === Rinit) {
@@ -153,12 +153,12 @@ class ImageConnection {
   queue(jobid: bigint, jobobj: object): Promise<void> {
     logger.debug(`Queuing ${jobid} on image server ${this.host}`);
     const str = JSON.stringify(jobobj);
-    
+
     // Limit request size to prevent memory issues
     if (str.length > MAX_JOB_PARAMS_SIZE) {
       throw new Error(`Job object too large (>${MAX_JOB_PARAMS_SIZE / BYTES_TO_MB}MB)`);
     }
-    
+
     const buf = Buffer.alloc(8);
     buf.writeBigUint64LE(jobid);
     return this.do(Tqueue, jobid, Buffer.concat([buf, Buffer.from(str)]));
@@ -190,7 +190,7 @@ class ImageConnection {
           }
         : undefined,
     );
-    
+
     // Check content length to prevent downloading excessively large responses
     const contentLength = req.headers.get("content-length");
     if (contentLength) {
@@ -199,7 +199,7 @@ class ImageConnection {
         throw new Error(`Response too large (>${MAX_IMAGE_SIZE / BYTES_TO_MB}MB)`);
       }
     }
-    
+
     const contentType = req.headers.get("content-type");
     let type: string;
     switch (contentType) {
@@ -222,14 +222,14 @@ class ImageConnection {
         type = contentType ?? "unknown";
         break;
     }
-    
+
     const buffer = Buffer.from(await req.arrayBuffer());
-    
+
     // Double-check actual size after download
     if (buffer.byteLength > MAX_IMAGE_SIZE) {
       throw new Error(`Response too large (>${MAX_IMAGE_SIZE / BYTES_TO_MB}MB)`);
     }
-    
+
     return { buffer, type };
   }
 

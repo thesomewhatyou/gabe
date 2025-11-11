@@ -151,7 +151,7 @@ class ShipCommand extends Command {
     }
 
     if (!user1 || !user2) {
-      return "❌ Gabe says: I need two people to ship! Try tagging them or using the flags.";
+      return this.getString("commands.responses.ship.needsTwo");
     }
 
     const compatibility = ShipCommand.getCompatibilityScore(user1.id, user2.id);
@@ -165,20 +165,23 @@ class ShipCommand extends Command {
 
     const displayName1 = ShipCommand.getDisplayName(user1);
     const displayName2 = ShipCommand.getDisplayName(user2);
-    const shipName =
-      displayName1 && displayName2
-        ? ShipCommand.makePortmanteau(displayName1, displayName2)
-        : null;
+    const shipName = displayName1 && displayName2 ? ShipCommand.makePortmanteau(displayName1, displayName2) : null;
+
+    const you = this.getString("commands.responses.ship.you");
+    const participantsLine = this.getString("commands.responses.ship.pairLine", {
+      first: user1.id === this.author.id ? you : `<@${user1.id}>`,
+      second: user2.id === this.author.id ? you : `<@${user2.id}>`,
+    });
 
     const lines = [
-      "💘 **Gabe's Compatibility Report**",
-      `${user1.id === this.author.id ? "You" : `<@${user1.id}>`} ❤ ${user2.id === this.author.id ? "You" : `<@${user2.id}>`}`,
-      `**Compatibility:** ${compatibility}%`,
+      this.getString("commands.responses.ship.header"),
+      participantsLine,
+      this.getString("commands.responses.ship.compatibility", { percent: compatibility }),
       tierMessage,
     ];
 
     if (shipName) {
-      lines.push(`**Ship Name:** ${shipName}`);
+      lines.push(this.getString("commands.responses.ship.shipName", { name: shipName }));
     }
 
     return lines.join("\n");
