@@ -1,4 +1,4 @@
-import { Constants, Permission } from "oceanic.js";
+import { Constants, Permissions } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
 
 class TimeoutCommand extends Command {
@@ -10,22 +10,33 @@ class TimeoutCommand extends Command {
     const guild = this.guild;
     const member = this.member;
 
-    if (!member.permissions.has(Permission.MODERATE_MEMBERS) && this.author.id !== process.env.OWNER) {
+    if (!member.permissions.has(Permissions.MODERATE_MEMBERS) && this.author.id !== process.env.OWNER) {
       return "❌ Gabe says: You don't have permission to timeout members. Tough luck!";
     }
 
-    const user = this.options.user ?? this.args[0];
+    const user = this.getOptionUser("user", true) ?? this.args[0];
     if (!user) return "❌ Gabe says: Tell me who to timeout, will ya?";
 
-    const duration = this.options.duration ?? parseInt(this.args[1]) ?? 60;
+    const duration = this.getOptionInteger("duration") ?? parseInt(this.args[1]) ?? 60;
     if (duration < 1 || duration > 40320) {
       return "❌ Gabe says: Duration must be between 1 and 40320 minutes (28 days).";
     }
 
-    const reason = this.options.reason ?? this.args.slice(2).join(" ") ?? "Gabe's timeout";
+    const defaultReasons = ["Gabe has chosen", "Gabe has deemed this user unworthy"];
+    const reason =
+      this.getOptionString("reason") ??
+      this.args.slice(2).join(" ") ??
+      defaultReasons[Math.floor(Math.random() * defaultReasons.length)];
 
     try {
-      const userToTimeout = typeof user === "string" ? await this.client.rest.users.get(user).catch(() => null) : user;
+      let userId = user;
+      if (typeof user === "string") {
+        const mentionMatch = user.match(/^<@!?(\d+)>$/);
+        userId = mentionMatch ? mentionMatch[1] : user;
+      }
+
+      const userToTimeout =
+        typeof userId === "string" ? await this.client.rest.users.get(userId).catch(() => null) : userId;
 
       if (!userToTimeout) return "❌ Gabe says: Can't find that user. Are you sure they exist?";
 
@@ -33,13 +44,13 @@ class TimeoutCommand extends Command {
       if (!memberToTimeout) return "❌ Gabe says: That user isn't in this server.";
 
       const myMember = guild.members.get(this.client.user.id);
-      if (!myMember?.permissions.has(Permission.MODERATE_MEMBERS)) {
+      if (!myMember?.permissions.has(Permissions.MODERATE_MEMBERS)) {
         return "❌ Gabe says: I don't have permission to timeout members. Give me power!";
       }
 
       if (
-        memberToTimeout.permissions.has(Permission.ADMINISTRATOR) ||
-        memberToTimeout.permissions.has(Permission.MODERATE_MEMBERS)
+        memberToTimeout.permissions.has(Permissions.ADMINISTRATOR) ||
+        memberToTimeout.permissions.has(Permissions.MODERATE_MEMBERS)
       ) {
         return "❌ Gabe says: I'm not timing out a mod/admin. That's a bad idea.";
       }

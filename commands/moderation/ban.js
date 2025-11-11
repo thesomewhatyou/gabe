@@ -1,4 +1,4 @@
-import { Constants, Permission } from "oceanic.js";
+import { Constants, Permissions } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
 
 class BanCommand extends Command {
@@ -10,18 +10,29 @@ class BanCommand extends Command {
     const guild = this.guild;
     const member = this.member;
 
-    if (!member.permissions.has(Permission.BAN_MEMBERS) && this.author.id !== process.env.OWNER) {
+    if (!member.permissions.has(Permissions.BAN_MEMBERS) && this.author.id !== process.env.OWNER) {
       return "❌ Gabe says: You don't have permission to ban members. Nice try though!";
     }
 
     const user = this.options.user ?? this.args[0];
     if (!user) return "❌ Gabe says: You gotta tell me who to ban, genius.";
 
-    const reason = this.options.reason ?? this.args.slice(1).join(" ") ?? "Gabe's judgement";
+    const defaultReasons = ["Gabe has chosen", "Gabe has deemed this user unworthy"];
+    const reason =
+      this.options.reason ??
+      this.args.slice(1).join(" ") ??
+      defaultReasons[Math.floor(Math.random() * defaultReasons.length)];
     const days = this.options.days ?? 0;
 
     try {
-      const userToBan = typeof user === "string" ? await this.client.rest.users.get(user).catch(() => null) : user;
+      let userId = user;
+      if (typeof user === "string") {
+        const mentionMatch = user.match(/^<@!?(\d+)>$/);
+        userId = mentionMatch ? mentionMatch[1] : user;
+      }
+
+      const userToBan =
+        typeof userId === "string" ? await this.client.rest.users.get(userId).catch(() => null) : userId;
 
       if (!userToBan) return "❌ Gabe says: I can't find that user. Are they even real?";
 
@@ -29,13 +40,13 @@ class BanCommand extends Command {
 
       if (memberToBan) {
         const myMember = guild.members.get(this.client.user.id);
-        if (!myMember?.permissions.has(Permission.BAN_MEMBERS)) {
+        if (!myMember?.permissions.has(Permissions.BAN_MEMBERS)) {
           return "❌ Gabe says: I don't have permission to ban members. Give me more power!";
         }
 
         if (
-          memberToBan.permissions.has(Permission.ADMINISTRATOR) ||
-          memberToBan.permissions.has(Permission.BAN_MEMBERS)
+          memberToBan.permissions.has(Permissions.ADMINISTRATOR) ||
+          memberToBan.permissions.has(Permissions.BAN_MEMBERS)
         ) {
           return "❌ Gabe says: I'm not banning a mod/admin. That's above my pay grade.";
         }
