@@ -50,6 +50,8 @@ class QuoteMessageCommand extends Command {
       if (contentType.includes(";")) {
         contentType = contentType.split(";")[0];
       }
+      // Convert MIME type to file extension (e.g., "image/png" -> "png")
+      contentType = contentType.split("/")[1] ?? "png";
       const arrayBuffer = await avatarResponse.arrayBuffer();
       avatarBuffer = Buffer.from(arrayBuffer);
     } catch {
