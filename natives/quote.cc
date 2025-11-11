@@ -65,7 +65,7 @@ ArgumentMap Quote(const string &type, string &outType, const char *bufferdata, s
       ->set("rgba", true)
       ->set("font", "Ubuntu 58")
       ->set("fontfile", fontPath.c_str())
-      ->set("align", VIPS_ALIGN_LEFT)
+  ->set("align", VIPS_ALIGN_LOW)
       ->set("width", textWidth));
 
   VImage quoteImage = VImage::text(
@@ -74,7 +74,7 @@ ArgumentMap Quote(const string &type, string &outType, const char *bufferdata, s
       ->set("rgba", true)
       ->set("font", "Ubuntu 46")
       ->set("fontfile", fontPath.c_str())
-      ->set("align", VIPS_ALIGN_LEFT)
+  ->set("align", VIPS_ALIGN_LOW)
       ->set("wrap", VIPS_TEXT_WRAP_WORD)
       ->set("width", textWidth));
 
