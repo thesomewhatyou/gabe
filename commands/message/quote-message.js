@@ -94,6 +94,8 @@ class QuoteMessageCommand extends Command {
       id: this.interaction.id,
     };
 
+    logger.info({ cmd: imageParams.cmd, paramKeys: Object.keys(imageParams.params) }, "Quote command params");
+
     try {
       const { buffer, type } = await runImageJob(imageParams);
 

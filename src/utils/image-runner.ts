@@ -2,6 +2,7 @@ import { Buffer } from "node:buffer";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { img } from "./imageLib.ts";
+import logger from "./logger.ts";
 import type { ImageParams } from "./types.ts";
 
 // Maximum image size to prevent memory issues (40MB)
@@ -88,6 +89,27 @@ export default async function run(object: ImageParams): Promise<{ buffer: Buffer
       const view = rawData as ArrayBufferView;
       object.input.data = view.buffer.slice(view.byteOffset, view.byteOffset + view.byteLength) as ArrayBuffer;
     }
+  }
+
+  const dataLength = (() => {
+    if (!object.input?.data) return undefined;
+    const raw = object.input.data as ArrayBuffer | ArrayBufferView | Buffer;
+    if (raw instanceof ArrayBuffer) return raw.byteLength;
+    if (ArrayBuffer.isView(raw)) return raw.byteLength;
+    if (Buffer.isBuffer(raw)) return (raw as Buffer).length;
+    return undefined;
+  })();
+
+  logger.info(
+    { cmd: object.cmd, paramKeys: Object.keys(object.params), inputType: object.input?.type, dataLength },
+    "Image runner call",
+  );
+
+  if (dataLength === 0) {
+    return {
+      buffer: Buffer.alloc(0),
+      fileExtension: "empty",
+    };
   }
 
   const { data, type } = await img.image(object.cmd, object.params, object.input ?? {});
