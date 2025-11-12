@@ -128,6 +128,7 @@ class QuoteMessageCommand extends Command {
           stack: err.stack,
           type: imageParams.input?.type,
           bufferLength: avatarBuffer?.length,
+          detail: "detail" in err ? err.detail : undefined,
         },
         "Quote command image failure",
       );
