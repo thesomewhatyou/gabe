@@ -1,3 +1,4 @@
+import { fileTypeFromBuffer } from "file-type";
 import { Message } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
 import { runImageJob } from "#utils/image.js";
@@ -46,14 +47,21 @@ class QuoteMessageCommand extends Command {
       if (!avatarResponse.ok) {
         return this.getString("commands.responses.Quote Message.avatarError");
       }
-      contentType = avatarResponse.headers.get("content-type") ?? "image/png";
-      if (contentType.includes(";")) {
-        contentType = contentType.split(";")[0];
-      }
-      // Convert MIME type to file extension (e.g., "image/png" -> "png")
-      contentType = contentType.split("/")[1] ?? "png";
       const arrayBuffer = await avatarResponse.arrayBuffer();
       avatarBuffer = Buffer.from(arrayBuffer);
+
+      const detectedType = await fileTypeFromBuffer(avatarBuffer);
+      if (detectedType?.ext) {
+        contentType = detectedType.ext;
+      } else {
+        contentType = avatarResponse.headers.get("content-type") ?? "image/png";
+        if (contentType.includes(";")) {
+          contentType = contentType.split(";")[0];
+        }
+        contentType = contentType.toLowerCase();
+        const mimeExtension = contentType.split("/")[1]?.split("+")[0];
+        contentType = mimeExtension ?? "png";
+      }
     } catch {
       return this.getString("commands.responses.Quote Message.avatarError");
     }
