@@ -70,6 +70,8 @@ class QuoteMessageCommand extends Command {
 
     const decoratedQuote = `“${text}”`;
 
+    logger.debug({ text: decoratedQuote, username: displayName }, "Quote command payload");
+
     const imageParams = {
       cmd: "quote",
       params: {
