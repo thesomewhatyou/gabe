@@ -3,7 +3,7 @@ import { Message } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
 import { runImageJob } from "#utils/image.js";
 import logger from "#utils/logger.js";
-import { clean, cleanMessage, textEncode } from "#utils/misc.js";
+import { clean, cleanMessage } from "#utils/misc.js";
 
 const MAX_QUOTE_LENGTH = 480;
 const MAX_NAME_LENGTH = 64;
@@ -84,8 +84,8 @@ class QuoteMessageCommand extends Command {
     const imageParams = {
       cmd: "quote",
       params: {
-        text: textEncode(decoratedQuote),
-        username: textEncode(displayName),
+        text: decoratedQuote.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+        username: displayName.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
       },
       input: {
         data: avatarBuffer,
