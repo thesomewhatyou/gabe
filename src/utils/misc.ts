@@ -62,8 +62,6 @@ export function textEncode(string: string) {
     .replaceAll("&", "&amp;")
     .replaceAll(">", "&gt;")
     .replaceAll("<", "&lt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&apos;")
     .replaceAll("\\n", "\n")
     .replaceAll("\\:", ":")
     .replaceAll("\\,", ",");
