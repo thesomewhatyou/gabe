@@ -50,17 +50,15 @@ class QuoteMessageCommand extends Command {
       const arrayBuffer = await avatarResponse.arrayBuffer();
       avatarBuffer = Buffer.from(arrayBuffer);
 
+      contentType = avatarResponse.headers.get("content-type") ?? "image/png";
+      if (contentType.includes(";")) {
+        contentType = contentType.split(";")[0];
+      }
+      contentType = contentType.toLowerCase();
+
       const detectedType = await fileTypeFromBuffer(avatarBuffer);
-      if (detectedType?.ext) {
-        contentType = detectedType.ext;
-      } else {
-        contentType = avatarResponse.headers.get("content-type") ?? "image/png";
-        if (contentType.includes(";")) {
-          contentType = contentType.split(";")[0];
-        }
-        contentType = contentType.toLowerCase();
-        const mimeExtension = contentType.split("/")[1]?.split("+")[0];
-        contentType = mimeExtension ?? "png";
+      if (detectedType?.mime) {
+        contentType = detectedType.mime;
       }
     } catch {
       return this.getString("commands.responses.Quote Message.avatarError");
