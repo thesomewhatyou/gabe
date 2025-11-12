@@ -27,10 +27,11 @@ void ImageAsyncWorker::OnError(const Error &e) {
     deferred.Reject(Napi::Error::New(Env(), "image_job_killed").Value());
   } else {
     Napi::Error err = Napi::Error::New(Env(), e.Message());
+    Napi::Object errObj = err.Value();
     if (!detail.empty()) {
-      err.Value().As<Napi::Object>().Set("detail", detail);
+      errObj.Set("detail", Napi::String::New(Env(), detail));
     }
-    deferred.Reject(err.Value());
+    deferred.Reject(errObj);
   }
 }
 

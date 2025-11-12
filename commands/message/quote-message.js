@@ -79,7 +79,7 @@ class QuoteMessageCommand extends Command {
 
     const decoratedQuote = `“${text}”`;
 
-    logger.debug({ text: decoratedQuote, username: displayName }, "Quote command payload");
+    logger.info({ text: decoratedQuote, username: displayName }, "Quote command payload");
 
     const imageParams = {
       cmd: "quote",
@@ -129,6 +129,7 @@ class QuoteMessageCommand extends Command {
           type: imageParams.input?.type,
           bufferLength: avatarBuffer?.length,
           detail: "detail" in err ? err.detail : undefined,
+          props: err ? Object.getOwnPropertyNames(err) : [],
         },
         "Quote command image failure",
       );
