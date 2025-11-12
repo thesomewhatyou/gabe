@@ -122,7 +122,13 @@ class QuoteMessageCommand extends Command {
     } catch (error) {
       const err = error instanceof Error ? error : new Error(String(error));
       logger.error(
-        { err, type: imageParams.input?.type, bufferLength: avatarBuffer?.length },
+        {
+          err,
+          message: err.message,
+          stack: err.stack,
+          type: imageParams.input?.type,
+          bufferLength: avatarBuffer?.length,
+        },
         "Quote command image failure",
       );
       const message = err.toString();
