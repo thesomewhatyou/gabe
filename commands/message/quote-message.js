@@ -2,6 +2,7 @@ import { fileTypeFromBuffer } from "file-type";
 import { Message } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
 import { runImageJob } from "#utils/image.js";
+import logger from "#utils/logger.js";
 import { clean, cleanMessage, textEncode } from "#utils/misc.js";
 
 const MAX_QUOTE_LENGTH = 480;
@@ -37,8 +38,7 @@ class QuoteMessageCommand extends Command {
     if (displayName.length > MAX_NAME_LENGTH) {
       displayName = `${displayName.slice(0, MAX_NAME_LENGTH - 1).trimEnd()}…`;
     }
-
-    const avatarURL = targetMessage.author.avatarURL(undefined, 512);
+    const avatarURL = targetMessage.author.avatarURL("png", 512);
     let avatarBuffer;
     let contentType;
 
@@ -50,7 +50,11 @@ class QuoteMessageCommand extends Command {
       const arrayBuffer = await avatarResponse.arrayBuffer();
       avatarBuffer = Buffer.from(arrayBuffer);
 
-      contentType = avatarResponse.headers.get("content-type") ?? "image/png";
+      contentType = "image/png";
+      const headerType = avatarResponse.headers.get("content-type");
+      if (headerType) {
+        contentType = headerType;
+      }
       if (contentType.includes(";")) {
         contentType = contentType.split(";")[0];
       }
@@ -106,6 +110,10 @@ class QuoteMessageCommand extends Command {
       };
     } catch (error) {
       const err = error instanceof Error ? error : new Error(String(error));
+      logger.error(
+        { err, type: imageParams.input?.type, bufferLength: avatarBuffer?.length },
+        "Quote command image failure",
+      );
       const message = err.toString();
       if (message.includes("image_not_working")) return this.getString("image.notWorking");
       if (message.includes("Request ended prematurely due to a closed connection"))
