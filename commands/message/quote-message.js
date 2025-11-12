@@ -86,7 +86,6 @@ class QuoteMessageCommand extends Command {
       params: {
         text: decoratedQuote.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
         username: displayName.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-        basePath: "/app/",
       },
       input: {
         data: avatarBuffer,
