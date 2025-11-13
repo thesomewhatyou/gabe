@@ -8,7 +8,7 @@
 - **Moderation Tools** - Ban, kick, timeout, and ENTER THE PURGE
 - **Music Playback** - Just chill with [Lavalink](https://github.com/lavalink-devs/Lavalink) (It's gonna be a thing you host seperately, though).                
 - **Server Tags** - Save and retrieve your favorite stuff
-- **Performance** - Low RAM and CPU utilization (**gabe** takes naps). If it looks low, that's normal.  <img src="./docs/assets/me.jpg?raw=true" align="right" width="128" height="128">
+- **Performance** - Low RAM and CPU utilization (**gabe** takes naps). If it looks low, that's normal.  <img src="https://github.com/thesomewhatyou/gabe/blob/5c064c85e67e56ef64d805c6a33f3d125f2d9492/images/favicon.png" align="right" width="128" height="128">
 - **Dual Command Support** - Slash commands AND prefix-based commands (& by default)
 - **Database Flexibility** - PostgreSQL and SQLite support (SQLite is preferred, but Postgre works)
 - **Easy to Extend** - Add new commands by just dropping in script files
@@ -16,14 +16,10 @@
 
 ## Usage
 
-**New to gabe?** Check out the [Commands Documentation](docs/commands.md) for a full guide to moderation and fun commands!
+**New to gabe?** Check out the [Commands Documentation](https://thesomewhatyou.me/gabe/docs/commands) for a full guide to moderation and fun commands!
 
 ## Documentation
 
-- **[Commands Guide](docs/commands.md)** - Complete documentation for all **gabe**'s commands
-- **[Setup Guide](docs/setup.md)** - How to self-host **gabe**
-- **[Custom Commands](docs/custom-commands.md)** - Create your own commands
-- **[Configuration](docs/config.md)** - Configure **gabe**'s settings
 - **[Everything](https://thesomewhatyou.me/gabe)** - Everything in one go
 
 
@@ -33,7 +29,7 @@
 
 ## Set up gabe
 
-If you want to setup **gabe**, a guide can be found in the [Setup Guide](docs/setup.md). A Docker container via GitHub Container Registry is also available. It is both an x86_64 container AND an ARM container. I mostly did this for the Raspberry Pi hosting freaks, but also because it's cheaper to host an ARM instance than an x86_64 instance.
+If you want to setup **gabe**, a guide can be found in the [Setup Guide](https://thesomewhatyou.me/gabe/docs/setup). A Docker container via GitHub Container Registry is also available. It is both an x86_64 container AND an ARM container. I mostly did this for the Raspberry Pi hosting freaks, but also because it's cheaper to host an ARM instance than an x86_64 instance.
 
 ## Let's Check Dis Out!
 
