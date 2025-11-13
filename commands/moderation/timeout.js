@@ -1,4 +1,4 @@
-import { Constants, Permission } from "oceanic.js";
+import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
 
 class TimeoutCommand extends Command {
@@ -10,7 +10,7 @@ class TimeoutCommand extends Command {
     const guild = this.guild;
     const member = this.member;
 
-    if (!member.permissions.has(Permission.MODERATE_MEMBERS) && this.author.id !== process.env.OWNER) {
+    if (!member.permissions.has(Constants.Permissions.MODERATE_MEMBERS) && this.author.id !== process.env.OWNER) {
       return "❌ Gabe says: You don't have permission to timeout members. Tough luck!";
     }
 
@@ -33,13 +33,13 @@ class TimeoutCommand extends Command {
       if (!memberToTimeout) return "❌ Gabe says: That user isn't in this server.";
 
       const myMember = guild.members.get(this.client.user.id);
-      if (!myMember?.permissions.has(Permission.MODERATE_MEMBERS)) {
+      if (!myMember?.permissions.has(Constants.Permissions.MODERATE_MEMBERS)) {
         return "❌ Gabe says: I don't have permission to timeout members. Give me power!";
       }
 
       if (
-        memberToTimeout.permissions.has(Permission.ADMINISTRATOR) ||
-        memberToTimeout.permissions.has(Permission.MODERATE_MEMBERS)
+        memberToTimeout.permissions.has(Constants.Permissions.ADMINISTRATOR) ||
+        memberToTimeout.permissions.has(Constants.Permissions.MODERATE_MEMBERS)
       ) {
         return "❌ Gabe says: I'm not timing out a mod/admin. That's a bad idea.";
       }

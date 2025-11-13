@@ -1,4 +1,4 @@
-import { Constants, Permission } from "oceanic.js";
+import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
 
 class BanCommand extends Command {
@@ -10,7 +10,7 @@ class BanCommand extends Command {
     const guild = this.guild;
     const member = this.member;
 
-    if (!member.permissions.has(Permission.BAN_MEMBERS) && this.author.id !== process.env.OWNER) {
+    if (!member.permissions.has(Constants.Permissions.BAN_MEMBERS) && this.author.id !== process.env.OWNER) {
       return "❌ Gabe says: You don't have permission to ban members. Nice try though!";
     }
 
@@ -29,13 +29,13 @@ class BanCommand extends Command {
 
       if (memberToBan) {
         const myMember = guild.members.get(this.client.user.id);
-        if (!myMember?.permissions.has(Permission.BAN_MEMBERS)) {
+        if (!myMember?.permissions.has(Constants.Permissions.BAN_MEMBERS)) {
           return "❌ Gabe says: I don't have permission to ban members. Give me more power!";
         }
 
         if (
-          memberToBan.permissions.has(Permission.ADMINISTRATOR) ||
-          memberToBan.permissions.has(Permission.BAN_MEMBERS)
+          memberToBan.permissions.has(Constants.Permissions.ADMINISTRATOR) ||
+          memberToBan.permissions.has(Constants.Permissions.BAN_MEMBERS)
         ) {
           return "❌ Gabe says: I'm not banning a mod/admin. That's above my pay grade.";
         }

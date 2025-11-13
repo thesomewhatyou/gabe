@@ -1,4 +1,4 @@
-import { Constants, Permission } from "oceanic.js";
+import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
 
 class KickCommand extends Command {
@@ -10,7 +10,7 @@ class KickCommand extends Command {
     const guild = this.guild;
     const member = this.member;
 
-    if (!member.permissions.has(Permission.KICK_MEMBERS) && this.author.id !== process.env.OWNER) {
+    if (!member.permissions.has(Constants.Permissions.KICK_MEMBERS) && this.author.id !== process.env.OWNER) {
       return "❌ Gabe says: You don't have permission to kick members. Maybe ask nicely?";
     }
 
@@ -28,13 +28,13 @@ class KickCommand extends Command {
       if (!memberToKick) return "❌ Gabe says: That user isn't in this server.";
 
       const myMember = guild.members.get(this.client.user.id);
-      if (!myMember?.permissions.has(Permission.KICK_MEMBERS)) {
+      if (!myMember?.permissions.has(Constants.Permissions.KICK_MEMBERS)) {
         return "❌ Gabe says: I don't have permission to kick members. Fix that!";
       }
 
       if (
-        memberToKick.permissions.has(Permission.ADMINISTRATOR) ||
-        memberToKick.permissions.has(Permission.KICK_MEMBERS)
+        memberToKick.permissions.has(Constants.Permissions.ADMINISTRATOR) ||
+        memberToKick.permissions.has(Constants.Permissions.KICK_MEMBERS)
       ) {
         return "❌ Gabe says: I'm not kicking a mod/admin. That's risky business.";
       }

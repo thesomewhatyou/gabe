@@ -1,4 +1,4 @@
-import { Constants, Permission } from "oceanic.js";
+import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
 
 class PurgeCommand extends Command {
@@ -10,18 +10,25 @@ class PurgeCommand extends Command {
 
     const member = this.member;
 
-    if (!member.permissions.has(Permission.MANAGE_MESSAGES) && this.author.id !== process.env.OWNER) {
+    if (
+      !member.permissions.has(Constants.Permissions.MANAGE_MESSAGES) &&
+      this.author.id !== process.env.OWNER
+    ) {
       return "❌ Gabe says: You don't have permission to manage messages. Back off!";
     }
 
-    const amount = this.options.amount ?? parseInt(this.args[0]) ?? 10;
+    const parseValidNumber = (value) =>
+      typeof value === "number" && Number.isFinite(value) ? value : undefined;
+    const optionAmount = parseValidNumber(this.getOptionInteger("amount"));
+    const positionalAmount = parseValidNumber(Number.parseInt(this.args[0], 10));
+    const amount = optionAmount ?? positionalAmount ?? 10;
     if (amount < 1 || amount > 100) {
       return "❌ Gabe says: I can only purge between 1 and 100 messages at a time.";
     }
 
     try {
       const myMember = this.guild.members.get(this.client.user.id);
-      if (!myMember?.permissions.has(Permission.MANAGE_MESSAGES)) {
+      if (!myMember?.permissions.has(Constants.Permissions.MANAGE_MESSAGES)) {
         return "❌ Gabe says: I don't have permission to manage messages. Give me power!";
       }
 
