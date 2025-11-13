@@ -14,10 +14,10 @@ class KickCommand extends Command {
       return "❌ Gabe says: You don't have permission to kick members. Maybe ask nicely?";
     }
 
-    const user = this.options.user ?? this.args[0];
+    const user = this.options?.user ?? this.getOptionUser("user") ?? this.args[0];
     if (!user) return "❌ Gabe says: Who am I supposed to kick? Tell me!";
 
-    const reason = this.options.reason ?? this.args.slice(1).join(" ") ?? "Gabe's decision";
+    const reason = this.options?.reason ?? this.getOptionString("reason") ?? this.args.slice(1).join(" ") ?? "Gabe's decision";
 
     try {
       const userToKick = typeof user === "string" ? await this.client.rest.users.get(user).catch(() => null) : user;

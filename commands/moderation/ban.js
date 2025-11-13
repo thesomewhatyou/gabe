@@ -14,11 +14,11 @@ class BanCommand extends Command {
       return "❌ Gabe says: You don't have permission to ban members. Nice try though!";
     }
 
-    const user = this.options.user ?? this.args[0];
+    const user = this.options?.user ?? this.getOptionUser("user") ?? this.args[0];
     if (!user) return "❌ Gabe says: You gotta tell me who to ban, genius.";
 
-    const reason = this.options.reason ?? this.args.slice(1).join(" ") ?? "Gabe's judgement";
-    const days = this.options.days ?? 0;
+    const reason = this.options?.reason ?? this.getOptionString("reason") ?? this.args.slice(1).join(" ") ?? "Gabe's judgement";
+    const days = this.options?.days ?? this.getOptionInteger("days") ?? 0;
 
     try {
       const userToBan = typeof user === "string" ? await this.client.rest.users.get(user).catch(() => null) : user;

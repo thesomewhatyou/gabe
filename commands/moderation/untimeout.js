@@ -14,10 +14,11 @@ class UntimeoutCommand extends Command {
       return "❌ Gabe says: You don't have permission to remove timeouts. Sorry!";
     }
 
-    const user = this.options.user ?? this.args[0];
+    const user = this.options?.user ?? this.getOptionUser("user") ?? this.args[0];
     if (!user) return "❌ Gabe says: Who am I supposed to untimeout? Tell me!";
 
-    const reason = this.options.reason ?? this.args.slice(1).join(" ") ?? "Gabe's mercy";
+    const reason =
+      this.options?.reason ?? this.getOptionString("reason") ?? this.args.slice(1).join(" ") ?? "Gabe's mercy";
 
     try {
       const userToUntimeout =

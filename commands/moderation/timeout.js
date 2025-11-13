@@ -14,15 +14,21 @@ class TimeoutCommand extends Command {
       return "❌ Gabe says: You don't have permission to timeout members. Tough luck!";
     }
 
-    const user = this.options.user ?? this.args[0];
+    const user = this.options?.user ?? this.getOptionUser("user") ?? this.args[0];
     if (!user) return "❌ Gabe says: Tell me who to timeout, will ya?";
 
-    const duration = this.options.duration ?? parseInt(this.args[1]) ?? 60;
+    const parsedDurationArg = parseInt(this.args[1], 10);
+    const duration =
+      this.options?.duration ??
+      this.getOptionInteger("duration") ??
+      (Number.isNaN(parsedDurationArg) ? undefined : parsedDurationArg) ??
+      60;
     if (duration < 1 || duration > 40320) {
       return "❌ Gabe says: Duration must be between 1 and 40320 minutes (28 days).";
     }
 
-    const reason = this.options.reason ?? this.args.slice(2).join(" ") ?? "Gabe's timeout";
+    const reason =
+      this.options?.reason ?? this.getOptionString("reason") ?? this.args.slice(2).join(" ") ?? "Gabe's timeout";
 
     try {
       const userToTimeout = typeof user === "string" ? await this.client.rest.users.get(user).catch(() => null) : user;
