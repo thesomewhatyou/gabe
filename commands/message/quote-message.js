@@ -3,7 +3,7 @@ import { Message } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
 import { runImageJob } from "#utils/image.js";
 import logger from "#utils/logger.js";
-import { clean, cleanMessage } from "#utils/misc.js";
+import { clean, cleanMessage, textEncode } from "#utils/misc.js";
 
 const MAX_QUOTE_LENGTH = 480;
 const MAX_NAME_LENGTH = 64;
@@ -21,7 +21,8 @@ class QuoteMessageCommand extends Command {
 
     if (!text) {
       const firstEmbed = targetMessage.embeds.find((embed) => embed.description?.trim() || embed.title?.trim());
-      text = firstEmbed?.description?.trim() ?? firstEmbed?.title?.trim() ?? "";
+      const embedText = firstEmbed?.description?.trim() ?? firstEmbed?.title?.trim() ?? "";
+      text = embedText ? textEncode(embedText) : "";
     }
 
     if (!text) {
@@ -78,14 +79,15 @@ class QuoteMessageCommand extends Command {
     }
 
     const decoratedQuote = `“${text}”`;
+    const sanitizedDisplayName = textEncode(displayName);
 
     logger.info({ text: decoratedQuote, username: displayName }, "Quote command payload");
 
     const imageParams = {
       cmd: "quote",
       params: {
-        text: decoratedQuote.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-        username: displayName.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+        text: decoratedQuote,
+        username: sanitizedDisplayName,
       },
       input: {
         data: avatarBuffer,
