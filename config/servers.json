@@ -3,3 +3,5 @@
   "image": [{ "name": "localhost", "server": "localhost", "auth": "verycoolpass100", "tls": false }],
   "searx": ["https://searx.projectlounge.pw"]
 }
+
+
