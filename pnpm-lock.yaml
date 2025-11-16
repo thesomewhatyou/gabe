@@ -41,8 +41,8 @@ importers:
         specifier: ^8.5.0
         version: 8.5.0
       oceanic.js:
-        specifier: 1.12.0
-        version: 1.12.0(bufferutil@4.0.9)
+        specifier: 1.13.0
+        version: 1.13.0(bufferutil@4.0.9)
       postgres:
         specifier: ^3.4.7
         version: 3.4.7
@@ -995,8 +995,8 @@ packages:
     resolution: {integrity: sha512-b9ecqKEfWrNcyzx5+1nmcfi80fPp8dVM8rlAh7fFK14PZbNjp++gRjyZTZfLJQa/Lw0qeCJho7WBIl0nw0v6HA==}
     engines: {node: '>=0.2.0'}
 
-  csstype@3.1.3:
-    resolution: {integrity: sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==}
+  csstype@3.2.2:
+    resolution: {integrity: sha512-D80T+tiqkd/8B0xNlbstWDG4x6aqVfO52+OlSUNIdkTvmNw0uQpJLeos2J/2XvpyidAFuTPmpad+tUxLndwj6g==}
 
   culvert@0.1.2:
     resolution: {integrity: sha512-yi1x3EAWKjQTreYWeSd98431AV+IEE0qoDyOoaHJ7KJ21gv6HtBXHVLX74opVSGqcR8/AbjJBHAHpcOy2bj5Gg==}
@@ -1748,8 +1748,8 @@ packages:
     resolution: {integrity: sha512-W67iLl4J2EXEGTbfeHCffrjDfitvLANg0UlX3wFUUSTx92KXRFegMHUVgSqE+wvhAbi4WqjGg9czysTV2Epbew==}
     engines: {node: '>= 0.4'}
 
-  oceanic.js@1.12.0:
-    resolution: {integrity: sha512-e3h5ptwBfbX4/gDz13UFiIfAFsaZrXDwJbfTdV7YEKdQG6d0A6of2KGzkBbqXrVC5wmM/7TWAYeh2fe9zuxGYA==}
+  oceanic.js@1.13.0:
+    resolution: {integrity: sha512-WXE8KhAZI9Fv/OsD+mEYMnRq363XfDHlPLiYe52SF+ND7+HyUxYuhBxDhPx2DqXUuC7fiB4ocxiMZGvlvHLVCQ==}
     engines: {node: '>=18.13.0'}
 
   once@1.4.0:
@@ -2998,7 +2998,7 @@ snapshots:
 
   '@types/react@19.1.8':
     dependencies:
-      csstype: 3.1.3
+      csstype: 3.2.2
 
   '@types/shimmer@1.2.0':
     optional: true
@@ -3457,7 +3457,7 @@ snapshots:
 
   cssom@0.2.5: {}
 
-  csstype@3.1.3: {}
+  csstype@3.2.2: {}
 
   culvert@0.1.2:
     optional: true
@@ -4173,7 +4173,7 @@ snapshots:
 
   object-inspect@1.13.4: {}
 
-  oceanic.js@1.12.0(bufferutil@4.0.9):
+  oceanic.js@1.13.0(bufferutil@4.0.9):
     dependencies:
       tslib: 2.8.1
       ws: 8.18.3(bufferutil@4.0.9)

@@ -54,7 +54,7 @@
     "format-duration": "^3.0.2",
     "ipaddr.js": "^2.2.0",
     "node-addon-api": "^8.5.0",
-    "oceanic.js": "1.12.0",
+    "oceanic.js": "1.13.0",
     "postgres": "^3.4.7",
     "shoukaku": "^4.2.0",
     "winston": "^3.18.3",
