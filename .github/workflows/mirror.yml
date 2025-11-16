@@ -1,5 +1,7 @@
 # Sync repo to the Codeberg mirror
 name: Repo sync (GitHub -> Codeberg)
+permissions:
+  contents: read
 on:
   push:
     branches:
