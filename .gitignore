@@ -145,6 +145,7 @@ dist/
 
 # macOS temp dirs
 **/.DS_Store
+# Why god, why? 
 
 # GitHub workflows, templates, etc
 **/.github
