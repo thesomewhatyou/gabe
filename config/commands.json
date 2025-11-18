@@ -18,6 +18,20 @@
     "reload",
     "imagereload",
     "soundreload",
-    "exec"
+    "exec",
+    "gamexplain",
+    "globe",
+    "reddit",
+    "scott",
+    "snapchat",
+    "spotify",
+    "squish",
+    "swirl",
+    "tile",
+    "uncanny",
+    "uncaption",
+    "wall",
+    "watermark",
+    "whisper"
   ]
 }
