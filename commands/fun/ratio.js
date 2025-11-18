@@ -91,7 +91,7 @@ Target: ${subject}
 Result: ${message}
 📊 Ratio Power: ${ratioPower}/100
 
-*WOW. You failed yourself. https://c.tenor.com/5lGj7oewq4EAAAAd/tenor.gif`;
+*WOW. [You failed yourself.](https://c.tenor.com/5lGj7oewq4EAAAAd/tenor.gif)*`;
       // Pathetic. How do you even manage that?
     }
 
