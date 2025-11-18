@@ -27,6 +27,7 @@ export interface CommandsConfig {
     application: boolean;
   };
   blacklist: string[];
+  guildCommands?: string[];
 }
 
 type ValueOrNested<T> = T | { [x: string]: ValueOrNested<T> };
@@ -58,6 +59,7 @@ export interface CommandInfo {
   userAllowed: boolean;
   baseCommand: boolean;
   adminOnly: boolean;
+  guildCommand: boolean;
   type: Constants.ApplicationCommandTypes;
 }
 

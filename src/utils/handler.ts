@@ -21,6 +21,7 @@ const basePath = dirname(fileURLToPath(import.meta.url));
 const cmdPath = resolve(basePath, "..", "..", "commands");
 
 const blacklist = (commandConfig as CommandsConfig).blacklist;
+const guildCommandSet = new Set((commandConfig as CommandsConfig).guildCommands ?? []);
 
 /**
  * Load a command into memory.
@@ -95,6 +96,8 @@ export async function load(
 
   const extendedFlags = extendFlags(props.flags, fullCommandName);
 
+  const isGuildCommand = !subcommand && guildCommandSet.has(commandName);
+
   const commandInfo: CommandInfo = {
     category: category,
     description: props.description,
@@ -106,6 +109,7 @@ export async function load(
     userAllowed: props.userAllowed,
     baseCommand: false,
     adminOnly: props.adminOnly,
+    guildCommand: isGuildCommand,
     type: Constants.ApplicationCommandTypes.CHAT_INPUT,
   };
 
@@ -240,7 +244,7 @@ export function update() {
       cmdInfo?.type === Constants.ApplicationCommandTypes.MESSAGE ||
       cmdInfo?.type === Constants.ApplicationCommandTypes.USER
     ) {
-      (cmdInfo.adminOnly ? privateCommandArray : commandArray).push({
+      (cmdInfo.adminOnly || cmdInfo.guildCommand ? privateCommandArray : commandArray).push({
         name: name,
         nameLocalizations: getAllLocalizations(`commands.names.${name}`),
         type: cmdInfo.type,
@@ -248,7 +252,7 @@ export function update() {
         contexts: [0, cmdInfo.directAllowed ? 1 : null, 2].filter((v) => v !== null),
       });
     } else if (cmdInfo?.slashAllowed) {
-      (cmdInfo.adminOnly ? privateCommandArray : commandArray).push({
+      (cmdInfo.adminOnly || cmdInfo.guildCommand ? privateCommandArray : commandArray).push({
         name,
         nameLocalizations: getAllLocalizations(`commands.names.${name}`),
         type: cmdInfo.type.valueOf(),

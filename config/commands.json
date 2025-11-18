@@ -3,5 +3,21 @@
     "classic": true,
     "application": true
   },
-  "blacklist": []
+  "blacklist": [],
+  "guildCommands": [
+    "command",
+    "channel",
+    "ban",
+    "kick",
+    "timeout",
+    "untimeout",
+    "purge",
+    "music",
+    "tags",
+    "broadcast",
+    "reload",
+    "imagereload",
+    "soundreload",
+    "exec"
+  ]
 }
