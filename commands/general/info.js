@@ -70,7 +70,7 @@ class InfoCommand extends Command {
 
     const resourcesLines = [
       `**${this.getString("commands.responses.info.officialServer")}** ${this.getString("commands.responses.info.noOfficialServer")}`,
-      `**${this.getString("commands.responses.info.sourceCode")}** [${this.getString("commands.responses.info.clickHere")}](https://github.com/gabrielpiss/gabe)`,
+      `**${this.getString("commands.responses.info.sourceCode")}** [${this.getString("commands.responses.info.clickHere")}](https://github.com/thesomewhatyou/gabe)`,
       `**${this.getString("commands.responses.info.translate")}** ${this.getString("commands.responses.info.noTranslations")}`,
       `**${this.getString("commands.responses.info.privacyPolicy")}** ${this.getString("commands.responses.info.seePrivacyMd")}`,
       `**${this.getString("commands.responses.info.mastodonLabel")}** ${this.getString("commands.responses.info.noSocials")}`,

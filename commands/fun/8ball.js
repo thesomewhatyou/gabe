@@ -40,7 +40,7 @@ class EightBallCommand extends Command {
   ];
 
   static description = "Asks Gabe's magic 8-ball a question (Gabe knows all... maybe)";
-  static aliases = ["magicball", "magikball", "magic8ball", "magik8ball", "eightball", "askgabe"];
+  static aliases = ["magicball", "magikball", "magic8ball", "magik8ball", "eightball", "askgabe", "decidemyfate"];
 }
 
 export default EightBallCommand;
