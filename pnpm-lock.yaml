@@ -130,8 +130,8 @@ importers:
         specifier: ^10.25.0
         version: 10.25.0
       '@sentry/deno':
-        specifier: ^10.25.0
-        version: 10.25.0
+        specifier: ^10.26.0
+        version: 10.26.0
       '@sentry/node':
         specifier: ^10.25.0
         version: 10.25.0
@@ -522,8 +522,12 @@ packages:
     resolution: {integrity: sha512-mGi4BYIPwZjWdOXHrPoXz1AW4/cQbFoiuW/m+OOATmtSoGTDnWYwP+qZU7VLlL+v8ZEzxfPi2C1NPfJtPj7QWA==}
     engines: {node: '>=18'}
 
-  '@sentry/deno@10.25.0':
-    resolution: {integrity: sha512-58J6x18PzaE6eGvWqk3mFXrncGKlDdowKaD7TYMfzpd7trmjnIrKBHF3N1FigzcEy/dLUrqtBUUNnHwkjv5wCw==}
+  '@sentry/core@10.26.0':
+    resolution: {integrity: sha512-TjDe5QI37SLuV0q3nMOH8JcPZhv2e85FALaQMIhRILH9Ce6G7xW5GSjmH91NUVq8yc3XtiqYlz/EenEZActc4Q==}
+    engines: {node: '>=18'}
+
+  '@sentry/deno@10.26.0':
+    resolution: {integrity: sha512-3dMPXzk3GNX/LGl1WJx0BOVAFi4PA3aWvl1xX4JmTrOyvrHYAR/6/1YQZwFSq61S+6lxqP/X/DPrygKQF7BfnA==}
 
   '@sentry/node-core@10.25.0':
     resolution: {integrity: sha512-Hk0s7r9pkotZ1yfUc9+XX0ALDQ/bjaYsWF23O2q8Yfc4m8NcQio54ztAmdI+Yf+YiHLpt0x9Hlgwpl3AaRvwIA==}
@@ -2863,10 +2867,13 @@ snapshots:
   '@sentry/core@10.25.0':
     optional: true
 
-  '@sentry/deno@10.25.0':
+  '@sentry/core@10.26.0':
+    optional: true
+
+  '@sentry/deno@10.26.0':
     dependencies:
       '@opentelemetry/api': 1.9.0
-      '@sentry/core': 10.25.0
+      '@sentry/core': 10.26.0
     optional: true
 
   '@sentry/node-core@10.25.0(@opentelemetry/api@1.9.0)(@opentelemetry/context-async-hooks@2.2.0(@opentelemetry/api@1.9.0))(@opentelemetry/core@2.2.0(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.204.0(@opentelemetry/api@1.9.0))(@opentelemetry/resources@2.2.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@2.2.0(@opentelemetry/api@1.9.0))(@opentelemetry/semantic-conventions@1.38.0)':
