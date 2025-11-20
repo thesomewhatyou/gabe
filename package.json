@@ -80,7 +80,7 @@
     "typescript-eslint": "^8.47.0"
   },
   "optionalDependencies": {
-    "@sentry/bun": "^10.25.0",
+    "@sentry/bun": "^10.26.0",
     "@sentry/deno": "^10.25.0",
     "@sentry/node": "^10.25.0",
     "pm2": "^6.0.13"
