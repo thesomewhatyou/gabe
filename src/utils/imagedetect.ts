@@ -309,12 +309,12 @@ export async function stickerDetect(
 }
 
 function getInteractionOption(interaction: CommandInteraction, key: string) {
-  const sub = interaction.data.options.getSubCommand();
+  const sub = interaction.data.options.getSubCommand() || [];
   let options = interaction.data.options.raw;
   for (const s of sub) {
     const found = options.find((o) => o.name === s && (o.type === 1 || o.type === 2));
-    if (found && found.options) {
-      options = found.options;
+    if (found && (found as any).options) {
+      options = (found as any).options;
     } else {
       break;
     }
@@ -337,7 +337,7 @@ export default async (
   // we start by determining whether or not we're dealing with an interaction or a message
   if (interaction) {
     // we can get a raw attachment or a URL in the interaction itself
-    const attachmentOpt = getInteractionOption(interaction, "image");
+    const attachmentOpt = getInteractionOption(interaction, "image") as any;
     if (attachmentOpt?.value) {
       const attachment = interaction.data.resolved.attachments.get(attachmentOpt.value as string);
       if (attachment) {
@@ -350,7 +350,7 @@ export default async (
         );
       }
     }
-    const linkOpt = getInteractionOption(interaction, "link");
+    const linkOpt = getInteractionOption(interaction, "link") as any;
     if (linkOpt?.value) {
       const link = linkOpt.value as string;
       return getImage(link, link, video, false, extraReturnTypes, null, interaction.client);

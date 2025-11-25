@@ -174,17 +174,17 @@ class Command {
     if (!this.interaction) return undefined;
     const sub = this.interaction.data.options.getSubCommand();
     let options = this.interaction.data.options.raw;
-    console.log(`[DEBUG] getRawOption key=${key} sub=${JSON.stringify(sub)} options=${JSON.stringify(options)}`);
+    // console.log(`[DEBUG] getRawOption key=${key} sub=${JSON.stringify(sub)} options=${JSON.stringify(options)}`);
     for (const s of sub) {
       const found = options.find((o) => o.name === s && (o.type === 1 || o.type === 2));
-      if (found && found.options) {
-        options = found.options;
+      if (found && (found as any).options) {
+        options = (found as any).options;
       } else {
         break;
       }
     }
     const result = options.find((o) => o.name === key);
-    console.log(`[DEBUG] getRawOption result=${JSON.stringify(result)}`);
+    // console.log(`[DEBUG] getRawOption result=${JSON.stringify(result)}`);
     return result;
   }
 
@@ -193,7 +193,7 @@ class Command {
       return defaultArg ? this.args.join(" ").trim() : (this.options?.[key] as string);
     }
     if (this.type === "application") {
-      return this.getRawOption(key)?.value as string;
+      return (this.getRawOption(key) as any)?.value as string;
     }
     throw Error("Unknown command type");
   }
@@ -205,7 +205,7 @@ class Command {
       else return;
     }
     if (this.type === "application") {
-      return this.getRawOption(key)?.value as boolean;
+      return (this.getRawOption(key) as any)?.value as boolean;
     }
     throw Error("Unknown command type");
   }
@@ -215,7 +215,7 @@ class Command {
       return Number.parseFloat((defaultArg ? this.args.join(" ").trim() : this.options?.[key]) as string);
     }
     if (this.type === "application") {
-      return this.getRawOption(key)?.value as number;
+      return (this.getRawOption(key) as any)?.value as number;
     }
     throw Error("Unknown command type");
   }
@@ -225,7 +225,7 @@ class Command {
       return Number.parseInt((defaultArg ? this.args.join(" ").trim() : this.options?.[key]) as string);
     }
     if (this.type === "application") {
-      return this.getRawOption(key)?.value as number;
+      return (this.getRawOption(key) as any)?.value as number;
     }
     throw Error("Unknown command type");
   }
@@ -236,7 +236,7 @@ class Command {
       return this.client.users.get(id as string);
     }
     if (this.type === "application") {
-      const opt = this.getRawOption(key);
+      const opt = this.getRawOption(key) as any;
       if (opt?.value) return this.interaction?.data.resolved.users.get(opt.value as string);
     }
     throw Error("Unknown command type");
@@ -248,7 +248,7 @@ class Command {
       return this.guild?.members.get(id as string);
     }
     if (this.type === "application") {
-      const opt = this.getRawOption(key);
+      const opt = this.getRawOption(key) as any;
       if (opt?.value) return this.interaction?.data.resolved.members.get(opt.value as string);
     }
     throw Error("Unknown command type");
@@ -260,7 +260,7 @@ class Command {
       return this.guild?.roles.get(id as string);
     }
     if (this.type === "application") {
-      const opt = this.getRawOption(key);
+      const opt = this.getRawOption(key) as any;
       if (opt?.value) return this.interaction?.data.resolved.roles.get(opt.value as string);
     }
     throw Error("Unknown command type");
@@ -272,7 +272,7 @@ class Command {
       return this.message?.attachments.first();
     }
     if (this.type === "application") {
-      const opt = this.getRawOption(key);
+      const opt = this.getRawOption(key) as any;
       if (opt?.value) return this.interaction?.data.resolved.attachments.get(opt.value as string);
     }
     throw Error("Unknown command type");
