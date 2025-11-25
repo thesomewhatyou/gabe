@@ -10,10 +10,10 @@ I need at least Node.js 22.X or more. Just try 22. Use nvm install 22 to install
 if (process.platform === "win32") {
   console.error(
     "\x1b[1m\x1b[31m\x1b[40m" +
-      `WINDOWS IS NOT OFFICIALLY SUPPORTED!
+    `WINDOWS IS NOT OFFICIALLY SUPPORTED!
 Although there's a (very) slim chance of it working, multiple aspects of Gabe are built with UNIX-like systems in mind and could break on Win32-based systems. If you want to run Gabe on Windows, using Windows Subsystem for Linux is highly recommended.
-Gabe will continue to run past this message in 5 seconds, but keep in mind that it could break at any time. Continue running at your own risk; alternatively, stop the bot using Ctrl+C and install WSL.` +
-      "\x1b[0m",
+Gabe will continue to run past this message in 5 seconds, but keep in mind that it could break at any time. Continue running at your own risk; alternatively, stop the bot using Ctrl+C, or the Windows equivalent, and install WSL.` +
+    "\x1b[0m",
   );
   await new Promise((resolve) => setTimeout(resolve, 5000));
 }
@@ -262,12 +262,12 @@ if (process.env.PM2_USAGE) {
 if (!connected) connect(client);
 
 process.on("SIGINT", async () => {
-  logger.info("SIGINT detected, I'm not doing this...");
+  logger.info("SIGINT detected. Someone hit Ctrl+C. Bye bye...");
   await exit(client, database);
 });
 
 process.on("SIGTERM", async () => {
-  logger.info("SIGTERM detected, absolutely not...");
+  logger.info("SIGTERM detected. A-");
   await exit(client, database);
 });
 
@@ -279,3 +279,6 @@ try {
   logger.error("I can't start. Goodbye suckers...");
   process.exit(1);
 }
+
+// btw if you're working on a machine that does NOT have dependencies installed, you'll see a shit ton of errors
+// mitigate using pnpm install. this goes out to my fellow vibe coders

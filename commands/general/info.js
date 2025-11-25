@@ -57,8 +57,8 @@ class InfoCommand extends Command {
       typeof servers === "number"
         ? formatNumber(servers)
         : this.getString("commands.responses.info.processOnly", {
-            params: { count: formatNumber(this.client.guilds.size) },
-          });
+          params: { count: formatNumber(this.client.guilds.size) },
+        });
 
     const statsLines = [
       `• **${this.getString("commands.responses.info.totalServers")}** ${serverDisplay}`,
@@ -89,9 +89,8 @@ class InfoCommand extends Command {
           fields: [
             {
               name: `ℹ️ ${this.getString("commands.responses.info.version")}`,
-              value: `v${packageJson.version}${
-                process.env.NODE_ENV === "development" ? `-dev (${process.env.GIT_REV})` : ""
-              }`,
+              value: `v${packageJson.version}${process.env.NODE_ENV === "development" ? `-dev (${process.env.GIT_REV})` : ""
+                }`,
             },
             {
               name: `📊 ${this.getString("commands.responses.info.keyStatsTitle")}`,
@@ -107,7 +106,7 @@ class InfoCommand extends Command {
             },
             {
               name: `📝 ${this.getString("commands.responses.info.creditsHeader")}`,
-              value: `${this.getString("commands.responses.info.credits")}\n*Themed by Gabriel Piss*`,
+              value: `${this.getString("commands.responses.info.credits")}\n*Themed by yours truly, Gabriel Piss*`,
             },
             {
               name: `🌐 ${this.getString("commands.responses.info.resourcesTitle")}`,

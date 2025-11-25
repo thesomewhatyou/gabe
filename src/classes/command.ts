@@ -174,6 +174,7 @@ class Command {
     if (!this.interaction) return undefined;
     const sub = this.interaction.data.options.getSubCommand();
     let options = this.interaction.data.options.raw;
+    console.log(`[DEBUG] getRawOption key=${key} sub=${JSON.stringify(sub)} options=${JSON.stringify(options)}`);
     for (const s of sub) {
       const found = options.find((o) => o.name === s && (o.type === 1 || o.type === 2));
       if (found && found.options) {
@@ -182,7 +183,9 @@ class Command {
         break;
       }
     }
-    return options.find((o) => o.name === key);
+    const result = options.find((o) => o.name === key);
+    console.log(`[DEBUG] getRawOption result=${JSON.stringify(result)}`);
+    return result;
   }
 
   getOptionString(key: string, defaultArg?: boolean): string | undefined {
