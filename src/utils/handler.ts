@@ -39,11 +39,11 @@ export async function load(
   subcommand?: true,
 ): Promise<
   | {
-      props: typeof Command;
-      info: CommandInfo;
-      entry: CommandEntry;
-      name: string;
-    }
+    props: typeof Command;
+    info: CommandInfo;
+    entry: CommandEntry;
+    name: string;
+  }
   | undefined
 >;
 export async function load(
@@ -54,11 +54,11 @@ export async function load(
 ): Promise<
   | string
   | {
-      props: typeof Command;
-      info: CommandInfo;
-      entry: CommandEntry;
-      name: string;
-    }
+    props: typeof Command;
+    info: CommandInfo;
+    entry: CommandEntry;
+    name: string;
+  }
   | undefined
 > {
   log("main", `Loading command from ${command}...`);
@@ -130,15 +130,21 @@ export async function load(
       try {
         const subdir = relPath.split(".")[0];
         const resolved = resolve(cmdPath, subdir);
+        log("info", `[DEBUG] Checking for subcommands in ${resolved} for ${commandName}`);
         const files = await readdir(resolved, {
           withFileTypes: true,
         });
+        log("info", `[DEBUG] Found ${files.length} files in ${resolved}`);
         commandInfo.baseCommand = true;
         commandInfo.flags = [];
         for (const file of files) {
           if (!file.isFile()) continue;
+          log("info", `[DEBUG] Loading subcommand ${file.name}`);
           const sub = await load(null, resolve(resolved, file.name), skipSend, true);
-          if (!sub) continue;
+          if (!sub) {
+            log("warn", `[DEBUG] Failed to load subcommand ${file.name}`);
+            continue;
+          }
 
           const split = sub.name.split(" ");
           const subName = split[split.length - 1];
@@ -159,8 +165,8 @@ export async function load(
             options: sub.info.flags,
           });
         }
-      } catch {
-        // come back to this
+      } catch (e) {
+        log("error", `[DEBUG] Error loading subcommands for ${commandName}: ${e}`);
       }
       commands.set(commandName, cmdMap);
     }
@@ -185,11 +191,11 @@ export async function load(
 
   return subcommand
     ? {
-        props,
-        info: commandInfo,
-        entry: cmdMap,
-        name: fullCommandName,
-      }
+      props,
+      info: commandInfo,
+      entry: cmdMap,
+      name: fullCommandName,
+    }
     : fullCommandName;
 }
 
@@ -281,6 +287,11 @@ export async function send(bot: Client) {
     );
   } else {
     cmdArray = [...commandArray.main, ...commandArray.private];
+  }
+  log("info", `[DEBUG] Sending ${cmdArray.length} commands: ${cmdArray.map(c => c.name).join(", ")}`);
+  const effectsCmd = cmdArray.find(c => c.name === "effects");
+  if (effectsCmd) {
+    log("info", `[DEBUG] Effects command options: ${JSON.stringify(effectsCmd.options)}`);
   }
   await bot.application.bulkEditGlobalCommands(cmdArray);
 }
