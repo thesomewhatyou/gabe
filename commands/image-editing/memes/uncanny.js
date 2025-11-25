@@ -18,7 +18,7 @@ const prompts = [
   "you fight:",
   "it's in your room:",
 ];
-const names = readdirSync(resolve(dirname(fileURLToPath(import.meta.url)), "../../assets/images/uncanny/"))
+const names = readdirSync(resolve(dirname(fileURLToPath(import.meta.url)), "../../../assets/images/uncanny/"))
   .filter((val) => {
     if (!val.startsWith(".") && val.endsWith(".png")) return true;
   })
