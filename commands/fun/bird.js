@@ -24,7 +24,9 @@ class BirdCommand extends Command {
   }
 
   static description = "Gets a random bird picture";
-  static aliases = ["birb", "birds", "birbs"];
+  static aliases = ["birb", "birds", "birbs", "fatwinglittlegargoyles", "fwlg"];
 }
 
 export default BirdCommand;
+
+// bird :3 nyaya i love birds :3 fatwinglittlegargoyles :3  fwlg :3 
