@@ -308,6 +308,20 @@ export async function stickerDetect(
   }
 }
 
+function getInteractionOption(interaction: CommandInteraction, key: string) {
+  const sub = interaction.data.options.getSubCommand();
+  let options = interaction.data.options.raw;
+  for (const s of sub) {
+    const found = options.find((o) => o.name === s && (o.type === 1 || o.type === 2));
+    if (found && found.options) {
+      options = found.options;
+    } else {
+      break;
+    }
+  }
+  return options.find((o) => o.name === key);
+}
+
 /**
  * Checks for the latest message containing an image and returns the URL of the image.
  */
@@ -323,18 +337,22 @@ export default async (
   // we start by determining whether or not we're dealing with an interaction or a message
   if (interaction) {
     // we can get a raw attachment or a URL in the interaction itself
-    const attachment = interaction.data.options.getAttachment("image");
-    if (attachment) {
-      return getImage(
-        attachment.proxyURL,
-        attachment.url,
-        video,
-        !!(attachment.flags & AttachmentFlags.IS_SPOILER),
-        !!attachment.contentType,
-      );
+    const attachmentOpt = getInteractionOption(interaction, "image");
+    if (attachmentOpt?.value) {
+      const attachment = interaction.data.resolved.attachments.get(attachmentOpt.value as string);
+      if (attachment) {
+        return getImage(
+          attachment.proxyURL,
+          attachment.url,
+          video,
+          !!(attachment.flags & AttachmentFlags.IS_SPOILER),
+          !!attachment.contentType,
+        );
+      }
     }
-    const link = interaction.data.options.getString("link");
-    if (link) {
+    const linkOpt = getInteractionOption(interaction, "link");
+    if (linkOpt?.value) {
+      const link = linkOpt.value as string;
       return getImage(link, link, video, false, extraReturnTypes, null, interaction.client);
     }
   }
