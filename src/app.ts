@@ -261,6 +261,25 @@ if (process.env.PM2_USAGE) {
 // connect to lavalink
 if (!connected) connect(client);
 
+// global error handlers to improve stability
+process.on("unhandledRejection", (reason) => {
+  logger.error("Unhandled promise rejection detected:");
+  logger.error(reason as unknown as Error);
+});
+
+process.on("uncaughtException", async (err) => {
+  logger.error("Uncaught exception detected:");
+  logger.error(err);
+  // attempt a graceful shutdown, then exit with failure code
+  try {
+    await exit(client, database);
+  } catch {
+    // ignore errors during shutdown
+  } finally {
+    process.exit(1);
+  }
+});
+
 process.on("SIGINT", async () => {
   logger.info("SIGINT detected. Someone hit Ctrl+C. Bye bye...");
   await exit(client, database);
