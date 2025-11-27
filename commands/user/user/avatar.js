@@ -1,5 +1,5 @@
 import { Constants } from "oceanic.js";
-import Command from "#cmd-classes/command.js";
+import Command from "#cmd-classes/command.ts";
 
 class AvatarCommand extends Command {
   async run() {

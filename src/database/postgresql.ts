@@ -92,6 +92,16 @@ const updates = [
   );
   CREATE INDEX IF NOT EXISTS idx_mod_logs_guild_user ON mod_logs(guild_id, user_id);
   CREATE INDEX IF NOT EXISTS idx_warnings_guild_user ON warnings(guild_id, user_id);`,
+  // User levels table for XP/leveling system
+  `CREATE TABLE IF NOT EXISTS user_levels (
+    guild_id VARCHAR(30) NOT NULL,
+    user_id VARCHAR(30) NOT NULL,
+    xp INTEGER DEFAULT 0,
+    level INTEGER DEFAULT 0,
+    last_xp_gain TIMESTAMP,
+    PRIMARY KEY (guild_id, user_id)
+  );
+  ALTER TABLE guilds ADD COLUMN IF NOT EXISTS levels_enabled BOOLEAN DEFAULT FALSE;`,
 ];
 
 export default class PostgreSQLPlugin implements DatabasePlugin {
@@ -351,5 +361,61 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
   async clearWarnings(guildId: string, userId: string) {
     const result = await this.sql`DELETE FROM warnings WHERE guild_id = ${guildId} AND user_id = ${userId}`;
     return result.count;
+  }
+
+  async getUserLevel(guildId: string, userId: string) {
+    const [result] = await this.sql<{ guild_id: string; user_id: string; xp: number; level: number; last_xp_gain: Date | null }[]>`
+      SELECT * FROM user_levels WHERE guild_id = ${guildId} AND user_id = ${userId}
+    `;
+
+    if (!result) {
+      return { guild_id: guildId, user_id: userId, xp: 0, level: 0, last_xp_gain: null };
+    }
+    return result;
+  }
+
+  async addXP(guildId: string, userId: string, amount: number) {
+    const now = new Date();
+    const [existing] = await this.sql<{ xp: number; level: number }[]>`
+      SELECT xp, level FROM user_levels WHERE guild_id = ${guildId} AND user_id = ${userId}
+    `;
+
+    if (existing) {
+      const newXP = existing.xp + amount;
+      const newLevel = Math.floor(0.1 * Math.sqrt(newXP));
+      const leveledUp = newLevel > existing.level;
+
+      await this.sql`
+        UPDATE user_levels SET xp = ${newXP}, level = ${newLevel}, last_xp_gain = ${now}
+        WHERE guild_id = ${guildId} AND user_id = ${userId}
+      `;
+
+      return { xp: newXP, level: newLevel, leveledUp };
+    } else {
+      const newLevel = Math.floor(0.1 * Math.sqrt(amount));
+      await this.sql`
+        INSERT INTO user_levels (guild_id, user_id, xp, level, last_xp_gain)
+        VALUES (${guildId}, ${userId}, ${amount}, ${newLevel}, ${now})
+      `;
+
+      return { xp: amount, level: newLevel, leveledUp: newLevel > 0 };
+    }
+  }
+
+  async getLeaderboard(guildId: string, limit = 10) {
+    return await this.sql<{ guild_id: string; user_id: string; xp: number; level: number; last_xp_gain: Date | null }[]>`
+      SELECT * FROM user_levels WHERE guild_id = ${guildId} ORDER BY xp DESC LIMIT ${limit}
+    `;
+  }
+
+  async setLevelsEnabled(guildId: string, enabled: boolean) {
+    await this.sql`UPDATE guilds SET levels_enabled = ${enabled} WHERE guild_id = ${guildId}`;
+  }
+
+  async isLevelsEnabled(guildId: string) {
+    const [result] = await this.sql<{ levels_enabled: boolean }[]>`
+      SELECT levels_enabled FROM guilds WHERE guild_id = ${guildId}
+    `;
+    return result?.levels_enabled === true;
   }
 }
