@@ -2,19 +2,18 @@
 
 Gabe is a fast, loud, and mildly cursed Discord bot built on top of [Oceanic.js](https://oceanic.ws). It ships native image processing, reliable moderation, fun commands, music via Lavalink, and a flexible storage layer — all tuned for low resource usage.
 
-<img src="assets/gabe.png" align="right" width="128" height="128" alt="gabe logo"/>
-
 ## Highlights
 
 - Powerful image processing (native module; optional ImageMagick support)
 - Moderation tools: ban, kick, timeout, purge
 - Music playback via [Lavalink](https://github.com/lavalink-devs/Lavalink) using [Shoukaku](https://github.com/Deivu/Shoukaku)
 - Tags system for saving and retrieving snippets
-- Low resource usage (CPU/RAM) — naps are normal
+- Low resource usage (CPU/RAM) — naps are normal  <img src="https://github.com/user-attachments/assets/a58b183a-cf97-478d-a7e1-8895cbd44c8e" align="right" width="128" height="128" alt="gabe logo"/>
+
 - Dual command system: slash commands and prefix commands (`&` by default)
 - Databases: SQLite (default) or PostgreSQL
 - Extensible: add commands by dropping files in `commands/`
-
+                                      
 ## Requirements
 
 - Node.js 22+ (required)
