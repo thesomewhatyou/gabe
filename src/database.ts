@@ -28,6 +28,14 @@ export declare class DatabasePlugin {
   getBroadcast: () => Promise<string | undefined>;
   setPrefix: (prefix: string, guild: Guild) => Promise<void>;
   getGuild: (query: string) => Promise<DBGuild>;
+  getUserPreferences: (userId: string) => Promise<{ user_id: string; locale: string | null; dm_notifications: boolean }>;
+  setUserPreference: (userId: string, key: "locale" | "dm_notifications", value: string | boolean | null) => Promise<void>;
+  addModLog: (guildId: string, userId: string, moderatorId: string, action: string, reason?: string) => Promise<void>;
+  getModLogs: (guildId: string, userId?: string, limit?: number) => Promise<{ id: number; guild_id: string; user_id: string; moderator_id: string; action: string; reason: string | null; created_at: string | Date }[]>;
+  addWarning: (guildId: string, userId: string, moderatorId: string, reason: string) => Promise<number>;
+  getWarnings: (guildId: string, userId: string) => Promise<{ id: number; guild_id: string; user_id: string; moderator_id: string; reason: string; created_at: string | Date }[]>;
+  removeWarning: (guildId: string, warningId: number) => Promise<boolean>;
+  clearWarnings: (guildId: string, userId: string) => Promise<number>;
 }
 
 export async function init(): Promise<DatabasePlugin | undefined> {

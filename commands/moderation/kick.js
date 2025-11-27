@@ -47,10 +47,41 @@ class KickCommand extends Command {
         return "❌ Gabe says: I'm not kicking myself. That's just rude!";
       }
 
+      // Try to DM the user before kicking (if they have DM notifications enabled)
+      let dmSent = false;
+      try {
+        const userPrefs = this.database ? await this.database.getUserPreferences(userToKick.id) : null;
+        if (userPrefs?.dm_notifications !== false) {
+          const dmChannel = await userToKick.createDM();
+          await dmChannel.createMessage({
+            embeds: [{
+              color: 0xffa500,
+              title: "👢 You have been kicked",
+              description: `You have been kicked from **${guild.name}**.`,
+              fields: [
+                { name: "Reason", value: reason, inline: false },
+                { name: "Moderator", value: this.author.tag, inline: true },
+              ],
+              footer: { text: "You can rejoin the server if you have an invite link." },
+              timestamp: new Date().toISOString(),
+            }],
+          });
+          dmSent = true;
+        }
+      } catch {
+        // User has DMs disabled or bot is blocked - continue with kick
+      }
+
       await memberToKick.kick(`${this.author.tag}: ${reason}`);
 
+      // Log the moderation action
+      if (this.database) {
+        await this.database.addModLog(guild.id, userToKick.id, this.author.id, "kick", reason);
+      }
+
       this.success = true;
-      return `👢 **KICKED!** ${userToKick.tag} has been booted by Gabe.\n*Reason:* ${reason}`;
+      const dmNote = dmSent ? "" : "\n*(User could not be notified via DM)*";
+      return `👢 **KICKED!** ${userToKick.tag} has been booted by Gabe.\n*Reason:* ${reason}${dmNote}`;
     } catch (error) {
       return `❌ Gabe says: Something broke. ${error.message}`;
     }

@@ -92,6 +92,32 @@ const updates = [
 		  'powerdirector', 'shutterstock', 'watermark'
     )
   ) INSERT OR REPLACE INTO counts ("command", "count") VALUES ('watermark', (SELECT amount FROM cmds));`,
+  // User preferences table
+  `CREATE TABLE IF NOT EXISTS user_preferences (
+    user_id VARCHAR(30) PRIMARY KEY,
+    locale VARCHAR(10),
+    dm_notifications INTEGER DEFAULT 1
+  );`,
+  // Moderation logs and warnings tables
+  `CREATE TABLE IF NOT EXISTS mod_logs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    guild_id VARCHAR(30) NOT NULL,
+    user_id VARCHAR(30) NOT NULL,
+    moderator_id VARCHAR(30) NOT NULL,
+    action VARCHAR(20) NOT NULL,
+    reason TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+  CREATE TABLE IF NOT EXISTS warnings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    guild_id VARCHAR(30) NOT NULL,
+    user_id VARCHAR(30) NOT NULL,
+    moderator_id VARCHAR(30) NOT NULL,
+    reason TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+  CREATE INDEX IF NOT EXISTS idx_mod_logs_guild_user ON mod_logs(guild_id, user_id);
+  CREATE INDEX IF NOT EXISTS idx_warnings_guild_user ON warnings(guild_id, user_id);`,
 ];
 
 export default class SQLitePlugin implements DatabasePlugin {
@@ -327,5 +353,93 @@ export default class SQLitePlugin implements DatabasePlugin {
         tag_roles: [],
       }
     );
+  }
+
+  async getUserPreferences(userId: string) {
+    const result = this.connection
+      .prepare("SELECT * FROM user_preferences WHERE user_id = ?")
+      .get(userId) as { user_id: string; locale: string | null; dm_notifications: number } | undefined;
+
+    if (!result) {
+      return {
+        user_id: userId,
+        locale: null,
+        dm_notifications: true,
+      };
+    }
+
+    return {
+      user_id: result.user_id,
+      locale: result.locale,
+      dm_notifications: result.dm_notifications === 1,
+    };
+  }
+
+  async setUserPreference(userId: string, key: "locale" | "dm_notifications", value: string | boolean | null) {
+    const existing = this.connection
+      .prepare("SELECT user_id FROM user_preferences WHERE user_id = ?")
+      .get(userId);
+
+    const dbValue = typeof value === "boolean" ? (value ? 1 : 0) : value;
+
+    if (existing) {
+      this.connection
+        .prepare(`UPDATE user_preferences SET ${key} = ? WHERE user_id = ?`)
+        .run(dbValue, userId);
+    } else {
+      const defaults = {
+        user_id: userId,
+        locale: null as string | null,
+        dm_notifications: 1,
+      };
+      defaults[key] = dbValue as never;
+      this.connection
+        .prepare("INSERT INTO user_preferences (user_id, locale, dm_notifications) VALUES (:user_id, :locale, :dm_notifications)")
+        .run(defaults);
+    }
+  }
+
+  async addModLog(guildId: string, userId: string, moderatorId: string, action: string, reason?: string) {
+    this.connection
+      .prepare("INSERT INTO mod_logs (guild_id, user_id, moderator_id, action, reason) VALUES (?, ?, ?, ?, ?)")
+      .run(guildId, userId, moderatorId, action, reason ?? null);
+  }
+
+  async getModLogs(guildId: string, userId?: string, limit = 10) {
+    if (userId) {
+      return this.connection
+        .prepare("SELECT * FROM mod_logs WHERE guild_id = ? AND user_id = ? ORDER BY created_at DESC LIMIT ?")
+        .all(guildId, userId, limit) as { id: number; guild_id: string; user_id: string; moderator_id: string; action: string; reason: string | null; created_at: string }[];
+    }
+    return this.connection
+      .prepare("SELECT * FROM mod_logs WHERE guild_id = ? ORDER BY created_at DESC LIMIT ?")
+      .all(guildId, limit) as { id: number; guild_id: string; user_id: string; moderator_id: string; action: string; reason: string | null; created_at: string }[];
+  }
+
+  async addWarning(guildId: string, userId: string, moderatorId: string, reason: string) {
+    const result = this.connection
+      .prepare("INSERT INTO warnings (guild_id, user_id, moderator_id, reason) VALUES (?, ?, ?, ?)")
+      .run(guildId, userId, moderatorId, reason);
+    return result.lastInsertRowid as number;
+  }
+
+  async getWarnings(guildId: string, userId: string) {
+    return this.connection
+      .prepare("SELECT * FROM warnings WHERE guild_id = ? AND user_id = ? ORDER BY created_at DESC")
+      .all(guildId, userId) as { id: number; guild_id: string; user_id: string; moderator_id: string; reason: string; created_at: string }[];
+  }
+
+  async removeWarning(guildId: string, warningId: number) {
+    const result = this.connection
+      .prepare("DELETE FROM warnings WHERE guild_id = ? AND id = ?")
+      .run(guildId, warningId);
+    return result.changes > 0;
+  }
+
+  async clearWarnings(guildId: string, userId: string) {
+    const result = this.connection
+      .prepare("DELETE FROM warnings WHERE guild_id = ? AND user_id = ?")
+      .run(guildId, userId);
+    return result.changes;
   }
 }

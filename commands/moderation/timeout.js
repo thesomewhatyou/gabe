@@ -59,6 +59,44 @@ class TimeoutCommand extends Command {
       }
 
       const timeoutUntil = new Date(Date.now() + duration * 60 * 1000);
+      const timeoutTimestamp = Math.floor(timeoutUntil.getTime() / 1000);
+
+      // Format duration for display
+      const formatDuration = (mins) => {
+        if (mins < 60) return `${mins} minute${mins !== 1 ? "s" : ""}`;
+        if (mins < 1440) {
+          const hours = Math.floor(mins / 60);
+          return `${hours} hour${hours !== 1 ? "s" : ""}`;
+        }
+        const days = Math.floor(mins / 1440);
+        return `${days} day${days !== 1 ? "s" : ""}`;
+      };
+
+      // Try to DM the user before timing out (if they have DM notifications enabled)
+      let dmSent = false;
+      try {
+        const userPrefs = this.database ? await this.database.getUserPreferences(userToTimeout.id) : null;
+        if (userPrefs?.dm_notifications !== false) {
+          const dmChannel = await userToTimeout.createDM();
+          await dmChannel.createMessage({
+            embeds: [{
+              color: 0xffff00,
+              title: "⏰ You have been timed out",
+              description: `You have been timed out in **${guild.name}**.`,
+              fields: [
+                { name: "Duration", value: formatDuration(duration), inline: true },
+                { name: "Expires", value: `<t:${timeoutTimestamp}:R>`, inline: true },
+                { name: "Reason", value: reason, inline: false },
+                { name: "Moderator", value: this.author.tag, inline: true },
+              ],
+              timestamp: new Date().toISOString(),
+            }],
+          });
+          dmSent = true;
+        }
+      } catch {
+        // User has DMs disabled or bot is blocked - continue with timeout
+      }
 
       await memberToTimeout.edit(
         {
@@ -67,8 +105,14 @@ class TimeoutCommand extends Command {
         `${this.author.tag}: ${reason}`,
       );
 
+      // Log the moderation action
+      if (this.database) {
+        await this.database.addModLog(guild.id, userToTimeout.id, this.author.id, "timeout", `${reason} (${formatDuration(duration)})`);
+      }
+
       this.success = true;
-      return `⏰ **TIMED OUT!** ${userToTimeout.tag} has been silenced by Gabe for ${duration} minutes.\n*Reason:* ${reason}`;
+      const dmNote = dmSent ? "" : "\n*(User could not be notified via DM)*";
+      return `⏰ **TIMED OUT!** ${userToTimeout.tag} has been silenced by Gabe for ${duration} minutes.\n*Reason:* ${reason}${dmNote}`;
     } catch (error) {
       return `❌ Gabe says: Something went wrong. ${error.message}`;
     }

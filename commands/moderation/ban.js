@@ -49,13 +49,46 @@ class BanCommand extends Command {
         }
       }
 
+      // Try to DM the user before banning (if they have DM notifications enabled)
+      let dmSent = false;
+      let dmDisabledByUser = false;
+      try {
+        const userPrefs = this.database ? await this.database.getUserPreferences(userToBan.id) : null;
+        if (userPrefs?.dm_notifications === false) {
+          dmDisabledByUser = true;
+        } else {
+          const dmChannel = await userToBan.createDM();
+          await dmChannel.createMessage({
+            embeds: [{
+              color: 0xff0000,
+              title: "🔨 You have been banned",
+              description: `You have been banned from **${guild.name}**.`,
+              fields: [
+                { name: "Reason", value: reason, inline: false },
+                { name: "Moderator", value: this.author.tag, inline: true },
+              ],
+              timestamp: new Date().toISOString(),
+            }],
+          });
+          dmSent = true;
+        }
+      } catch {
+        // User has DMs disabled or bot is blocked - continue with ban
+      }
+
       await guild.createBan(userToBan.id, {
         deleteMessageSeconds: days * 86400,
         reason: `${this.author.tag}: ${reason}`,
       });
 
+      // Log the moderation action
+      if (this.database) {
+        await this.database.addModLog(guild.id, userToBan.id, this.author.id, "ban", reason);
+      }
+
       this.success = true;
-      return `🔨 **BANNED!** ${userToBan.tag} has been yeeted by Gabe.\n*Reason:* ${reason}`;
+      const dmNote = dmSent ? "" : "\n*(User could not be notified via DM)*";
+      return `🔨 **BANNED!** ${userToBan.tag} has been yeeted by Gabe.\n*Reason:* ${reason}${dmNote}`;
     } catch (error) {
       return `❌ Gabe says: Something went wrong. ${error.message}`;
     }

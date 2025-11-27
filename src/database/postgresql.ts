@@ -66,6 +66,32 @@ const updates = [
     )
   ) INSERT INTO counts ("command", "count") VALUES ('watermark', (SELECT amount FROM cmds))
   ON CONFLICT ("command") DO UPDATE SET "count" = (SELECT amount FROM cmds);`,
+  // User preferences table
+  `CREATE TABLE IF NOT EXISTS user_preferences (
+    user_id VARCHAR(30) PRIMARY KEY,
+    locale VARCHAR(10),
+    dm_notifications BOOLEAN DEFAULT TRUE
+  );`,
+  // Moderation logs and warnings tables
+  `CREATE TABLE IF NOT EXISTS mod_logs (
+    id SERIAL PRIMARY KEY,
+    guild_id VARCHAR(30) NOT NULL,
+    user_id VARCHAR(30) NOT NULL,
+    moderator_id VARCHAR(30) NOT NULL,
+    action VARCHAR(20) NOT NULL,
+    reason TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+  CREATE TABLE IF NOT EXISTS warnings (
+    id SERIAL PRIMARY KEY,
+    guild_id VARCHAR(30) NOT NULL,
+    user_id VARCHAR(30) NOT NULL,
+    moderator_id VARCHAR(30) NOT NULL,
+    reason TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+  CREATE INDEX IF NOT EXISTS idx_mod_logs_guild_user ON mod_logs(guild_id, user_id);
+  CREATE INDEX IF NOT EXISTS idx_warnings_guild_user ON warnings(guild_id, user_id);`,
 ];
 
 export default class PostgreSQLPlugin implements DatabasePlugin {
@@ -243,5 +269,87 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
 
   async stop() {
     await this.sql.end();
+  }
+
+  async getUserPreferences(userId: string) {
+    const [result]: [{ user_id: string; locale: string | null; dm_notifications: boolean }?] =
+      await this.sql`SELECT * FROM user_preferences WHERE user_id = ${userId}`;
+
+    if (!result) {
+      return {
+        user_id: userId,
+        locale: null,
+        dm_notifications: true,
+      };
+    }
+
+    return {
+      user_id: result.user_id,
+      locale: result.locale,
+      dm_notifications: result.dm_notifications,
+    };
+  }
+
+  async setUserPreference(userId: string, key: "locale" | "dm_notifications", value: string | boolean | null) {
+    const [existing]: [{ user_id: string }?] =
+      await this.sql`SELECT user_id FROM user_preferences WHERE user_id = ${userId}`;
+
+    if (existing) {
+      if (key === "locale") {
+        await this.sql`UPDATE user_preferences SET locale = ${value as string | null} WHERE user_id = ${userId}`;
+      } else {
+        await this.sql`UPDATE user_preferences SET dm_notifications = ${value as boolean} WHERE user_id = ${userId}`;
+      }
+    } else {
+      const defaults = {
+        user_id: userId,
+        locale: null as string | null,
+        dm_notifications: true,
+      };
+      if (key === "locale") {
+        defaults.locale = value as string | null;
+      } else {
+        defaults.dm_notifications = value as boolean;
+      }
+      await this.sql`INSERT INTO user_preferences ${this.sql(defaults, "user_id", "locale", "dm_notifications")}`;
+    }
+  }
+
+  async addModLog(guildId: string, userId: string, moderatorId: string, action: string, reason?: string) {
+    await this.sql`INSERT INTO mod_logs (guild_id, user_id, moderator_id, action, reason) VALUES (${guildId}, ${userId}, ${moderatorId}, ${action}, ${reason ?? null})`;
+  }
+
+  async getModLogs(guildId: string, userId?: string, limit = 10) {
+    if (userId) {
+      return await this.sql<{ id: number; guild_id: string; user_id: string; moderator_id: string; action: string; reason: string | null; created_at: Date }[]>`
+        SELECT * FROM mod_logs WHERE guild_id = ${guildId} AND user_id = ${userId} ORDER BY created_at DESC LIMIT ${limit}
+      `;
+    }
+    return await this.sql<{ id: number; guild_id: string; user_id: string; moderator_id: string; action: string; reason: string | null; created_at: Date }[]>`
+      SELECT * FROM mod_logs WHERE guild_id = ${guildId} ORDER BY created_at DESC LIMIT ${limit}
+    `;
+  }
+
+  async addWarning(guildId: string, userId: string, moderatorId: string, reason: string) {
+    const [result] = await this.sql<{ id: number }[]>`
+      INSERT INTO warnings (guild_id, user_id, moderator_id, reason) VALUES (${guildId}, ${userId}, ${moderatorId}, ${reason}) RETURNING id
+    `;
+    return result.id;
+  }
+
+  async getWarnings(guildId: string, userId: string) {
+    return await this.sql<{ id: number; guild_id: string; user_id: string; moderator_id: string; reason: string; created_at: Date }[]>`
+      SELECT * FROM warnings WHERE guild_id = ${guildId} AND user_id = ${userId} ORDER BY created_at DESC
+    `;
+  }
+
+  async removeWarning(guildId: string, warningId: number) {
+    const result = await this.sql`DELETE FROM warnings WHERE guild_id = ${guildId} AND id = ${warningId}`;
+    return result.count > 0;
+  }
+
+  async clearWarnings(guildId: string, userId: string) {
+    const result = await this.sql`DELETE FROM warnings WHERE guild_id = ${guildId} AND user_id = ${userId}`;
+    return result.count;
   }
 }
