@@ -171,6 +171,8 @@ export async function load(
             const split = sub.name.split(" ");
             const subName = split[split.length - 1];
             cmdMap[subName] = sub.props;
+            log("info", `[DEBUG] Added subcommand '${subName}' to cmdMap for ${commandName}`);
+            log("info", `[DEBUG] sub.props: ${sub.props.name}`);
 
             const hasSubCommands = sub.info.flags.some(
               (v) => v.type === Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
@@ -194,6 +196,7 @@ export async function load(
         log("error", `[DEBUG] Error loading subcommands for ${commandName}: ${e}`);
       }
       commandInfo.params = parseFlags(commandInfo.flags);
+      log("info", `[DEBUG] Final cmdMap keys for ${commandName}: ${JSON.stringify(Object.keys(cmdMap))}`);
       commands.set(commandName, cmdMap);
     }
   }

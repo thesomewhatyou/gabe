@@ -104,11 +104,23 @@ export default async ({ client, database }: EventParams, message: Message) => {
   const parsed = parseCommand(preArgs);
   let canon = cmdName;
   const lowerSub = parsed.args[0]?.toLowerCase();
+
+  // DEBUG: Log command resolution
+  console.log(`[DEBUG] Command: ${cmdName}, Subcommand: ${lowerSub}`);
+  console.log(`[DEBUG] cmdBase keys:`, Object.keys(cmdBase));
+
   const potentialSub = cmdBase[lowerSub];
+  console.log(`[DEBUG] potentialSub:`, potentialSub);
+  console.log(`[DEBUG] potentialSub?.prototype instanceof Command:`, potentialSub?.prototype instanceof Command);
+  if (potentialSub?.prototype) {
+    console.log(`[DEBUG] typeof potentialSub.prototype.run:`, typeof (potentialSub as any).prototype.run);
+  }
+
   if (
     potentialSub?.prototype instanceof Command ||
     (potentialSub?.prototype && typeof (potentialSub as any).prototype.run === "function")
   ) {
+    console.log(`[DEBUG] Subcommand detected! Using ${lowerSub}`);
     cmd = potentialSub as typeof Command;
     canon = `${canon} ${lowerSub}`;
     if (!aliased) command = `${command} ${lowerSub}`;
