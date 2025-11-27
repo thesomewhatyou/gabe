@@ -420,7 +420,7 @@ export default class SQLitePlugin implements DatabasePlugin {
     const result = this.connection
       .prepare("INSERT INTO warnings (guild_id, user_id, moderator_id, reason) VALUES (?, ?, ?, ?)")
       .run(guildId, userId, moderatorId, reason);
-    return result.lastInsertRowid as number;
+    return (typeof result === 'number' ? result : result.lastInsertRowid) as number;
   }
 
   async getWarnings(guildId: string, userId: string) {
@@ -433,13 +433,13 @@ export default class SQLitePlugin implements DatabasePlugin {
     const result = this.connection
       .prepare("DELETE FROM warnings WHERE guild_id = ? AND id = ?")
       .run(guildId, warningId);
-    return result.changes > 0;
+    return (typeof result === 'number' ? result > 0 : result.changes > 0);
   }
 
   async clearWarnings(guildId: string, userId: string) {
     const result = this.connection
       .prepare("DELETE FROM warnings WHERE guild_id = ? AND user_id = ?")
       .run(guildId, userId);
-    return result.changes;
+    return typeof result === 'number' ? result : result.changes;
   }
 }
