@@ -5,12 +5,12 @@ import { promisify } from "node:util";
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
 import { clean } from "#utils/misc.js";
+import { isOwner } from "#utils/owners.js";
 const exec = promisify(baseExec);
 
 class ExecCommand extends Command {
   async run() {
-    const owners = process.env.OWNER?.split(",") ?? [];
-    if (!owners.includes(this.author.id)) {
+    if (!isOwner(this.author?.id)) {
       this.success = false;
       return this.getString("commands.responses.exec.botOwnerOnly");
     }

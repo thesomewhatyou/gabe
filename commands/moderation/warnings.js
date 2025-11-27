@@ -1,5 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { isOwner } from "#utils/owners.js";
 
 class WarningsCommand extends Command {
   async run() {
@@ -84,7 +85,7 @@ class WarningsCommand extends Command {
     // Permission check for deletion
     if (
       !this.member.permissions.has(Constants.Permissions.MODERATE_MEMBERS) &&
-      this.author.id !== process.env.OWNER
+      !isOwner(this.author?.id)
     ) {
       return "❌ You need Moderate Members permission to delete warnings.";
     }
@@ -107,7 +108,7 @@ class WarningsCommand extends Command {
     // Permission check for clearing
     if (
       !this.member.permissions.has(Constants.Permissions.MODERATE_MEMBERS) &&
-      this.author.id !== process.env.OWNER
+      !isOwner(this.author?.id)
     ) {
       return "❌ You need Moderate Members permission to clear warnings.";
     }

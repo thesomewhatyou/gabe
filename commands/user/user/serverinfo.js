@@ -1,4 +1,4 @@
-import Command from "#cmd-classes/command.ts";
+import Command from "#cmd-classes/command.js";
 
 class ServerInfoCommand extends Command {
   async run() {

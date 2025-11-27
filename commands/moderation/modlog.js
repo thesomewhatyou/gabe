@@ -1,5 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { isOwner } from "#utils/owners.js";
 
 class ModLogCommand extends Command {
   async run() {
@@ -16,7 +17,7 @@ class ModLogCommand extends Command {
       !this.member.permissions.has(Constants.Permissions.MODERATE_MEMBERS) &&
       !this.member.permissions.has(Constants.Permissions.KICK_MEMBERS) &&
       !this.member.permissions.has(Constants.Permissions.BAN_MEMBERS) &&
-      this.author.id !== process.env.OWNER
+      !isOwner(this.author?.id)
     ) {
       return "❌ You need moderation permissions to view mod logs.";
     }

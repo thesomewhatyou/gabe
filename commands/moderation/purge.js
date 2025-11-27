@@ -1,5 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { isOwner } from "#utils/owners.js";
 
 class PurgeCommand extends Command {
   async run() {
@@ -12,7 +13,7 @@ class PurgeCommand extends Command {
 
     if (
       !member.permissions.has(Constants.Permissions.MANAGE_MESSAGES) &&
-      this.author.id !== process.env.OWNER
+      !isOwner(this.author?.id)
     ) {
       return "❌ Gabe says: You don't have permission to manage messages. Back off!";
     }

@@ -1,6 +1,7 @@
 import process from "node:process";
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { isOwner } from "#utils/owners.js";
 
 class PrefixCommand extends Command {
   async run() {
@@ -15,8 +16,7 @@ class PrefixCommand extends Command {
       if (!this.database) {
         return this.getString("commands.responses.prefix.stateless");
       }
-      const owners = process.env.OWNER?.split(",") ?? [];
-      if (!this.memberPermissions.has("ADMINISTRATOR") && !owners.includes(this.author.id)) {
+      if (!this.memberPermissions.has("ADMINISTRATOR") && !isOwner(this.author?.id)) {
         this.success = false;
         return this.getString("commands.responses.prefix.adminOnly");
       }

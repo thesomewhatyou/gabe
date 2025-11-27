@@ -2,6 +2,7 @@ import process from "node:process";
 import { Constants, GuildChannel } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
 import { safeBigInt } from "#utils/misc.js";
+import { isOwner } from "#utils/owners.js";
 
 class ChannelCommand extends Command {
   async run() {
@@ -9,8 +10,7 @@ class ChannelCommand extends Command {
     if (!this.guild) return this.getString("guildOnly");
     if (!this.database) return this.getString("noDatabase");
     if (!this.channel) throw Error("No channel found");
-    const owners = process.env.OWNER?.split(",") ?? [];
-    if (!this.memberPermissions.has("ADMINISTRATOR") && !owners.includes(this.author.id))
+    if (!this.memberPermissions.has("ADMINISTRATOR") && !isOwner(this.author?.id))
       return this.getString("commands.responses.channel.adminOnly");
     if (this.args.length === 0) return this.getString("commands.responses.channel.noCmd");
     if (this.args[0] !== "disable" && this.args[0] !== "enable")

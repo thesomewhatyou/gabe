@@ -1,5 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { isOwner } from "#utils/owners.js";
 
 const blacklist = ["create", "add", "edit", "remove", "delete", "list", "random", "own", "owner"];
 
@@ -7,8 +8,7 @@ class TagsAddCommand extends Command {
   async run() {
     if (!this.database) return this.getString("noDatabase");
     if (!this.guild) return this.getString("guildOnly");
-    const owners = process.env.OWNER?.split(",") ?? [];
-    const privileged = this.memberPermissions.has("ADMINISTRATOR") || owners.includes(this.author.id);
+    const privileged = this.memberPermissions.has("ADMINISTRATOR") || isOwner(this.author?.id);
     const guild = await this.database.getGuild(this.guild.id);
     const setConv = new Set(guild.tag_roles);
     if (

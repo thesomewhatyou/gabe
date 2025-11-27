@@ -3,11 +3,11 @@ import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
 import { paths } from "#utils/collections.js";
 import { load } from "#utils/handler.js";
+import { isOwner } from "#utils/owners.js";
 
 class ReloadCommand extends Command {
   async run() {
-    const owners = process.env.OWNER?.split(",") ?? [];
-    if (!owners.includes(this.author.id)) return this.getString("commands.responses.reload.botOwnerOnly");
+    if (!isOwner(this.author?.id)) return this.getString("commands.responses.reload.botOwnerOnly");
     const commandName = this.getOptionString("cmd") ?? this.args.join(" ");
     if (!commandName || !commandName.trim()) return this.getString("commands.responses.reload.noInput");
     await this.acknowledge();

@@ -1,5 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { isOwner } from "#utils/owners.js";
 
 class WarnCommand extends Command {
   async run() {
@@ -18,7 +19,7 @@ class WarnCommand extends Command {
     if (
       !member.permissions.has(Constants.Permissions.MODERATE_MEMBERS) &&
       !member.permissions.has(Constants.Permissions.KICK_MEMBERS) &&
-      this.author.id !== process.env.OWNER
+      !isOwner(this.author?.id)
     ) {
       return "❌ You need Moderate Members or Kick Members permission to warn users.";
     }

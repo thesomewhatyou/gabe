@@ -1,3 +1,4 @@
+import type { Dirent } from "node:fs";
 import { readdir } from "node:fs/promises";
 import { dirname, relative, resolve } from "node:path";
 import process from "node:process";
@@ -70,13 +71,32 @@ export async function load(
   let commandName = commandArray[commandArray.length - 1].split(".")[0];
   const category = commandArray[0];
   const subPath = commandArray.slice(1, -1);
+  const subdir = relPath.split(".")[0];
+  const resolvedSubcommandPath = resolve(cmdPath, subdir);
+  let subcommandDirEntries: Dirent[] | null = null;
+  let subcommandDirExists = false;
+
+  if (!subcommand && category !== "message") {
+    try {
+      subcommandDirEntries = await readdir(resolvedSubcommandPath, {
+        withFileTypes: true,
+      });
+      subcommandDirExists = true;
+    } catch (error) {
+      const err = error as NodeJS.ErrnoException;
+      if (err.code && err.code !== "ENOENT") {
+        log("error", `[DEBUG] Error reading subcommands for ${commandName}: ${error}`);
+      }
+    }
+  }
 
   if (!(props?.prototype instanceof Command)) {
     log("warn", `Command ${command} is invalid, skipping...`);
     return;
   }
 
-  if (category === "message" || category === "user") {
+  const shouldTitleCase = category === "message" || (category === "user" && !subcommand && !subcommandDirExists);
+  if (shouldTitleCase) {
     const nameStringArray = commandName.split("-");
     for (const index of nameStringArray.keys()) {
       nameStringArray[index] = nameStringArray[index].charAt(0).toUpperCase() + nameStringArray[index].slice(1);
@@ -123,34 +143,26 @@ export async function load(
     if (commandInfo.category === "message") {
       messageCommands.set(commandName, cmdMap);
       commandInfo.type = Constants.ApplicationCommandTypes.MESSAGE;
-    } else if (commandInfo.category === "user") {
+    } else if (commandInfo.category === "user" && !subcommandDirExists) {
       userCommands.set(commandName, cmdMap);
       commandInfo.type = Constants.ApplicationCommandTypes.USER;
     } else {
       try {
-        const subdir = relPath.split(".")[0];
-        const resolved = resolve(cmdPath, subdir);
-        // Check if directory exists first
-        try {
-          await readdir(resolved);
-        } catch {
-          // Directory doesn't exist, so no subcommands
+        if (!subcommandDirExists || !subcommandDirEntries?.length) {
           commands.set(commandName, cmdMap);
           return;
         }
 
-        log("info", `[DEBUG] Checking for subcommands in ${resolved} for ${commandName}`);
-        const files = await readdir(resolved, {
-          withFileTypes: true,
-        });
-        log("info", `[DEBUG] Found ${files.length} files in ${resolved}`);
+        log("info", `[DEBUG] Checking for subcommands in ${resolvedSubcommandPath} for ${commandName}`);
+        const files = subcommandDirEntries;
+        log("info", `[DEBUG] Found ${files.length} files in ${resolvedSubcommandPath}`);
         commandInfo.baseCommand = true;
         commandInfo.flags = [];
         for (const file of files) {
           if (!file.isFile()) continue;
           log("info", `[DEBUG] Loading subcommand ${file.name}`);
           try {
-            const sub = await load(null, resolve(resolved, file.name), skipSend, true);
+            const sub = await load(null, resolve(resolvedSubcommandPath, file.name), skipSend, true);
             if (!sub) {
               log("warn", `[DEBUG] Failed to load subcommand ${file.name}`);
               continue;

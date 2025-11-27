@@ -2,14 +2,14 @@ import process from "node:process";
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
 import * as collections from "#utils/collections.js";
+import { isOwner } from "#utils/owners.js";
 
 class CommandCommand extends Command {
   async run() {
     this.success = false;
     if (!this.guild) return this.getString("guildOnly");
     if (!this.database) return this.getString("noDatabase");
-    const owners = process.env.OWNER?.split(",") ?? [];
-    if (!this.memberPermissions.has("ADMINISTRATOR") && !owners.includes(this.author.id))
+    if (!this.memberPermissions.has("ADMINISTRATOR") && !isOwner(this.author?.id))
       return this.getString("commands.responses.command.adminOnly");
     if (this.args.length === 0) return this.getString("commands.responses.command.noCmd");
     if (this.args[0] !== "disable" && this.args[0] !== "enable")

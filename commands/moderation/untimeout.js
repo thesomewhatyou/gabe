@@ -1,5 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { isOwner } from "#utils/owners.js";
 
 class UntimeoutCommand extends Command {
   async run() {
@@ -10,7 +11,7 @@ class UntimeoutCommand extends Command {
     const guild = this.guild;
     const member = this.member;
 
-    if (!member.permissions.has(Constants.Permissions.MODERATE_MEMBERS) && this.author.id !== process.env.OWNER) {
+    if (!member.permissions.has(Constants.Permissions.MODERATE_MEMBERS) && !isOwner(this.author?.id)) {
       return "❌ Gabe says: You don't have permission to remove timeouts. Sorry!";
     }
 

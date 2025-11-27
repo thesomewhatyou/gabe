@@ -1,5 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { isOwner } from "#utils/owners.js";
 
 class TagsEditCommand extends Command {
   async run() {
@@ -9,11 +10,10 @@ class TagsEditCommand extends Command {
     if (!tagName || !tagName.trim()) return this.getString("commands.responses.tags.editName");
     const getResult = await this.database.getTag(this.guild.id, tagName);
     if (!getResult) return this.getString("commands.responses.tags.invalid");
-    const owners = process.env.OWNER?.split(",");
     if (
       getResult.author !== this.author.id &&
       !this.memberPermissions.has("MANAGE_MESSAGES") &&
-      !owners?.includes(this.author.id)
+      !isOwner(this.author?.id)
     )
       return this.getString("commands.responses.tags.notOwner");
     await this.database.editTag(

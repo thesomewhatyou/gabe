@@ -3,6 +3,7 @@ import Command from "#cmd-classes/command.js";
 import { commands as slashCommands, locales, messageCommands, userCommands } from "#utils/collections.js";
 import logger from "#utils/logger.js";
 import { getServers } from "#utils/misc.js";
+import { getOwners } from "#utils/owners.js";
 import packageJson from "../../package.json" with { type: "json" };
 
 class InfoCommand extends Command {
@@ -14,7 +15,7 @@ class InfoCommand extends Command {
 
     await this.acknowledge();
 
-    const owners = process.env.OWNER?.split(",") ?? [];
+    const owners = getOwners();
     let owner;
     if (owners.length !== 0) {
       owner = this.client.users.get(owners[0]);

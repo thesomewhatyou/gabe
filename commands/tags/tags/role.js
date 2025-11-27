@@ -1,6 +1,7 @@
 import { Constants } from "oceanic.js";
 import paginator from "#pagination";
 import { mentionToObject } from "#utils/mentions.js";
+import { isOwner } from "#utils/owners.js";
 import TagsGetCommand from "./get.js";
 
 class TagsRoleCommand extends TagsGetCommand {
@@ -29,8 +30,7 @@ class TagsRoleCommand extends TagsGetCommand {
 
   async roleAdd() {
     if (!this.database || !this.guild) return;
-    const owners = process.env.OWNER?.split(",");
-    if (!this.memberPermissions.has("MANAGE_MESSAGES") && !owners?.includes(this.author.id))
+    if (!this.memberPermissions.has("MANAGE_MESSAGES") && !isOwner(this.author?.id))
       return this.getString("commands.responses.tags.notOwnerRole");
 
     let role = this.type === "classic" ? this.args.slice(2)[0] : this.getOptionRole("role");
@@ -57,8 +57,7 @@ class TagsRoleCommand extends TagsGetCommand {
 
   async roleRemove() {
     if (!this.database || !this.guild) return;
-    const owners = process.env.OWNER?.split(",");
-    if (!this.memberPermissions.has("MANAGE_MESSAGES") && !owners?.includes(this.author.id))
+    if (!this.memberPermissions.has("MANAGE_MESSAGES") && !isOwner(this.author?.id))
       return this.getString("commands.responses.tags.notOwnerRole");
 
     let role = this.type === "classic" ? this.args.slice(2)[0] : this.getOptionRole("role");

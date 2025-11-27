@@ -4,6 +4,7 @@ import { VERSION } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
 import detectRuntime from "#utils/detectRuntime.js";
 import { getServers } from "#utils/misc.js";
+import { getOwners } from "#utils/owners.js";
 import packageJson from "../../package.json" with { type: "json" };
 
 const pm2 = process.env.PM2_USAGE ? (await import("pm2")).default : null;
@@ -16,7 +17,7 @@ class StatsCommand extends Command {
     }
     const uptime = process.uptime() * 1000;
     const connUptime = this.client.uptime;
-    const owners = process.env.OWNER?.split(",") ?? [];
+    const owners = getOwners();
     let owner;
     if (owners.length !== 0) {
       owner = this.client.users.get(owners[0]) ?? (await this.client.rest.users.get(owners[0]));

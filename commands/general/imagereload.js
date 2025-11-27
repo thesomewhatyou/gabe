@@ -1,11 +1,11 @@
 import process from "node:process";
 import Command from "#cmd-classes/command.js";
 import { reloadImageConnections } from "#utils/image.js";
+import { isOwner } from "#utils/owners.js";
 
 class ImageReloadCommand extends Command {
   async run() {
-    const owners = process.env.OWNER?.split(",") ?? [];
-    if (!owners.includes(this.author.id)) {
+    if (!isOwner(this.author?.id)) {
       this.success = false;
       return this.getString("commands.responses.imagereload.owner");
     }

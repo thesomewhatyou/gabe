@@ -3,11 +3,11 @@ import process from "node:process";
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
 import { clean } from "#utils/misc.js";
+import { isOwner } from "#utils/owners.js";
 
 class EvalCommand extends Command {
   async run() {
-    const owners = process.env.OWNER?.split(",") ?? [];
-    if (!owners.includes(this.author.id)) {
+    if (!isOwner(this.author?.id)) {
       this.success = false;
       return this.getString("commands.responses.eval.botOwnerOnly");
     }

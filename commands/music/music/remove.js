@@ -2,6 +2,7 @@ import process from "node:process";
 import { Constants } from "oceanic.js";
 import MusicCommand from "#cmd-classes/musicCommand.js";
 import { queues } from "#utils/soundplayer.js";
+import { isOwner } from "#utils/owners.js";
 
 class MusicRemoveCommand extends MusicCommand {
   async run() {
@@ -10,8 +11,7 @@ class MusicRemoveCommand extends MusicCommand {
     if (!this.member?.voiceState) return this.getString("sound.noVoiceState");
     if (!this.guild.voiceStates.get(this.client.user.id)?.channelID) return this.getString("sound.notInVoice");
     if (!this.connection) return this.getString("sound.noConnection");
-    const owners = process.env.OWNER?.split(",") ?? [];
-    if (this.connection.host !== this.author.id && !owners.includes(this.connection.host))
+    if (this.connection.host !== this.author.id && !isOwner(this.author?.id))
       return this.getString("commands.responses.remove.notHost");
     const pos = this.getOptionInteger("position", true) ?? Number.parseInt(this.args[0]);
     if (Number.isNaN(pos) || pos > this.queue.length || pos < 1)
