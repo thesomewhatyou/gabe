@@ -171,8 +171,6 @@ export async function load(
             const split = sub.name.split(" ");
             const subName = split[split.length - 1];
             cmdMap[subName] = sub.props;
-            log("info", `[DEBUG] Added subcommand '${subName}' to cmdMap for ${commandName}`);
-            log("info", `[DEBUG] sub.props: ${sub.props.name}`);
 
             const hasSubCommands = sub.info.flags.some(
               (v) => v.type === Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
@@ -196,7 +194,6 @@ export async function load(
         log("error", `[DEBUG] Error loading subcommands for ${commandName}: ${e}`);
       }
       commandInfo.params = parseFlags(commandInfo.flags);
-      log("info", `[DEBUG] Final cmdMap keys for ${commandName}: ${JSON.stringify(Object.keys(cmdMap))}`);
       commands.set(commandName, cmdMap);
     }
   }
@@ -213,6 +210,12 @@ export async function load(
 
   if (props.aliases) {
     for (const alias of props.aliases) {
+      // For subcommands, don't register aliases that match the parent command name
+      // to prevent shadowing (e.g., 'user' alias on 'user userinfo' would shadow 'user' base command)
+      if (subcommand && subPath.length > 0 && alias === subPath[0]) {
+        log("warn", `Skipping alias '${alias}' for subcommand ${fullCommandName} as it shadows parent command`);
+        continue;
+      }
       aliases.set(alias, fullCommandName);
       paths.set(alias, command);
     }
