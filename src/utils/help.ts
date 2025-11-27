@@ -40,7 +40,7 @@ export function generateList() {
     if (!cmd) throw Error(`Command info missing for ${command}`);
     if (cmd.type !== Constants.ApplicationCommandTypes.CHAT_INPUT) continue;
     if (!cmd.slashAllowed && !commandConfig.types.classic) continue;
-    if (cmd.baseCommand) continue;
+    // if (cmd.baseCommand) continue;
     if (!categories[cmd.category]) categories[cmd.category] = [];
     if (command !== "music") generateEntries(command, cmd.params, cmd.description, cmd.category);
   }

@@ -193,6 +193,7 @@ export async function load(
       } catch (e) {
         log("error", `[DEBUG] Error loading subcommands for ${commandName}: ${e}`);
       }
+      commandInfo.params = parseFlags(commandInfo.flags);
       commands.set(commandName, cmdMap);
     }
   }
