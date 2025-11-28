@@ -1,11 +1,15 @@
-import type { MessageReactionAddEvent } from "oceanic.js";
-import type { EventParams } from "#utils/types.js";
-import { getString } from "#utils/i18n.js";
+import type { EventReaction, Member, PossiblyUncachedMessage, Uncached, User } from "oceanic.js";
 import { log } from "#utils/logger.js";
+import type { EventParams } from "#utils/types.js";
 import handleStarboardReaction from "#utils/starboard.js";
 
-export default async (params: EventParams, payload: MessageReactionAddEvent) => {
-  await handleStarboardReaction("add", params, payload).catch((error) => {
+export default async (
+  params: EventParams,
+  message: PossiblyUncachedMessage & { author?: User | Uncached; member?: Member | Uncached },
+  reactor: Member | User | Uncached,
+  reaction: EventReaction,
+) => {
+  await handleStarboardReaction("add", params, message, reactor, reaction).catch((error) => {
     log("error", `Starboard add failed: ${error}`);
   });
 };

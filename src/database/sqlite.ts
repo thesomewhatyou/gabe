@@ -604,6 +604,15 @@ export default class SQLitePlugin implements DatabasePlugin {
   }
 
   async upsertStarboardEntry(entry: StarboardEntry) {
+    const params: Record<string, string | number | null> = {
+      guild_id: entry.guild_id,
+      message_id: entry.message_id,
+      channel_id: entry.channel_id,
+      starboard_message_id: entry.starboard_message_id,
+      star_count: entry.star_count,
+      author_id: entry.author_id,
+    };
+
     this.connection
       .prepare(`INSERT INTO starboard_messages
         (guild_id, message_id, channel_id, starboard_message_id, star_count, author_id)
@@ -613,7 +622,7 @@ export default class SQLitePlugin implements DatabasePlugin {
           starboard_message_id = excluded.starboard_message_id,
           star_count = excluded.star_count,
           author_id = excluded.author_id`)
-      .run(entry);
+      .run(params);
   }
 
   async deleteStarboardEntry(guildId: string, messageId: string) {
@@ -623,6 +632,7 @@ export default class SQLitePlugin implements DatabasePlugin {
   }
 
   async pruneStarboardEntries(guildId: string, olderThan: number) {
+    void olderThan;
     this.connection
       .prepare("DELETE FROM starboard_messages WHERE guild_id = ? AND star_count <= 0")
       .run(guildId);

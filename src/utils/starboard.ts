@@ -1,49 +1,54 @@
-import type { Message, MessageReactionAddEvent, MessageReactionRemoveEvent } from "oceanic.js";
+import type {
+  EventReaction,
+  Member,
+  Message,
+  PossiblyUncachedMessage,
+  Uncached,
+  User,
+} from "oceanic.js";
 import { getString } from "#utils/i18n.js";
-import { log } from "#utils/logger.js";
 import type { EventParams, StarboardEntry, StarboardSettings } from "#utils/types.js";
 
 const STARBOARD_COOLDOWN = 1000 * 60 * 60 * 24 * 7; // 7 days, used for pruning old records
 
 type ReactionKind = "add" | "remove";
 
-type ReactionEvent = MessageReactionAddEvent | MessageReactionRemoveEvent;
-
 export default async function handleStarboardReaction(
   kind: ReactionKind,
   { client, database }: EventParams,
-  payload: ReactionEvent,
+  rawMessage: PossiblyUncachedMessage & { author?: User | Uncached; member?: Member | Uncached },
+  reactor: Member | User | Uncached,
+  reaction: EventReaction,
 ) {
   if (!database) return;
-  if (!payload.guildID) return;
-  if (!payload.emoji.name) return;
+  if (!rawMessage.guildID) return;
+  if (!reaction.emoji.name && !reaction.emoji.id) return;
 
-  const settings = await database.getStarboardSettings(payload.guildID);
+  const settings = await database.getStarboardSettings(rawMessage.guildID);
   if (!settings.enabled || !settings.channel_id) return;
 
-  if (!matchesEmoji(settings.emoji, payload.emoji.id, payload.emoji.name)) return;
+  if (!matchesEmoji(settings.emoji, reaction.emoji.id, reaction.emoji.name)) return;
 
-  const userId = "user" in payload ? payload.userID : payload.member?.id;
-  if (!userId) return;
-  if (!settings.allow_self && payload.message?.author?.id === userId) return;
-  if (!settings.allow_bots && payload.message?.author?.bot) return;
+  const userId = reactor.id;
+  if (!settings.allow_self && rawMessage.author && "id" in rawMessage.author && rawMessage.author.id === userId) return;
 
-  const channel = await client.rest.channels.get(payload.channelID).catch(() => null);
+  const channel = await client.rest.channels.get(rawMessage.channelID).catch(() => null);
   if (!channel || !("guildID" in channel)) return;
 
   const targetChannel = await client.rest.channels.get(settings.channel_id).catch(() => null);
   if (!targetChannel) return;
 
   const message =
-    payload.message ??
-    ((await client.rest.channels.getMessage(payload.channelID, payload.messageID).catch(() => null)) as Message | null);
+    isFullMessage(rawMessage)
+      ? rawMessage
+      : ((await client.rest.channels.getMessage(rawMessage.channelID, rawMessage.id).catch(() => null)) as Message | null);
   if (!message || message.author.id === client.user.id) return;
   if (!settings.allow_self && message.author.id === userId) return;
   if (!settings.allow_bots && message.author.bot) return;
 
   const entry =
-    (await database.getStarboardEntry(payload.guildID, payload.messageID)) ??
-    createEntry(payload.guildID, payload.messageID, payload.channelID, message.author.id);
+    (await database.getStarboardEntry(rawMessage.guildID, rawMessage.id)) ??
+    createEntry(rawMessage.guildID, rawMessage.id, rawMessage.channelID, message.author.id);
   entry.star_count = Math.max(0, entry.star_count + (kind === "add" ? 1 : -1));
 
   if (entry.star_count <= 0) {
@@ -66,7 +71,7 @@ export default async function handleStarboardReaction(
     return;
   }
 
-  const embed = buildEmbed(settings, entry, message, payload.channelID);
+  const embed = buildEmbed(settings, entry, message, rawMessage.channelID);
 
   if (entry.starboard_message_id) {
     await client.rest.channels
@@ -79,6 +84,10 @@ export default async function handleStarboardReaction(
       await database.upsertStarboardEntry(entry);
     }
   }
+}
+
+function isFullMessage(message: PossiblyUncachedMessage): message is Message {
+  return typeof (message as Message).author !== "undefined";
 }
 
 function matchesEmoji(configEmoji: string, emojiId?: string | null, emojiName?: string | null) {

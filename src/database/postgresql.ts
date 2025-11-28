@@ -10,7 +10,7 @@ import {
   userCommands,
 } from "#utils/collections.js";
 import logger from "#utils/logger.js";
-import type { Count, DBGuild, Tag } from "#utils/types.js";
+import type { Count, DBGuild, StarboardEntry, StarboardSettings, Tag } from "#utils/types.js";
 import type { DatabasePlugin } from "../database.ts";
 
 interface Settings {
@@ -46,6 +46,25 @@ CREATE TABLE tags (
   author VARCHAR(30) NOT NULL,
   UNIQUE(guild_id, name)
 );
+CREATE TABLE starboard_settings (
+  guild_id VARCHAR(30) NOT NULL PRIMARY KEY,
+  channel_id VARCHAR(30),
+  emoji VARCHAR(64) NOT NULL DEFAULT '⭐',
+  threshold INTEGER NOT NULL DEFAULT 3,
+  allow_self BOOLEAN NOT NULL DEFAULT FALSE,
+  allow_bots BOOLEAN NOT NULL DEFAULT FALSE,
+  enabled BOOLEAN NOT NULL DEFAULT FALSE
+);
+CREATE TABLE starboard_messages (
+  guild_id VARCHAR(30) NOT NULL,
+  message_id VARCHAR(30) NOT NULL,
+  channel_id VARCHAR(30) NOT NULL,
+  starboard_message_id VARCHAR(30),
+  star_count INTEGER NOT NULL DEFAULT 0,
+  author_id VARCHAR(30) NOT NULL,
+  PRIMARY KEY (guild_id, message_id)
+);
+CREATE INDEX starboard_messages_guild_idx ON starboard_messages (guild_id);
 `;
 
 const updates = [
@@ -104,6 +123,26 @@ const updates = [
   ALTER TABLE guilds ADD COLUMN IF NOT EXISTS levels_enabled BOOLEAN DEFAULT FALSE;`,
   // Level-up notifications setting
   `ALTER TABLE guilds ADD COLUMN IF NOT EXISTS level_up_notifications BOOLEAN DEFAULT TRUE;`,
+  // Starboard tables
+  `CREATE TABLE IF NOT EXISTS starboard_settings (
+    guild_id VARCHAR(30) NOT NULL PRIMARY KEY,
+    channel_id VARCHAR(30),
+    emoji VARCHAR(64) NOT NULL DEFAULT '⭐',
+    threshold INTEGER NOT NULL DEFAULT 3,
+    allow_self BOOLEAN NOT NULL DEFAULT FALSE,
+    allow_bots BOOLEAN NOT NULL DEFAULT FALSE,
+    enabled BOOLEAN NOT NULL DEFAULT FALSE
+  );
+  CREATE TABLE IF NOT EXISTS starboard_messages (
+    guild_id VARCHAR(30) NOT NULL,
+    message_id VARCHAR(30) NOT NULL,
+    channel_id VARCHAR(30) NOT NULL,
+    starboard_message_id VARCHAR(30),
+    star_count INTEGER NOT NULL DEFAULT 0,
+    author_id VARCHAR(30) NOT NULL,
+    PRIMARY KEY (guild_id, message_id)
+  );
+  CREATE INDEX IF NOT EXISTS starboard_messages_guild_idx ON starboard_messages (guild_id);`,
 ];
 
 export default class PostgreSQLPlugin implements DatabasePlugin {
@@ -363,6 +402,64 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
   async clearWarnings(guildId: string, userId: string) {
     const result = await this.sql`DELETE FROM warnings WHERE guild_id = ${guildId} AND user_id = ${userId}`;
     return result.count;
+  }
+
+  async getStarboardSettings(guildId: string) {
+    const [result] = await this.sql<StarboardSettings[]>`
+      SELECT * FROM starboard_settings WHERE guild_id = ${guildId}
+    `;
+    if (result) return result;
+    return {
+      guild_id: guildId,
+      channel_id: null,
+      emoji: "⭐",
+      threshold: 3,
+      allow_self: false,
+      allow_bots: false,
+      enabled: false,
+    };
+  }
+
+  async setStarboardSettings(settings: StarboardSettings) {
+    await this.sql`
+      INSERT INTO starboard_settings (guild_id, channel_id, emoji, threshold, allow_self, allow_bots, enabled)
+      VALUES (${settings.guild_id}, ${settings.channel_id}, ${settings.emoji}, ${settings.threshold}, ${settings.allow_self}, ${settings.allow_bots}, ${settings.enabled})
+      ON CONFLICT (guild_id) DO UPDATE SET
+        channel_id = EXCLUDED.channel_id,
+        emoji = EXCLUDED.emoji,
+        threshold = EXCLUDED.threshold,
+        allow_self = EXCLUDED.allow_self,
+        allow_bots = EXCLUDED.allow_bots,
+        enabled = EXCLUDED.enabled
+    `;
+  }
+
+  async getStarboardEntry(guildId: string, messageId: string) {
+    const [result] = await this.sql<StarboardEntry[]>`
+      SELECT * FROM starboard_messages WHERE guild_id = ${guildId} AND message_id = ${messageId}
+    `;
+    return result;
+  }
+
+  async upsertStarboardEntry(entry: StarboardEntry) {
+    await this.sql`
+      INSERT INTO starboard_messages (guild_id, message_id, channel_id, starboard_message_id, star_count, author_id)
+      VALUES (${entry.guild_id}, ${entry.message_id}, ${entry.channel_id}, ${entry.starboard_message_id}, ${entry.star_count}, ${entry.author_id})
+      ON CONFLICT (guild_id, message_id) DO UPDATE SET
+        channel_id = EXCLUDED.channel_id,
+        starboard_message_id = EXCLUDED.starboard_message_id,
+        star_count = EXCLUDED.star_count,
+        author_id = EXCLUDED.author_id
+    `;
+  }
+
+  async deleteStarboardEntry(guildId: string, messageId: string) {
+    await this.sql`DELETE FROM starboard_messages WHERE guild_id = ${guildId} AND message_id = ${messageId}`;
+  }
+
+  async pruneStarboardEntries(guildId: string, olderThan: number) {
+    void olderThan;
+    await this.sql`DELETE FROM starboard_messages WHERE guild_id = ${guildId} AND star_count <= 0`;
   }
 
   async getUserLevel(guildId: string, userId: string) {
