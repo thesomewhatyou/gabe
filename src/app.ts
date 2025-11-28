@@ -179,10 +179,16 @@ const client = new Client({
 
 // register events
 logger.log("info", "Loading sum events...");
+const registeredEvents = new Set<string>();
 for await (const file of glob(resolve(basePath, "events", runtime.tsLoad ? "*.{js,ts}" : "*.js"))) {
   logger.log("main", `Loading event from ${file}...`);
   const eventArray = file.split("/");
   const eventName = eventArray[eventArray.length - 1].split(".")[0];
+  if (registeredEvents.has(eventName)) {
+    logger.warn(`Duplicate event ${eventName} found in ${file}, skipping...`);
+    continue;
+  }
+  registeredEvents.add(eventName);
   const { default: event } = await import(file);
   client.on(eventName as keyof ClientEvents, event.bind(null, { client, database }));
 }
