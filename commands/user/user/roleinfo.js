@@ -54,7 +54,10 @@ class RoleInfoCommand extends Command {
       "MENTION_EVERYONE",
     ];
 
-    const rolePermissions = keyPermissions.filter((perm) => role.permissions.has(perm));
+    const rolePermissions = keyPermissions.filter((perm) => {
+      const val = Constants.Permissions[perm];
+      return val && role.permissions.has(val);
+    });
     const permissionDisplay = rolePermissions.length > 0
       ? rolePermissions.map((p) => `\`${p.replace(/_/g, " ")}\``).join(", ")
       : "No key permissions";
