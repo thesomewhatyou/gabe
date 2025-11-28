@@ -10,8 +10,11 @@ let ready = false;
 export default async ({ client, database }: EventParams) => {
   if (ready) return;
 
+  const pmId = process.env.pm_id ? Number.parseInt(process.env.pm_id, 10) : null;
+  const isPrimaryProcess = !process.env.PM2_USAGE || pmId === 0 || Number.isNaN(pmId);
+
   // send slash command data
-  if (commandsConfig.types.application && !(process.env.PM2_USAGE && process.env.pm_id !== "1")) {
+  if (commandsConfig.types.application && isPrimaryProcess) {
     try {
       await send(client);
     } catch (e) {

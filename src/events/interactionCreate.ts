@@ -3,7 +3,14 @@ import process from "node:process";
 import type { AnyInteractionGateway } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
 import ImageCommand from "#cmd-classes/imageCommand.js";
-import { collectors, commands, messageCommands, selectedImages, userCommands } from "#utils/collections.js";
+import {
+  collectors,
+  commands,
+  messageCommands,
+  processedInteractions,
+  selectedImages,
+  userCommands,
+} from "#utils/collections.js";
 import detectRuntime from "#utils/detectRuntime.js";
 import { getString } from "#utils/i18n.js";
 import logger from "#utils/logger.js";
@@ -33,6 +40,10 @@ export default async ({ client, database }: EventParams, interaction: AnyInterac
 
   // block other non-command events
   if (!interaction.isCommandInteraction()) return;
+
+  // drop duplicate gateway deliveries of the same interaction
+  if (processedInteractions.has(interaction.id)) return;
+  processedInteractions.set(interaction.id, true);
 
   // check if command exists and if it's enabled
   const cmdBaseName = interaction.data.name;
@@ -139,7 +150,7 @@ export default async ({ client, database }: EventParams, interaction: AnyInterac
     if (process.env.SENTRY_DSN && process.env.SENTRY_DSN !== "")
       Sentry.captureException(error, {
         tags: {
-          process: process.env.pm_id ? Number.parseInt(process.env.pm_id) - 1 : 0,
+          process: process.env.pm_id ? Number.parseInt(process.env.pm_id, 10) || 0 : 0,
           command,
           args: JSON.stringify(interaction.data.options.raw, (key, value) => (typeof value === "bigint" ? value.toString() : value)),
         },

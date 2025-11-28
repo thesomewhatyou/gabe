@@ -36,6 +36,8 @@ export const stolenEmojis = new TimedMap<
   string,
   { name: string; buffer: Buffer; animated: boolean; guildId?: string; userId: string }
 >(600000);
+export const processedInteractions = new TimedMap<string, boolean>(120000);
+export const processedMessages = new TimedMap<string, boolean>(120000);
 
 class Cache<K, V> extends Map {
   maxValues: number;

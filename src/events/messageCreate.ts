@@ -3,7 +3,7 @@ import process from "node:process";
 import { type AnyTextableChannel, GroupChannel, type Message, PrivateChannel, ThreadChannel } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
 import ImageCommand from "#cmd-classes/imageCommand.js";
-import { aliases, commands, disabledCache, disabledCmdCache, prefixCache } from "#utils/collections.js";
+import { aliases, commands, disabledCache, disabledCmdCache, prefixCache, processedMessages } from "#utils/collections.js";
 import detectRuntime from "#utils/detectRuntime.js";
 import { getString } from "#utils/i18n.js";
 import { error as _error, log } from "#utils/logger.js";
@@ -23,14 +23,17 @@ let mentionRegex: RegExp;
  * Runs when someone sends a message.
  */
 export default async ({ client, database }: EventParams, message: Message) => {
-  const executionId = Math.random().toString(36).substring(7);
-  log("info", `[${executionId}] messageCreate triggered for message ${message.id} from ${message.author.id}`);
-
   // block if client is not ready yet
   if (!client.ready) return;
 
   // ignore other bots
   if (message.author.bot) return;
+
+  if (processedMessages.has(message.id)) return;
+  processedMessages.set(message.id, true);
+
+  const executionId = Math.random().toString(36).substring(7);
+  log("info", `[${executionId}] messageCreate triggered for message ${message.id} from ${message.author.id}`);
 
   // don't run command if bot can't send messages
   let permChannel: AnyTextableChannel | undefined;
@@ -234,7 +237,7 @@ export default async ({ client, database }: EventParams, message: Message) => {
     if (process.env.SENTRY_DSN && process.env.SENTRY_DSN !== "")
       Sentry.captureException(error, {
         tags: {
-          process: process.env.pm_id ? Number.parseInt(process.env.pm_id) - 1 : 0,
+          process: process.env.pm_id ? Number.parseInt(process.env.pm_id, 10) || 0 : 0,
           command,
           args: JSON.stringify(preArgs),
         },

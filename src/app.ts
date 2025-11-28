@@ -137,10 +137,9 @@ if (database) {
 if (process.env.API_TYPE === "ws") await reloadImageConnections();
 else initImageLib();
 
+const pmId = process.env.pm_id ? Number.parseInt(process.env.pm_id, 10) : null;
 const shardArray =
-  process.env.SHARDS && process.env.pm_id
-    ? JSON.parse(process.env.SHARDS)[Number.parseInt(process.env.pm_id) - 1]
-    : null;
+  process.env.SHARDS && pmId !== null && !Number.isNaN(pmId) ? JSON.parse(process.env.SHARDS)[pmId] : null;
 
 // create the oceanic client
 const client = new Client({
