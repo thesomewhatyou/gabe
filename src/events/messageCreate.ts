@@ -24,7 +24,7 @@ let mentionRegex: RegExp;
  */
 export default async ({ client, database }: EventParams, message: Message) => {
   const executionId = Math.random().toString(36).substring(7);
-  log("debug", `[${executionId}] messageCreate triggered for message ${message.id} from ${message.author.id}`);
+  log("info", `[${executionId}] messageCreate triggered for message ${message.id} from ${message.author.id}`);
 
   // block if client is not ready yet
   if (!client.ready) return;
@@ -175,22 +175,22 @@ export default async ({ client, database }: EventParams, message: Message) => {
     });
     const result = await commandClass.run();
     const endTime = new Date();
-    log("debug", `[${executionId}] Command result type: ${typeof result}, value: ${JSON.stringify(result)?.substring(0, 100)}`);
+    log("info", `[${executionId}] Command result type: ${typeof result}, value: ${JSON.stringify(result)?.substring(0, 100)}`);
     if (endTime.getTime() - startTime.getTime() >= 180000) reference.allowedMentions.repliedUser = true;
     if (typeof result === "string") {
       reference.allowedMentions.repliedUser = true;
-      log("debug", `[${executionId}] Sending string result`);
+      log("info", `[${executionId}] Sending string result`);
       await client.rest.channels.createMessage(
         message.channelID,
         Object.assign(
           {
-            content: result,
+            content: result + ` [STR-${executionId}]`,
           },
           reference,
         ),
       );
     } else if (typeof result === "object") {
-      log("debug", `[${executionId}] Result is object, checking if ImageCommand: ${commandClass instanceof ImageCommand}`);
+      log("info", `[${executionId}] Result is object, checking if ImageCommand: ${commandClass instanceof ImageCommand}`);
       if (commandClass instanceof ImageCommand && result.files) {
         let fileSize = 10485760;
         if (message.guild) {
@@ -213,7 +213,7 @@ export default async ({ client, database }: EventParams, message: Message) => {
             });
           }
         } else {
-          log("debug", `[${executionId}] Sending image file`);
+          log("info", `[${executionId}] Sending image file`);
           await client.rest.channels.createMessage(
             message.channelID,
             Object.assign(
@@ -225,7 +225,7 @@ export default async ({ client, database }: EventParams, message: Message) => {
           );
         }
       } else {
-        log("debug", `[${executionId}] Sending object result (embed/etc)`);
+        log("info", `[${executionId}] Sending object result (embed/etc)`);
         await client.rest.channels.createMessage(message.channelID, Object.assign(result, reference));
       }
     }
@@ -316,6 +316,7 @@ export default async ({ client, database }: EventParams, message: Message) => {
               if (result.leveledUp) {
                 const notificationsEnabled = await database.isLevelUpNotificationsEnabled(message.guildID);
                 if (notificationsEnabled) {
+                  log("info", `[${executionId}] Sending level-up notification for level ${result.level}`);
                   await client.rest.channels.createMessage(message.channelID, {
                     content: `🎉 Congratulations ${message.author.mention}! You've reached level **${result.level}**!`,
                     messageReference: {
