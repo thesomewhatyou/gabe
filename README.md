@@ -1,4 +1,5 @@
 # Gabe - Your Discord Bro (or Enemy)                                                                                                 		 
+[![Publish to GitHub Container Registry (multi-arch, explicit builder)](https://github.com/thesomewhatyou/gabe/actions/workflows/deploy-to-ghcr.yml/badge.svg)](https://github.com/thesomewhatyou/gabe/actions/workflows/deploy-to-ghcr.yml)
 
 Gabe is a fast, loud, and mildly cursed Discord bot built on top of [Oceanic.js](https://oceanic.ws). It ships native image processing, reliable moderation, fun commands, music via Lavalink, and a flexible storage layer — all tuned for low resource usage.
 
