@@ -148,7 +148,7 @@ class HelpCommand extends Command {
   }
 
   static description = "Gets a list of commands";
-  static aliases = ["commands"];
+  static aliases = ["commands", "help", "h"];
   static flags = [
     {
       name: "command",
