@@ -41,7 +41,7 @@ class ChannelCommand extends Command {
       description: "Channel to post starboard messages",
       type: Constants.ApplicationCommandOptionTypes.CHANNEL,
       required: true,
-      channelTypes: [Constants.ChannelTypes.GUILD_TEXT, Constants.ChannelTypes.GUILD_NEWS],
+      channelTypes: [Constants.ChannelTypes.GUILD_TEXT, Constants.ChannelTypes.GUILD_ANNOUNCEMENT],
       classic: false,
     },
   ];
@@ -50,4 +50,3 @@ class ChannelCommand extends Command {
 }
 
 export default ChannelCommand;
-
