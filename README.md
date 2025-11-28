@@ -57,6 +57,10 @@ pnpm start
 - Want extra logs? `pnpm run start:debug`
 - Prefer Bun or Deno? Try `pnpm run start:bun` or `pnpm run start:deno` (experimental).
 
+Gabe, unfortunately, sometimes does NOT have classic commands (for example, level) and it is sometimes broken.
+
+Fixing is hard, but you CAN add the fix yourself in a pull request (PLEASEPLEASEPLEASEPLEASE). 
+
 ## Commands
 
 Use `/help` or `&help` in your server to view available commands and categories.
@@ -111,7 +115,7 @@ Gabe is based on the legendary [esmBot](https://github.com/esmBot/esmBot) by [Es
 
 - `TOKEN` (required): Your bot token from Discord Developer Portal.
 - `PREFIX` (optional): Prefix for classic commands. Default `&`.
-- `DB` (optional): Database URL. Examples: `sqlite:///data/gabe.db`, `postgres://user:pass@host:5432/db`.
+- `DB` (required): Database URL. Examples: `sqlite:///data/gabe.db`, `postgres://user:pass@host:5432/db`.
 - `API_TYPE` (optional): Set to `ws` to use the external image API via WebSocket.
 - `TEMPDIR` (optional): Directory for temporary images (default OS temp).
 - `THRESHOLD` (optional): Max size of `TEMPDIR` before cleanup (e.g. `4G`, `500M`).
