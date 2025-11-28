@@ -26,19 +26,14 @@ class RankCommand extends Command {
         }
 
         // Determine which user to check
+        const userOption = this.getOptionUser("user");
         let userId = this.author.id;
         let username = this.author.username;
 
-        // Check if a user was mentioned
-        if (this.options.user) {
-            userId = this.options.user;
-            try {
-                const user = await this.client.rest.users.get(userId);
-                username = user.username;
-            } catch {
-                this.success = false;
-                return "Could not find that user.";
-            }
+        // Check if a user was specified via slash command or classic mention
+        if (userOption) {
+            userId = userOption.id;
+            username = userOption.username;
         } else if (this.message && this.message.mentions.length > 0) {
             const mentionedUser = this.message.mentions[0];
             userId = mentionedUser.id;
