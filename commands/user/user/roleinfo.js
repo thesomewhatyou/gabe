@@ -119,11 +119,12 @@ class RoleInfoCommand extends Command {
       inline: false,
     });
 
+    const iconURL = role.iconURL ? role.iconURL("png", 128) : undefined;
     const embed = {
       color: role.color || 0x5865f2,
       author: {
         name: `Role Info: ${role.name}`,
-        iconURL: role.iconURL("png", 128) ?? undefined,
+        iconURL: iconURL,
       },
       fields,
       footer: {
@@ -133,8 +134,8 @@ class RoleInfoCommand extends Command {
       timestamp: new Date().toISOString(),
     };
 
-    if (role.iconURL("png", 128)) {
-      embed.thumbnail = { url: role.iconURL("png", 128) };
+    if (iconURL) {
+      embed.thumbnail = { url: iconURL };
     }
 
     return { embeds: [embed] };
