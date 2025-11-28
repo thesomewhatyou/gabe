@@ -10,6 +10,25 @@ export interface DBGuild {
   tag_roles: string[];
 }
 
+export interface StarboardSettings {
+  guild_id: string;
+  channel_id: string | null;
+  emoji: string;
+  threshold: number;
+  allow_self: boolean;
+  allow_bots: boolean;
+  enabled: boolean;
+}
+
+export interface StarboardEntry {
+  guild_id: string;
+  message_id: string;
+  channel_id: string;
+  starboard_message_id: string | null;
+  star_count: number;
+  author_id: string;
+}
+
 export interface Tag {
   name: string;
   content: string;
@@ -105,3 +124,5 @@ export interface EventParams {
 export function isError(error: unknown): error is NodeJS.ErrnoException {
   return error instanceof Error;
 }
+
+export type StarboardDirection = "add" | "remove";

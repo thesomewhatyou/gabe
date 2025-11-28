@@ -4,7 +4,7 @@ import process from "node:process";
 import type { Guild, GuildChannel } from "oceanic.js";
 import detectRuntime from "#utils/detectRuntime.js";
 import logger from "#utils/logger.js";
-import { type DBGuild, isError, type Tag } from "#utils/types.js";
+import { type DBGuild, type StarboardEntry, type StarboardSettings, isError, type Tag } from "#utils/types.js";
 
 export declare class DatabasePlugin {
   constructor(connectString: string);
@@ -36,6 +36,13 @@ export declare class DatabasePlugin {
   getWarnings: (guildId: string, userId: string) => Promise<{ id: number; guild_id: string; user_id: string; moderator_id: string; reason: string; created_at: string | Date }[]>;
   removeWarning: (guildId: string, warningId: number) => Promise<boolean>;
   clearWarnings: (guildId: string, userId: string) => Promise<number>;
+  // Starboard support
+  getStarboardSettings: (guildId: string) => Promise<StarboardSettings>;
+  setStarboardSettings: (settings: StarboardSettings) => Promise<void>;
+  getStarboardEntry: (guildId: string, messageId: string) => Promise<StarboardEntry | undefined>;
+  upsertStarboardEntry: (entry: StarboardEntry) => Promise<void>;
+  deleteStarboardEntry: (guildId: string, messageId: string) => Promise<void>;
+  pruneStarboardEntries: (guildId: string, olderThan: number) => Promise<void>;
   // Leveling system
   getUserLevel: (guildId: string, userId: string) => Promise<{ guild_id: string; user_id: string; xp: number; level: number; last_xp_gain: Date | string | null }>;
   addXP: (guildId: string, userId: string, amount: number) => Promise<{ xp: number; level: number; leveledUp: boolean }>;
