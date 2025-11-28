@@ -136,8 +136,8 @@ importers:
         specifier: ^10.27.0
         version: 10.27.0
       pm2:
-        specifier: ^6.0.13
-        version: 6.0.13(patch_hash=58934bbe5227989bc6553945db05a54b38678aed1fbd2436fcc339710be7a3c4)(bufferutil@4.0.9)
+        specifier: ^6.0.14
+        version: 6.0.14(patch_hash=58934bbe5227989bc6553945db05a54b38678aed1fbd2436fcc339710be7a3c4)(bufferutil@4.0.9)
 
 packages:
 
@@ -1855,8 +1855,8 @@ packages:
   pm2-sysmonit@1.2.8:
     resolution: {integrity: sha512-ACOhlONEXdCTVwKieBIQLSi2tQZ8eKinhcr9JpZSUAL8Qy0ajIgRtsLxG/lwPOW3JEKqPyw/UaHmTWhUzpP4kA==}
 
-  pm2@6.0.13:
-    resolution: {integrity: sha512-1hS/adMgKoDpX4S1ichJW8SiGpex+oBSZK31dP1FSYOOGtaeuemXzhXPOCefmddgIY4K6v7uu+7xNPnmEnK3ag==}
+  pm2@6.0.14:
+    resolution: {integrity: sha512-wX1FiFkzuT2H/UUEA8QNXDAA9MMHDsK/3UHj6Dkd5U7kxyigKDA5gyDw78ycTQZAuGCLWyUX5FiXEuVQWafukA==}
     engines: {node: '>=16.0.0'}
     hasBin: true
 
@@ -4284,7 +4284,7 @@ snapshots:
       - supports-color
     optional: true
 
-  pm2@6.0.13(patch_hash=58934bbe5227989bc6553945db05a54b38678aed1fbd2436fcc339710be7a3c4)(bufferutil@4.0.9):
+  pm2@6.0.14(patch_hash=58934bbe5227989bc6553945db05a54b38678aed1fbd2436fcc339710be7a3c4)(bufferutil@4.0.9):
     dependencies:
       '@pm2/agent': 2.1.1(bufferutil@4.0.9)
       '@pm2/blessed': 0.1.81

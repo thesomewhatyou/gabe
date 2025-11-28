@@ -83,7 +83,7 @@
     "@sentry/bun": "^10.27.0",
     "@sentry/deno": "^10.27.0",
     "@sentry/node": "^10.27.0",
-    "pm2": "^6.0.13"
+    "pm2": "^6.0.14"
   },
   "binary": {
     "napi_versions": [
