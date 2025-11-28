@@ -26,7 +26,7 @@ jobs:
 
       # ensure buildx is available (this step doesn't create the builder for you)
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
       # === explicit builder creation (your requested command) ===
       - name: Create and use a named buildx builder
