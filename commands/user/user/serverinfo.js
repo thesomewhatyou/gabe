@@ -39,9 +39,9 @@ class ServerInfoCommand extends Command {
       2: "All members",
     };
 
-    const totalMembers = guild.memberCount ?? guild.members.size;
-    const botCount = guild.members.filter((m) => m.user?.bot).size;
-    const humanCount = totalMembers - botCount;
+    const totalMembers = guild.memberCount ?? guild.members.size ?? 0;
+    const botCount = guild.members.filter((m) => m.user?.bot).size ?? 0;
+    const humanCount = Math.max(0, totalMembers - botCount);
 
     const textChannels = guild.channels.filter((c) => c.type === 0).size;
     const voiceChannels = guild.channels.filter((c) => c.type === 2).size;

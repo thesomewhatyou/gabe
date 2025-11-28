@@ -235,6 +235,7 @@ class Command {
     if (this.type === "application") {
       const opt = this.getRawOption(key) as any;
       if (opt?.value) return this.interaction?.data.resolved.users.get(opt.value as string);
+      return undefined;
     }
     throw Error("Unknown command type");
   }
@@ -247,6 +248,7 @@ class Command {
     if (this.type === "application") {
       const opt = this.getRawOption(key) as any;
       if (opt?.value) return this.interaction?.data.resolved.members.get(opt.value as string);
+      return undefined;
     }
     throw Error("Unknown command type");
   }
@@ -259,6 +261,7 @@ class Command {
     if (this.type === "application") {
       const opt = this.getRawOption(key) as any;
       if (opt?.value) return this.interaction?.data.resolved.roles.get(opt.value as string);
+      return undefined;
     }
     throw Error("Unknown command type");
   }
@@ -271,6 +274,7 @@ class Command {
     if (this.type === "application") {
       const opt = this.getRawOption(key) as any;
       if (opt?.value) return this.interaction?.data.resolved.attachments.get(opt.value as string);
+      return undefined;
     }
     throw Error("Unknown command type");
   }
