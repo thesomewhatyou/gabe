@@ -37,7 +37,7 @@ class RoleInfoCommand extends Command {
     }
 
     const createdAt = Math.floor(role.createdAt.getTime() / 1000);
-    const memberCount = this.guild.members.filter((m) => m.roles.includes(role.id)).size;
+    const memberCount = this.guild.members.filter((m) => m.roles.includes(role.id)).length;
 
     const keyPermissions = [
       "ADMINISTRATOR",
