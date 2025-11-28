@@ -23,6 +23,9 @@ let mentionRegex: RegExp;
  * Runs when someone sends a message.
  */
 export default async ({ client, database }: EventParams, message: Message) => {
+  const executionId = Math.random().toString(36).substring(7);
+  log("debug", `[${executionId}] messageCreate triggered for message ${message.id} from ${message.author.id}`);
+
   // block if client is not ready yet
   if (!client.ready) return;
 
