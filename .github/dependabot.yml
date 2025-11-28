@@ -27,6 +27,6 @@ updates:
       interval: "daily"
 
    - package-ecosystem: "devcontainer" 
-   directory: "/" 
-   schedule: 
-     interval: "daily" 
+     directory: "/" 
+     schedule: 
+      interval: "daily" 
