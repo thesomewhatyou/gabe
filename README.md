@@ -1,7 +1,16 @@
 # Gabe - Your Discord Bro (or Enemy)                                                                                                 		 
-[![Publish to GitHub Container Registry (multi-arch, explicit builder)](https://github.com/thesomewhatyou/gabe/actions/workflows/deploy-to-ghcr.yml/badge.svg)](https://github.com/thesomewhatyou/gabe/actions/workflows/deploy-to-ghcr.yml)
+[![Publish to GitHub Container Registry (multi-arch, explicit builder)](https://github.com/thesomewhatyou/gabe/actions/workflows/deploy-to-ghcr.yml/badge.svg)](https://github.com/thesomewhatyou/gabe/actions/workflows/deploy-to-ghcr.yml) 
 
-Gabe is a fast, loud, and mildly cursed Discord bot built on top of [Oceanic.js](https://oceanic.ws). It ships native image processing, reliable moderation, fun commands, music via Lavalink, and a flexible storage layer — all tuned for low resource usage.
+[![Repo sync (GitHub -> Codeberg)](https://github.com/thesomewhatyou/gabe/actions/workflows/mirror.yml/badge.svg)](https://github.com/thesomewhatyou/gabe/actions/workflows/mirror.yml)
+
+
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white) ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black) ![C++](https://img.shields.io/badge/C++-00599C?style=for-the-badge&logo=cplusplus&logoColor=white) ![pnpm](https://img.shields.io/badge/pnpm-F69220?style=for-the-badge&logo=pnpm&logoColor=white) ![CMake](https://img.shields.io/badge/CMake-064F8C?style=for-the-badge&logo=cmake&logoColor=white) ![Dependabot](https://img.shields.io/badge/Dependabot-025E8C?style=for-the-badge&logo=dependabot&logoColor=white)
+
+
+
+Gabe is a fast, loud, and mildly cursed Discord bot built on top of ![oceanic.js](https://img.shields.io/badge/oceanic.js-000?style=for-the-badge). 
+
+It ships native image processing, reliable moderation, fun commands, music via Lavalink, and a flexible storage layer — all tuned for low resource usage
 
 ## Highlights
 
@@ -64,7 +73,9 @@ Fixing is hard, but you CAN add the fix yourself in a pull request (PLEASEPLEASE
 
 ## Commands
 
-Use `/help` or `&help` in your server to view available commands and categories.
+Use `/help` or `&help` in your server to view available commands and categories. Using prefixes is a better practice; as slash commands can sometimes be too much and prefixes are generally better. 
+
+Don't know a command? It's not better to guess. Just use `&help`. 
 
 ## Docker and Lavalink
 
@@ -153,7 +164,7 @@ Gabe is based on the legendary [esmBot](https://github.com/esmBot/esmBot) by [Es
   - Verify host/port/secret and that your bot can connect from its network.
 
 - Windows
-  - Windows is not officially supported. Use WSL for best results.
+  - Windows is not officially supported, nor will it ever be. Use WSL for best results.
 
 ## Logs and stability
 
