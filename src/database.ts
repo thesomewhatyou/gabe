@@ -36,6 +36,14 @@ export declare class DatabasePlugin {
   getWarnings: (guildId: string, userId: string) => Promise<{ id: number; guild_id: string; user_id: string; moderator_id: string; reason: string; created_at: string | Date }[]>;
   removeWarning: (guildId: string, warningId: number) => Promise<boolean>;
   clearWarnings: (guildId: string, userId: string) => Promise<number>;
+  // Leveling system
+  getUserLevel: (guildId: string, userId: string) => Promise<{ guild_id: string; user_id: string; xp: number; level: number; last_xp_gain: Date | string | null }>;
+  addXP: (guildId: string, userId: string, amount: number) => Promise<{ xp: number; level: number; leveledUp: boolean }>;
+  getLeaderboard: (guildId: string, limit?: number) => Promise<{ guild_id: string; user_id: string; xp: number; level: number; last_xp_gain: Date | string | null }[]>;
+  setLevelsEnabled: (guildId: string, enabled: boolean) => Promise<void>;
+  isLevelsEnabled: (guildId: string) => Promise<boolean>;
+  setLevelUpNotifications: (guildId: string, enabled: boolean) => Promise<void>;
+  isLevelUpNotificationsEnabled: (guildId: string) => Promise<boolean>;
 }
 
 export async function init(): Promise<DatabasePlugin | undefined> {

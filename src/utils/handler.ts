@@ -147,53 +147,50 @@ export async function load(
       userCommands.set(commandName, cmdMap);
       commandInfo.type = Constants.ApplicationCommandTypes.USER;
     } else {
-      try {
-        if (!subcommandDirExists || !subcommandDirEntries?.length) {
-          commands.set(commandName, cmdMap);
-          return;
-        }
+      if (subcommandDirExists && subcommandDirEntries?.length) {
+        try {
+          log("info", `[DEBUG] Checking for subcommands in ${resolvedSubcommandPath} for ${commandName}`);
+          const files = subcommandDirEntries;
+          log("info", `[DEBUG] Found ${files.length} files in ${resolvedSubcommandPath}`);
+          commandInfo.baseCommand = true;
+          commandInfo.flags = [];
+          for (const file of files) {
+            if (!file.isFile()) continue;
+            log("info", `[DEBUG] Loading subcommand ${file.name}`);
+            try {
+              const sub = await load(null, resolve(resolvedSubcommandPath, file.name), skipSend, true);
+              if (!sub) {
+                log("warn", `[DEBUG] Failed to load subcommand ${file.name}`);
+                continue;
+              }
 
-        log("info", `[DEBUG] Checking for subcommands in ${resolvedSubcommandPath} for ${commandName}`);
-        const files = subcommandDirEntries;
-        log("info", `[DEBUG] Found ${files.length} files in ${resolvedSubcommandPath}`);
-        commandInfo.baseCommand = true;
-        commandInfo.flags = [];
-        for (const file of files) {
-          if (!file.isFile()) continue;
-          log("info", `[DEBUG] Loading subcommand ${file.name}`);
-          try {
-            const sub = await load(null, resolve(resolvedSubcommandPath, file.name), skipSend, true);
-            if (!sub) {
-              log("warn", `[DEBUG] Failed to load subcommand ${file.name}`);
-              continue;
+              const split = sub.name.split(" ");
+              const subName = split[split.length - 1];
+              cmdMap[subName] = sub.props;
+
+              const hasSubCommands = sub.info.flags.some(
+                (v) => v.type === Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+              );
+              commandInfo.flags.push({
+                name: subName,
+                nameLocalizations: getAllLocalizations(`commands.flagNames.${fullCommandName}.${subName}`),
+                type: hasSubCommands
+                  ? Constants.ApplicationCommandOptionTypes.SUB_COMMAND_GROUP
+                  : Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+                description: sub.info.description,
+                descriptionLocalizations: getAllLocalizations(`commands.flags.${fullCommandName}.${subName}`),
+                // @ts-expect-error It thinks we're using the wrong flag type
+                options: sub.info.flags,
+              });
+            } catch (e) {
+              log("error", `[DEBUG] Error loading subcommand ${file.name}: ${e}`);
             }
-
-            const split = sub.name.split(" ");
-            const subName = split[split.length - 1];
-            cmdMap[subName] = sub.props;
-
-            const hasSubCommands = sub.info.flags.some(
-              (v) => v.type === Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
-            );
-            commandInfo.flags.push({
-              name: subName,
-              nameLocalizations: getAllLocalizations(`commands.flagNames.${fullCommandName}.${subName}`),
-              type: hasSubCommands
-                ? Constants.ApplicationCommandOptionTypes.SUB_COMMAND_GROUP
-                : Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
-              description: sub.info.description,
-              descriptionLocalizations: getAllLocalizations(`commands.flags.${fullCommandName}.${subName}`),
-              // @ts-expect-error It thinks we're using the wrong flag type
-              options: sub.info.flags,
-            });
-          } catch (e) {
-            log("error", `[DEBUG] Error loading subcommand ${file.name}: ${e}`);
           }
+          commandInfo.params = parseFlags(commandInfo.flags);
+        } catch (e) {
+          log("error", `[DEBUG] Error loading subcommands for ${commandName}: ${e}`);
         }
-      } catch (e) {
-        log("error", `[DEBUG] Error loading subcommands for ${commandName}: ${e}`);
       }
-      commandInfo.params = parseFlags(commandInfo.flags);
       commands.set(commandName, cmdMap);
     }
   }

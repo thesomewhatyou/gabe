@@ -102,6 +102,8 @@ const updates = [
     PRIMARY KEY (guild_id, user_id)
   );
   ALTER TABLE guilds ADD COLUMN IF NOT EXISTS levels_enabled BOOLEAN DEFAULT FALSE;`,
+  // Level-up notifications setting
+  `ALTER TABLE guilds ADD COLUMN IF NOT EXISTS level_up_notifications BOOLEAN DEFAULT TRUE;`,
 ];
 
 export default class PostgreSQLPlugin implements DatabasePlugin {
@@ -109,7 +111,7 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
 
   constructor(connectString: string) {
     this.sql = Postgres(connectString, {
-      onnotice: () => {},
+      onnotice: () => { },
     });
   }
 
@@ -417,5 +419,16 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
       SELECT levels_enabled FROM guilds WHERE guild_id = ${guildId}
     `;
     return result?.levels_enabled === true;
+  }
+
+  async setLevelUpNotifications(guildId: string, enabled: boolean) {
+    await this.sql`UPDATE guilds SET level_up_notifications = ${enabled} WHERE guild_id = ${guildId}`;
+  }
+
+  async isLevelUpNotificationsEnabled(guildId: string) {
+    const [result] = await this.sql<{ level_up_notifications: boolean }[]>`
+      SELECT level_up_notifications FROM guilds WHERE guild_id = ${guildId}
+    `;
+    return result?.level_up_notifications !== false; // Default to true if not set
   }
 }

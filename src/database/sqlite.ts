@@ -128,6 +128,8 @@ const updates = [
     PRIMARY KEY (guild_id, user_id)
   );
   ALTER TABLE guilds ADD COLUMN levels_enabled INTEGER DEFAULT 0;`,
+  // Level-up notifications setting
+  `ALTER TABLE guilds ADD COLUMN level_up_notifications INTEGER DEFAULT 1;`,
 ];
 
 export default class SQLitePlugin implements DatabasePlugin {
@@ -321,10 +323,10 @@ export default class SQLitePlugin implements DatabasePlugin {
     // SQLite does not support arrays, so instead we convert them from strings
     let guild:
       | ({
-          disabled: string;
-          disabled_commands: string;
-          tag_roles: string;
-        } & Omit<DBGuild, "disabled" | "disabled_commands" | "tag_roles">)
+        disabled: string;
+        disabled_commands: string;
+        tag_roles: string;
+      } & Omit<DBGuild, "disabled" | "disabled_commands" | "tag_roles">)
       | undefined;
     this.connection.transaction(() => {
       guild = this.connection.prepare("SELECT * FROM guilds WHERE guild_id = ?").get(query) as {
@@ -507,5 +509,18 @@ export default class SQLitePlugin implements DatabasePlugin {
       .prepare("SELECT levels_enabled FROM guilds WHERE guild_id = ?")
       .get(guildId) as { levels_enabled: number } | undefined;
     return result?.levels_enabled === 1;
+  }
+
+  async setLevelUpNotifications(guildId: string, enabled: boolean) {
+    this.connection
+      .prepare("UPDATE guilds SET level_up_notifications = ? WHERE guild_id = ?")
+      .run(enabled ? 1 : 0, guildId);
+  }
+
+  async isLevelUpNotificationsEnabled(guildId: string) {
+    const result = this.connection
+      .prepare("SELECT level_up_notifications FROM guilds WHERE guild_id = ?")
+      .get(guildId) as { level_up_notifications: number } | undefined;
+    return result?.level_up_notifications !== 0; // Default to true (1) if not set
   }
 }

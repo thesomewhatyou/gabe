@@ -288,6 +288,44 @@ export default async ({ client, database }: EventParams, message: Message) => {
   } finally {
     if (database) {
       await database.addCount(cmdName);
+
+      // Leveling system: award XP for messages
+      if (message.guildID) {
+        try {
+          const levelsEnabled = await database.isLevelsEnabled(message.guildID);
+          if (levelsEnabled) {
+            const userLevel = await database.getUserLevel(message.guildID, message.author.id);
+            const now = Date.now();
+            const lastXP = userLevel.last_xp_gain ? new Date(userLevel.last_xp_gain).getTime() : 0;
+
+            // 1 minute cooldown (60000 ms)
+            if (now - lastXP >= 60000) {
+              // Award random XP between 15-25
+              const xpGain = Math.floor(Math.random() * 11) + 15;
+              const result = await database.addXP(message.guildID, message.author.id, xpGain);
+
+              // Check if user leveled up and notifications are enabled
+              if (result.leveledUp) {
+                const notificationsEnabled = await database.isLevelUpNotificationsEnabled(message.guildID);
+                if (notificationsEnabled) {
+                  await client.rest.channels.createMessage(message.channelID, {
+                    content: `🎉 Congratulations ${message.author.mention}! You've reached level **${result.level}**!`,
+                    messageReference: {
+                      channelID: message.channelID,
+                      messageID: message.id,
+                      guildID: message.guildID,
+                      failIfNotExists: false,
+                    },
+                  });
+                }
+              }
+            }
+          }
+        } catch (err) {
+          // Silently fail XP gain to not interrupt normal bot operations
+          _error(`Error awarding XP: ${(err as Error).stack || err}`);
+        }
+      }
     }
   }
 };
