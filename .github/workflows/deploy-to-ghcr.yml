@@ -22,7 +22,7 @@ jobs:
 
       # register QEMU handlers so cross-arch builds work
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
 
       # ensure buildx is available (this step doesn't create the builder for you)
       - name: Set up Docker Buildx
