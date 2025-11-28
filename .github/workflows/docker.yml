@@ -30,7 +30,7 @@ jobs:
     name: Build and Publish Docker Image (${{matrix.platform.key}})
     runs-on: ${{matrix.platform.os}}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Prepare
         run: |
           platform=${{ matrix.platform.key }}
@@ -82,7 +82,7 @@ jobs:
     needs:
       - build-image
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Download digests
         uses: actions/download-artifact@v4
         with:
