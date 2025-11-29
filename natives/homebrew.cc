@@ -13,7 +13,8 @@ ArgumentMap Homebrew([[maybe_unused]] const string &type, string &outType, Argum
   VImage bg = VImage::new_from_file(assetPath.c_str());
 
   LoadFonts(basePath);
-  VImage text = VImage::text(("<span letter_spacing=\"-5120\" color=\"white\">" + caption + "</span>").c_str(),
+  string escapedCaption = PangoEscape(caption);
+  VImage text = VImage::text(("<span letter_spacing=\"-5120\" color=\"white\">" + escapedCaption + "</span>").c_str(),
                              VImage::option()
                                ->set("rgba", true)
                                ->set("align", VIPS_ALIGN_CENTRE)

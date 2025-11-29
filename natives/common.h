@@ -30,6 +30,7 @@ uint32_t readUint32LE(unsigned char *buffer);
 #include "commands.h"
 
 void LoadFonts(string basePath);
+string PangoEscape(const string &input);
 vips::VImage NormalizeVips(vips::VImage in, int *width, int *pageHeight, int nPages);
 vips::VOption *GetInputOptions(string type, bool sequential, bool sequentialIfAnim);
 vips::VOption *GetOutputOptions(string type);
