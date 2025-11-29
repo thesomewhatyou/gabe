@@ -383,6 +383,8 @@ async function finishJob(
 
   jobs.set(job.id, jobObject);
   let r: RawMessage | undefined;
+  let webhookFailed = false;
+  let isExpiredToken = false;
   if (clientID && object.token && allowedExtensions.includes(jobObject.ext) && jobObject.data.length < fileSize) {
     const form = new FormData();
     form.set(
@@ -402,6 +404,12 @@ async function finishJob(
       });
       clearTimeout(timeout);
       if (!res.ok) {
+        webhookFailed = true;
+        // 404 typically indicates an expired or invalid interaction token
+        if (res.status === 404) {
+          isExpiredToken = true;
+          log(`Webhook request failed with 404 for job ${job.id}, token likely expired. Falling back to HTTP retrieval.`, job.num);
+        }
         let resObj: string | object;
         try {
           resObj = (await res.json()) as Record<string, unknown>;
@@ -416,7 +424,10 @@ async function finishJob(
       }
       r = (await res.json()) as RawMessage;
     } catch (e) {
-      error(`Error while sending job ${job.id}, will attempt to send back to the bot: ${e}`, job.num);
+      webhookFailed = true;
+      if (!isExpiredToken) {
+        error(`Error while sending job ${job.id}, will attempt to send back to the bot: ${e}`, job.num);
+      }
     }
   }
 
@@ -426,6 +437,9 @@ async function finishJob(
     const attachment = r.attachments[0];
     response = Buffer.concat([Buffer.from([Rsent]), tag, Buffer.from(JSON.stringify(attachment ?? {}))]);
   } else {
+    // Ensure job data is preserved in cache for HTTP fallback retrieval
+    // This is critical when webhook fails (e.g., expired token)
+    jobs.set(job.id, jobObject);
     response = Buffer.concat([Buffer.from([Rwait]), tag]);
   }
   ws.send(response);
