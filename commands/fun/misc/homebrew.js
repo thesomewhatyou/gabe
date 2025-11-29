@@ -1,4 +1,5 @@
 import ImageCommand from "#cmd-classes/imageCommand.js";
+import { textDecode } from "#utils/misc.js";
 
 class HomebrewCommand extends ImageCommand {
   /**
@@ -7,7 +8,7 @@ class HomebrewCommand extends ImageCommand {
   paramsFunc(url) {
     const newArgs = this.getOptionString("text") ?? this.args.filter((item) => !item.includes(url ?? "")).join(" ");
     return {
-      caption: this.clean(newArgs),
+      caption: textDecode(this.clean(newArgs)),
     };
   }
 

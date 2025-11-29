@@ -15,6 +15,36 @@ void LoadFonts(string basePath) {
   }
 }
 
+string PangoEscape(const string &input) {
+  string output;
+  output.reserve(input.length());
+  
+  for (char c : input) {
+    switch (c) {
+      case '&':
+        output.append("&amp;");
+        break;
+      case '<':
+        output.append("&lt;");
+        break;
+      case '>':
+        output.append("&gt;");
+        break;
+      case '"':
+        output.append("&quot;");
+        break;
+      case '\'':
+        output.append("&apos;");
+        break;
+      default:
+        output.push_back(c);
+        break;
+    }
+  }
+  
+  return output;
+}
+
 vips::VImage NormalizeVips(vips::VImage in, int *width, int *pageHeight, int nPages) {
   if (nPages > 1000) {
     throw -1;
