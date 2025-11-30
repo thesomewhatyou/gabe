@@ -2,6 +2,7 @@
   "commands": {
     "descriptions": {
       "8ball": "Asks Gabe's magic 8-ball a question (Gabe knows all... maybe)",
+      "annoy": "Piss someone off with an insult",
       "bird": "Gets a random bird picture",
       "cat": "Gets a random cat picture",
       "dice": "Rolls the dice",
@@ -108,6 +109,9 @@
     "flagNames": {
       "8ball": {
         "question": "question"
+      },
+      "annoy": {
+        "who": "who"
       },
       "dice": {
         "max": "max"
@@ -355,6 +359,9 @@
       "8ball": {
         "question": "A question you want to ask the ball"
       },
+      "annoy": {
+        "who": "User to annoy (defaults to you)"
+      },
       "dice": {
         "max": "The maximum dice value"
       },
@@ -572,6 +579,7 @@
     },
     "names": {
       "8ball": "8ball",
+      "annoy": "annoy",
       "bird": "bird",
       "cat": "cat",
       "dice": "dice",
