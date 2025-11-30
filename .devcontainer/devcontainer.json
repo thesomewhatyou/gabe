@@ -1,7 +1,6 @@
 {
   "name": "Node.js 24 + pnpm",
   "image": "node:24-bookworm",
-  
   "features": {
     "ghcr.io/devcontainers/features/common-utils:2": {
       "installZsh": true,
@@ -23,9 +22,7 @@
       "version": "latest"
     }
   },
-  
   "postCreateCommand": "bash .devcontainer/setup.sh",
-
   "customizations": {
     "vscode": {
       "extensions": [
@@ -47,19 +44,19 @@
       }
     }
   },
-  
   "remoteUser": "node",
-  
   "mounts": [
     "source=${localWorkspaceFolder}/node_modules,target=${containerWorkspaceFolder}/node_modules,type=bind,consistency=cached"
   ],
-
   "runArgs": [
     "--init"
   ],
-
-  "forwardPorts": [3000, 5173, 8080],
-  
+  "forwardPorts": [
+    3000,
+    5173,
+    8080,
+    42069
+  ],
   "portsAttributes": {
     "3000": {
       "label": "Application",
