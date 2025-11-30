@@ -1,5 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { random } from "#utils/misc.js";
 
 class AnnoyCommand extends Command {
     static responses = [
@@ -37,4 +38,4 @@ class AnnoyCommand extends Command {
     static cooldownMessage = "WAIT. Just wait."
     static cooldownType = "user"
 }
-export default AnnoyCommand; 
+export default AnnoyCommand;  
