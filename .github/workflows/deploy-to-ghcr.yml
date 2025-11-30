@@ -57,7 +57,3 @@ jobs:
             --cache-to type=gha,mode=max \
             .
 
-      # optional: remove the builder when finished (keeps runner tidy)
-      - name: Remove buildx builder
-        if: always()
-        run: docker buildx rm mybuilder || true
