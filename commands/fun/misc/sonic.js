@@ -20,6 +20,7 @@ class SonicCommand extends ImageCommand {
   static requiresParam = true;
   static noParam = "You need to provide some text to make a Sonic meme!";
   static command = "sonic";
+  static aliases = ["sonic", "sonicsays", "sonic-says"];
 }
 
 export default SonicCommand;

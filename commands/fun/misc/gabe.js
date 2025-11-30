@@ -19,10 +19,11 @@ class GabeCommand extends Command {
     "I can be your best friend or your worst nightmare. Choose wisely.",
     "Gabe's the name, Discord shenanigans is the game!",
     "Multifunctional and full of attitude. That's me!",
+    "You'll burn in hell, you rotten fuck. You'll see.",
   ];
 
   async run() {
-    return `🤖 ${random(GabeCommand.responses)}`;
+    return `${random(GabeCommand.responses)}`;
   }
 
   static flags = [

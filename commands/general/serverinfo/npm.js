@@ -38,6 +38,8 @@ class NpmCommand extends Command {
       this.success = false;
       return "Failed to contact npm registry.";
     }
+    // this.maybe = wtf
+    // return "How do you do that vro"
 
     const latest = data["dist-tags"]?.latest;
     const version = latest && data.versions?.[latest] ? latest : Object.keys(data.versions || {}).pop();
@@ -48,9 +50,9 @@ class NpmCommand extends Command {
       (verMeta?.author && (typeof verMeta.author === "string" ? verMeta.author : verMeta.author.name)) ||
       (Array.isArray(verMeta?.maintainers)
         ? verMeta.maintainers
-            .map((m) => (typeof m === "string" ? m : m.name))
-            .slice(0, 3)
-            .join(", ")
+          .map((m) => (typeof m === "string" ? m : m.name))
+          .slice(0, 3)
+          .join(", ")
         : undefined);
 
     let repo = verMeta?.repository?.url || verMeta?.repository || data.repository?.url || data.repository;
