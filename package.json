@@ -46,7 +46,7 @@
   },
   "dependencies": {
     "@db/sqlite": "jsr:^0.12.0",
-    "better-sqlite3": "^12.4.6",
+    "better-sqlite3": "^12.5.0",
     "bufferutil": "^4.0.9",
     "codex": "^0.2.3",
     "dotenv": "^17.2.3",
