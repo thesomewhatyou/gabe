@@ -64,6 +64,16 @@ pnpm build
 pnpm start
 ```
 
+## Tests
+
+Gabe ships with a small but growing automated test suite for core utilities.
+
+To build the TypeScript sources and run the tests:
+
+```
+pnpm test
+```
+
 - Want extra logs? `pnpm run start:debug`
 - Prefer Bun or Deno? Try `pnpm run start:bun` or `pnpm run start:deno` (experimental).
 
