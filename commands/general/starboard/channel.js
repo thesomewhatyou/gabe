@@ -45,7 +45,6 @@ class ChannelCommand extends Command {
       classic: false,
     },
   ];
-  static adminOnly = true;
   static dbRequired = true;
 }
 

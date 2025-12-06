@@ -17,7 +17,6 @@ class StarboardCommand extends Command {
 
   static description = "Manage the starboard";
   static aliases = ["sb"];
-  static adminOnly = true;
   static dbRequired = true;
 }
 

@@ -51,9 +51,7 @@ class AllowCommand extends Command {
       classic: true,
     },
   ];
-  static adminOnly = true;
   static dbRequired = true;
 }
 
 export default AllowCommand;
-

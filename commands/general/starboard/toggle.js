@@ -37,9 +37,7 @@ class ToggleCommand extends Command {
       required: true,
     },
   ];
-  static adminOnly = true;
   static dbRequired = true;
 }
 
 export default ToggleCommand;
-

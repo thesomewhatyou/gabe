@@ -38,9 +38,7 @@ class ThresholdCommand extends Command {
       classic: true,
     },
   ];
-  static adminOnly = true;
   static dbRequired = true;
 }
 
 export default ThresholdCommand;
-
