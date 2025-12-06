@@ -1097,8 +1097,33 @@
         "compatibility": "**Compatibility:** {{percent}}%",
         "shipName": "**Ship Name:** {{name}}",
         "needsTwo": "❌ Gabe says: I need two people to ship! Try tagging them or using the flags."
+      },
+      "starboard": {
+        "serverOnly": "This command can only be used in a server!",
+        "adminOnly": "You need to be an administrator to use this command!",
+        "manageGuildOnly": "You need the `Manage Server` permission to configure the starboard!",
+        "help": "**Starboard Commands:**\n• `/starboard channel` - Set the starboard channel\n• `/starboard emoji` - Set the starboard emoji (default: ⭐)\n• `/starboard threshold` - Set minimum reactions needed (1-25)\n• `/starboard toggle` - Enable/disable the starboard\n• `/starboard allow` - Configure self-starring and bot messages\n\nReact to messages with the configured emoji to add them to the starboard!",
+        "channelSet": "Starboard channel has been set to {{channel}} and the starboard has been enabled!",
+        "invalidChannel": "That's not a valid text channel in this server!",
+        "cannotSend": "I don't have permission to send messages in that channel!",
+        "emojiSet": "Starboard emoji has been set to {{emoji}}!",
+        "invalidEmoji": "You need to provide a valid emoji!",
+        "thresholdSet": "Starboard threshold has been set to {{amount}} reactions!",
+        "invalidThreshold": "Threshold must be between 1 and 25!",
+        "enabled": "The starboard has been enabled!",
+        "disabled": "The starboard has been disabled.",
+        "toggleRequired": "You need to specify whether to enable or disable the starboard!",
+        "allowNoChange": "You need to specify at least one option to change!",
+        "allowUpdated": "Starboard settings updated!\n• Self-starring: {{self}}\n• Bot messages: {{bots}}"
       }
     }
+  },
+  "common": {
+    "enabled": "Enabled",
+    "disabled": "Disabled"
+  },
+  "starboard": {
+    "noContent": "(No content)"
   },
   "error": "Uh oh! I ran into an error while running this command. Please report the content of the attached file at the following link or on the Gabe Support server:",
   "errorCaps": "ERROR",
