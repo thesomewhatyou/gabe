@@ -12,7 +12,7 @@ class StarboardCommand extends Command {
       return this.getString("commands.responses.starboard.adminOnly");
     }
 
-D    return this.getString("commands.responses.starboard.help");
+    return this.getString("commands.responses.starboard.help");
   }
 
   static description = "Manage the starboard";
@@ -22,4 +22,3 @@ D    return this.getString("commands.responses.starboard.help");
 }
 
 export default StarboardCommand;
-
