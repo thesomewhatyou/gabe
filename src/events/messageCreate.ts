@@ -3,7 +3,14 @@ import process from "node:process";
 import { type AnyTextableChannel, GroupChannel, type Message, PrivateChannel, ThreadChannel } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
 import ImageCommand from "#cmd-classes/imageCommand.js";
-import { aliases, commands, disabledCache, disabledCmdCache, prefixCache, processedMessages } from "#utils/collections.js";
+import {
+  aliases,
+  commands,
+  disabledCache,
+  disabledCmdCache,
+  prefixCache,
+  processedMessages,
+} from "#utils/collections.js";
 import detectRuntime from "#utils/detectRuntime.js";
 import { getString } from "#utils/i18n.js";
 import { error as _error, log } from "#utils/logger.js";
@@ -178,7 +185,10 @@ export default async ({ client, database }: EventParams, message: Message) => {
     });
     const result = await commandClass.run();
     const endTime = new Date();
-    log("info", `[${executionId}] Command result type: ${typeof result}, value: ${JSON.stringify(result)?.substring(0, 100)}`);
+    log(
+      "info",
+      `[${executionId}] Command result type: ${typeof result}, value: ${JSON.stringify(result)?.substring(0, 100)}`,
+    );
     if (endTime.getTime() - startTime.getTime() >= 180000) reference.allowedMentions.repliedUser = true;
     if (typeof result === "string") {
       reference.allowedMentions.repliedUser = true;
@@ -193,7 +203,10 @@ export default async ({ client, database }: EventParams, message: Message) => {
         ),
       );
     } else if (typeof result === "object") {
-      log("info", `[${executionId}] Result is object, checking if ImageCommand: ${commandClass instanceof ImageCommand}`);
+      log(
+        "info",
+        `[${executionId}] Result is object, checking if ImageCommand: ${commandClass instanceof ImageCommand}`,
+      );
       if (commandClass instanceof ImageCommand && result.files) {
         let fileSize = 10485760;
         if (message.guild) {

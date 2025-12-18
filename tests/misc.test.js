@@ -1,13 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import {
-  clean,
-  isEmpty,
-  safeBigInt,
-  textDecode,
-  textEncode,
-} from "../dist/utils/misc.js";
+import { clean, isEmpty, safeBigInt, textDecode, textEncode } from "../dist/utils/misc.js";
 
 test("textEncode encodes special characters and escape sequences", () => {
   const input = "&><\\n\\:\\,";

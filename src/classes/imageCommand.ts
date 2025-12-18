@@ -158,18 +158,20 @@ class ImageCommand extends Command {
     if (this.interaction) {
       imageParams.ephemeral = ephemeral;
       imageParams.spoiler = needsSpoiler;
-      
+
       // Discord interaction tokens are valid for 15 minutes from interaction creation
       // Only set the token if it's still valid (with a 60 second buffer for processing time)
       const interactionAge = Date.now() - CommandInteraction.getCreatedAt(this.interaction.id).getTime();
       const TOKEN_EXPIRY_MS = 15 * 60 * 1000; // 15 minutes
       const BUFFER_MS = 60 * 1000; // 60 seconds buffer
-      
+
       if (interactionAge < TOKEN_EXPIRY_MS - BUFFER_MS) {
         imageParams.token = this.interaction.token;
       } else {
         // Token is too old or about to expire, don't set it to avoid webhook failures
-        logger.warn(`Interaction token for ${this.interaction.id} is too old (${Math.floor(interactionAge / 1000)}s), skipping direct webhook upload`);
+        logger.warn(
+          `Interaction token for ${this.interaction.id} is too old (${Math.floor(interactionAge / 1000)}s), skipping direct webhook upload`,
+        );
       }
     }
 

@@ -150,7 +150,7 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
 
   constructor(connectString: string) {
     this.sql = Postgres(connectString, {
-      onnotice: () => { },
+      onnotice: () => {},
     });
   }
 
@@ -323,8 +323,8 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
   }
 
   async getUserPreferences(userId: string) {
-    const [result]: [{ user_id: string; locale: string | null; dm_notifications: boolean }?] =
-      await this.sql`SELECT * FROM user_preferences WHERE user_id = ${userId}`;
+    const [result]: [{ user_id: string; locale: string | null; dm_notifications: boolean }?] = await this
+      .sql`SELECT * FROM user_preferences WHERE user_id = ${userId}`;
 
     if (!result) {
       return {
@@ -342,8 +342,8 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
   }
 
   async setUserPreference(userId: string, key: "locale" | "dm_notifications", value: string | boolean | null) {
-    const [existing]: [{ user_id: string }?] =
-      await this.sql`SELECT user_id FROM user_preferences WHERE user_id = ${userId}`;
+    const [existing]: [{ user_id: string }?] = await this
+      .sql`SELECT user_id FROM user_preferences WHERE user_id = ${userId}`;
 
     if (existing) {
       if (key === "locale") {
@@ -367,16 +367,37 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
   }
 
   async addModLog(guildId: string, userId: string, moderatorId: string, action: string, reason?: string) {
-    await this.sql`INSERT INTO mod_logs (guild_id, user_id, moderator_id, action, reason) VALUES (${guildId}, ${userId}, ${moderatorId}, ${action}, ${reason ?? null})`;
+    await this
+      .sql`INSERT INTO mod_logs (guild_id, user_id, moderator_id, action, reason) VALUES (${guildId}, ${userId}, ${moderatorId}, ${action}, ${reason ?? null})`;
   }
 
   async getModLogs(guildId: string, userId?: string, limit = 10) {
     if (userId) {
-      return await this.sql<{ id: number; guild_id: string; user_id: string; moderator_id: string; action: string; reason: string | null; created_at: Date }[]>`
+      return await this.sql<
+        {
+          id: number;
+          guild_id: string;
+          user_id: string;
+          moderator_id: string;
+          action: string;
+          reason: string | null;
+          created_at: Date;
+        }[]
+      >`
         SELECT * FROM mod_logs WHERE guild_id = ${guildId} AND user_id = ${userId} ORDER BY created_at DESC LIMIT ${limit}
       `;
     }
-    return await this.sql<{ id: number; guild_id: string; user_id: string; moderator_id: string; action: string; reason: string | null; created_at: Date }[]>`
+    return await this.sql<
+      {
+        id: number;
+        guild_id: string;
+        user_id: string;
+        moderator_id: string;
+        action: string;
+        reason: string | null;
+        created_at: Date;
+      }[]
+    >`
       SELECT * FROM mod_logs WHERE guild_id = ${guildId} ORDER BY created_at DESC LIMIT ${limit}
     `;
   }
@@ -389,7 +410,9 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
   }
 
   async getWarnings(guildId: string, userId: string) {
-    return await this.sql<{ id: number; guild_id: string; user_id: string; moderator_id: string; reason: string; created_at: Date }[]>`
+    return await this.sql<
+      { id: number; guild_id: string; user_id: string; moderator_id: string; reason: string; created_at: Date }[]
+    >`
       SELECT * FROM warnings WHERE guild_id = ${guildId} AND user_id = ${userId} ORDER BY created_at DESC
     `;
   }
@@ -463,7 +486,9 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
   }
 
   async getUserLevel(guildId: string, userId: string) {
-    const [result] = await this.sql<{ guild_id: string; user_id: string; xp: number; level: number; last_xp_gain: Date | null }[]>`
+    const [result] = await this.sql<
+      { guild_id: string; user_id: string; xp: number; level: number; last_xp_gain: Date | null }[]
+    >`
       SELECT * FROM user_levels WHERE guild_id = ${guildId} AND user_id = ${userId}
     `;
 
@@ -502,7 +527,9 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
   }
 
   async getLeaderboard(guildId: string, limit = 10) {
-    return await this.sql<{ guild_id: string; user_id: string; xp: number; level: number; last_xp_gain: Date | null }[]>`
+    return await this.sql<
+      { guild_id: string; user_id: string; xp: number; level: number; last_xp_gain: Date | null }[]
+    >`
       SELECT * FROM user_levels WHERE guild_id = ${guildId} ORDER BY xp DESC LIMIT ${limit}
     `;
   }

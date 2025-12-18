@@ -11,15 +11,11 @@ class PurgeCommand extends Command {
 
     const member = this.member;
 
-    if (
-      !member.permissions.has(Constants.Permissions.MANAGE_MESSAGES) &&
-      !isOwner(this.author?.id)
-    ) {
+    if (!member.permissions.has(Constants.Permissions.MANAGE_MESSAGES) && !isOwner(this.author?.id)) {
       return "❌ Gabe says: You don't have permission to manage messages. Back off!";
     }
 
-    const parseValidNumber = (value) =>
-      typeof value === "number" && Number.isFinite(value) ? value : undefined;
+    const parseValidNumber = (value) => (typeof value === "number" && Number.isFinite(value) ? value : undefined);
     const optionAmount = parseValidNumber(this.getOptionInteger("amount"));
     const positionalAmount = parseValidNumber(Number.parseInt(this.args[0], 10));
     const amount = optionAmount ?? positionalAmount ?? 10;

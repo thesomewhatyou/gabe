@@ -24,7 +24,8 @@ class RoleInfoCommand extends Command {
     let role;
     if (typeof roleInput === "string") {
       const roleId = roleInput.replace(/<@&|>/g, "");
-      role = this.guild.roles.get(roleId) ??
+      role =
+        this.guild.roles.get(roleId) ??
         this.guild.roles.find((r) => r.name.toLowerCase() === roleInput.toLowerCase()) ??
         this.guild.roles.find((r) => r.name.toLowerCase().includes(roleInput.toLowerCase()));
     } else {
@@ -58,9 +59,10 @@ class RoleInfoCommand extends Command {
       const val = Constants.Permissions[perm];
       return val && role.permissions.has(val);
     });
-    const permissionDisplay = rolePermissions.length > 0
-      ? rolePermissions.map((p) => `\`${p.replace(/_/g, " ")}\``).join(", ")
-      : "No key permissions";
+    const permissionDisplay =
+      rolePermissions.length > 0
+        ? rolePermissions.map((p) => `\`${p.replace(/_/g, " ")}\``).join(", ")
+        : "No key permissions";
 
     const fields = [
       {

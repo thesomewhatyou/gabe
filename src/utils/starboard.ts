@@ -1,11 +1,4 @@
-import type {
-  EventReaction,
-  Member,
-  Message,
-  PossiblyUncachedMessage,
-  Uncached,
-  User,
-} from "oceanic.js";
+import type { EventReaction, Member, Message, PossiblyUncachedMessage, Uncached, User } from "oceanic.js";
 import { getString } from "#utils/i18n.js";
 import type { EventParams, StarboardEntry, StarboardSettings } from "#utils/types.js";
 
@@ -38,10 +31,11 @@ export default async function handleStarboardReaction(
   const targetChannel = await client.rest.channels.get(settings.channel_id).catch(() => null);
   if (!targetChannel) return;
 
-  const message =
-    isFullMessage(rawMessage)
-      ? rawMessage
-      : ((await client.rest.channels.getMessage(rawMessage.channelID, rawMessage.id).catch(() => null)) as Message | null);
+  const message = isFullMessage(rawMessage)
+    ? rawMessage
+    : ((await client.rest.channels
+        .getMessage(rawMessage.channelID, rawMessage.id)
+        .catch(() => null)) as Message | null);
   if (!message || message.author.id === client.user.id) return;
   if (!settings.allow_self && message.author.id === userId) return;
   if (!settings.allow_bots && message.author.bot) return;
@@ -74,9 +68,7 @@ export default async function handleStarboardReaction(
   const embed = buildEmbed(settings, entry, message, rawMessage.channelID);
 
   if (entry.starboard_message_id) {
-    await client.rest.channels
-      .editMessage(targetChannel.id, entry.starboard_message_id, embed)
-      .catch(() => undefined);
+    await client.rest.channels.editMessage(targetChannel.id, entry.starboard_message_id, embed).catch(() => undefined);
   } else {
     const created = await client.rest.channels.createMessage(targetChannel.id, embed).catch(() => null);
     if (created) {
@@ -151,4 +143,3 @@ function buildEmbed(settings: StarboardSettings, entry: StarboardEntry, message:
     },
   };
 }
-

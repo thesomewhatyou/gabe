@@ -45,54 +45,64 @@ class ServerSettingsCommand extends Command {
   async viewSettings() {
     const guildSettings = await this.database.getGuild(this.guild.id);
 
-    const disabledCommandsDisplay = guildSettings.disabled_commands?.length > 0
-      ? guildSettings.disabled_commands.slice(0, 10).map(c => `\`${c}\``).join(", ") +
-        (guildSettings.disabled_commands.length > 10 ? ` +${guildSettings.disabled_commands.length - 10} more` : "")
-      : "None";
+    const disabledCommandsDisplay =
+      guildSettings.disabled_commands?.length > 0
+        ? guildSettings.disabled_commands
+            .slice(0, 10)
+            .map((c) => `\`${c}\``)
+            .join(", ") +
+          (guildSettings.disabled_commands.length > 10 ? ` +${guildSettings.disabled_commands.length - 10} more` : "")
+        : "None";
 
-    const disabledChannelsDisplay = guildSettings.disabled?.length > 0
-      ? guildSettings.disabled.slice(0, 5).map(c => `<#${c}>`).join(", ") +
-        (guildSettings.disabled.length > 5 ? ` +${guildSettings.disabled.length - 5} more` : "")
-      : "None";
+    const disabledChannelsDisplay =
+      guildSettings.disabled?.length > 0
+        ? guildSettings.disabled
+            .slice(0, 5)
+            .map((c) => `<#${c}>`)
+            .join(", ") + (guildSettings.disabled.length > 5 ? ` +${guildSettings.disabled.length - 5} more` : "")
+        : "None";
 
-    const tagRolesDisplay = guildSettings.tag_roles?.length > 0
-      ? guildSettings.tag_roles.map(r => `<@&${r}>`).join(", ")
-      : "None (everyone can use tags)";
+    const tagRolesDisplay =
+      guildSettings.tag_roles?.length > 0
+        ? guildSettings.tag_roles.map((r) => `<@&${r}>`).join(", ")
+        : "None (everyone can use tags)";
 
     return {
-      embeds: [{
-        color: 0x5865f2,
-        title: `⚙️ Server Settings for ${this.guild.name}`,
-        thumbnail: {
-          url: this.guild.iconURL("png", 256),
+      embeds: [
+        {
+          color: 0x5865f2,
+          title: `⚙️ Server Settings for ${this.guild.name}`,
+          thumbnail: {
+            url: this.guild.iconURL("png", 256),
+          },
+          fields: [
+            {
+              name: "🔧 Prefix",
+              value: `\`${guildSettings.prefix ?? process.env.PREFIX ?? "&"}\``,
+              inline: true,
+            },
+            {
+              name: "🚫 Disabled Commands",
+              value: disabledCommandsDisplay,
+              inline: true,
+            },
+            {
+              name: "📵 Disabled Channels",
+              value: disabledChannelsDisplay,
+              inline: false,
+            },
+            {
+              name: "🏷️ Tag Roles",
+              value: tagRolesDisplay,
+              inline: false,
+            },
+          ],
+          footer: {
+            text: "Use /serversettings prefix <new_prefix> to change the prefix",
+          },
+          timestamp: new Date().toISOString(),
         },
-        fields: [
-          {
-            name: "🔧 Prefix",
-            value: `\`${guildSettings.prefix ?? process.env.PREFIX ?? "&"}\``,
-            inline: true,
-          },
-          {
-            name: "🚫 Disabled Commands",
-            value: disabledCommandsDisplay,
-            inline: true,
-          },
-          {
-            name: "📵 Disabled Channels",
-            value: disabledChannelsDisplay,
-            inline: false,
-          },
-          {
-            name: "🏷️ Tag Roles",
-            value: tagRolesDisplay,
-            inline: false,
-          },
-        ],
-        footer: {
-          text: "Use /serversettings prefix <new_prefix> to change the prefix",
-        },
-        timestamp: new Date().toISOString(),
-      }],
+      ],
     };
   }
 

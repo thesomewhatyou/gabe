@@ -40,11 +40,11 @@ export async function load(
   subcommand?: true,
 ): Promise<
   | {
-    props: typeof Command;
-    info: CommandInfo;
-    entry: CommandEntry;
-    name: string;
-  }
+      props: typeof Command;
+      info: CommandInfo;
+      entry: CommandEntry;
+      name: string;
+    }
   | undefined
 >;
 export async function load(
@@ -55,11 +55,11 @@ export async function load(
 ): Promise<
   | string
   | {
-    props: typeof Command;
-    info: CommandInfo;
-    entry: CommandEntry;
-    name: string;
-  }
+      props: typeof Command;
+      info: CommandInfo;
+      entry: CommandEntry;
+      name: string;
+    }
   | undefined
 > {
   log("main", `Loading command from ${command}...`);
@@ -220,11 +220,11 @@ export async function load(
 
   return subcommand
     ? {
-      props,
-      info: commandInfo,
-      entry: cmdMap,
-      name: fullCommandName,
-    }
+        props,
+        info: commandInfo,
+        entry: cmdMap,
+        name: fullCommandName,
+      }
     : fullCommandName;
 }
 
@@ -317,8 +317,8 @@ export async function send(bot: Client) {
   } else {
     cmdArray = [...commandArray.main, ...commandArray.private];
   }
-  log("info", `[DEBUG] Sending ${cmdArray.length} commands: ${cmdArray.map(c => c.name).join(", ")}`);
-  const effectsCmd = cmdArray.find(c => c.name === "effects");
+  log("info", `[DEBUG] Sending ${cmdArray.length} commands: ${cmdArray.map((c) => c.name).join(", ")}`);
+  const effectsCmd = cmdArray.find((c) => c.name === "effects");
   if (effectsCmd) {
     log("info", `[DEBUG] Effects command options: ${JSON.stringify((effectsCmd as any).options)}`);
   }

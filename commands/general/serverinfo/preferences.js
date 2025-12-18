@@ -41,32 +41,34 @@ class PreferencesCommand extends Command {
     const availableLocales = [...locales.keys()].slice(0, 20).join(", ");
 
     return {
-      embeds: [{
-        color: 0x5865f2,
-        title: "⚙️ Your Preferences",
-        description: "Use the subcommands to change your preferences.",
-        fields: [
-          {
-            name: "🌐 Language",
-            value: prefs.locale ?? "Not set (using server/default)",
-            inline: true,
+      embeds: [
+        {
+          color: 0x5865f2,
+          title: "⚙️ Your Preferences",
+          description: "Use the subcommands to change your preferences.",
+          fields: [
+            {
+              name: "🌐 Language",
+              value: prefs.locale ?? "Not set (using server/default)",
+              inline: true,
+            },
+            {
+              name: "📬 DM Notifications",
+              value: prefs.dm_notifications ? "Enabled" : "Disabled",
+              inline: true,
+            },
+            {
+              name: "📝 Available Languages",
+              value: `\`${availableLocales}\`${locales.size > 20 ? ` +${locales.size - 20} more` : ""}`,
+              inline: false,
+            },
+          ],
+          footer: {
+            text: "Use /preferences language <locale> or /preferences notifications <on/off>",
           },
-          {
-            name: "📬 DM Notifications",
-            value: prefs.dm_notifications ? "Enabled" : "Disabled",
-            inline: true,
-          },
-          {
-            name: "📝 Available Languages",
-            value: `\`${availableLocales}\`${locales.size > 20 ? ` +${locales.size - 20} more` : ""}`,
-            inline: false,
-          },
-        ],
-        footer: {
-          text: "Use /preferences language <locale> or /preferences notifications <on/off>",
+          timestamp: new Date().toISOString(),
         },
-        timestamp: new Date().toISOString(),
-      }],
+      ],
     };
   }
 

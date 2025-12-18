@@ -80,18 +80,20 @@ class TimeoutCommand extends Command {
         if (userPrefs?.dm_notifications !== false) {
           const dmChannel = await userToTimeout.createDM();
           await dmChannel.createMessage({
-            embeds: [{
-              color: 0xffff00,
-              title: "⏰ You have been timed out",
-              description: `You have been timed out in **${guild.name}**.`,
-              fields: [
-                { name: "Duration", value: formatDuration(duration), inline: true },
-                { name: "Expires", value: `<t:${timeoutTimestamp}:R>`, inline: true },
-                { name: "Reason", value: reason, inline: false },
-                { name: "Moderator", value: this.author.tag, inline: true },
-              ],
-              timestamp: new Date().toISOString(),
-            }],
+            embeds: [
+              {
+                color: 0xffff00,
+                title: "⏰ You have been timed out",
+                description: `You have been timed out in **${guild.name}**.`,
+                fields: [
+                  { name: "Duration", value: formatDuration(duration), inline: true },
+                  { name: "Expires", value: `<t:${timeoutTimestamp}:R>`, inline: true },
+                  { name: "Reason", value: reason, inline: false },
+                  { name: "Moderator", value: this.author.tag, inline: true },
+                ],
+                timestamp: new Date().toISOString(),
+              },
+            ],
           });
           dmSent = true;
         }
@@ -108,7 +110,13 @@ class TimeoutCommand extends Command {
 
       // Log the moderation action
       if (this.database) {
-        await this.database.addModLog(guild.id, userToTimeout.id, this.author.id, "timeout", `${reason} (${formatDuration(duration)})`);
+        await this.database.addModLog(
+          guild.id,
+          userToTimeout.id,
+          this.author.id,
+          "timeout",
+          `${reason} (${formatDuration(duration)})`,
+        );
       }
 
       this.success = true;

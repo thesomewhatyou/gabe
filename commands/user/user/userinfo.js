@@ -62,9 +62,13 @@ class UserInfoCommand extends Command {
         .sort((a, b) => b.position - a.position);
 
       if (roles.length > 0) {
-        const roleDisplay = roles.length > 10
-          ? `${roles.slice(0, 10).map((r) => `<@&${r.id}>`).join(", ")} +${roles.length - 10} more`
-          : roles.map((r) => `<@&${r.id}>`).join(", ");
+        const roleDisplay =
+          roles.length > 10
+            ? `${roles
+                .slice(0, 10)
+                .map((r) => `<@&${r.id}>`)
+                .join(", ")} +${roles.length - 10} more`
+            : roles.map((r) => `<@&${r.id}>`).join(", ");
 
         fields.push({
           name: `🎭 Roles (${roles.length})`,
@@ -93,11 +97,13 @@ class UserInfoCommand extends Command {
 
     const embed = {
       color: targetMember?.roles.length
-        ? this.guild.roles.get(targetMember.roles.sort((a, b) => {
-            const roleA = this.guild.roles.get(a);
-            const roleB = this.guild.roles.get(b);
-            return (roleB?.position ?? 0) - (roleA?.position ?? 0);
-          })[0])?.color ?? 0x5865f2
+        ? (this.guild.roles.get(
+            targetMember.roles.sort((a, b) => {
+              const roleA = this.guild.roles.get(a);
+              const roleB = this.guild.roles.get(b);
+              return (roleB?.position ?? 0) - (roleA?.position ?? 0);
+            })[0],
+          )?.color ?? 0x5865f2)
         : 0x5865f2,
       author: {
         name: `${targetUser.globalName ?? targetUser.username}'s Info`,

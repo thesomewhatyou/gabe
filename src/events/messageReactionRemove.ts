@@ -1,7 +1,7 @@
 import type { EventReaction, Member, PossiblyUncachedMessage, Uncached, User } from "oceanic.js";
 import { log } from "#utils/logger.js";
-import type { EventParams } from "#utils/types.js";
 import handleStarboardReaction from "#utils/starboard.js";
+import type { EventParams } from "#utils/types.js";
 
 export default async (
   params: EventParams,
@@ -13,4 +13,3 @@ export default async (
     log("error", `Starboard remove failed: ${error}`);
   });
 };
-

@@ -18,7 +18,8 @@ class BanCommand extends Command {
     const user = this.options?.user ?? this.getOptionUser("user") ?? this.args[0];
     if (!user) return "❌ Gabe says: You gotta tell me who to ban, genius.";
 
-    const reason = this.options?.reason ?? this.getOptionString("reason") ?? this.args.slice(1).join(" ") ?? "Gabe's judgement";
+    const reason =
+      this.options?.reason ?? this.getOptionString("reason") ?? this.args.slice(1).join(" ") ?? "Gabe's judgement";
     const days = this.options?.days ?? this.getOptionInteger("days") ?? 0;
 
     try {
@@ -60,16 +61,18 @@ class BanCommand extends Command {
         } else {
           const dmChannel = await userToBan.createDM();
           await dmChannel.createMessage({
-            embeds: [{
-              color: 0xff0000,
-              title: "🔨 You have been banned",
-              description: `You have been banned from **${guild.name}**.`,
-              fields: [
-                { name: "Reason", value: reason, inline: false },
-                { name: "Moderator", value: this.author.tag, inline: true },
-              ],
-              timestamp: new Date().toISOString(),
-            }],
+            embeds: [
+              {
+                color: 0xff0000,
+                title: "🔨 You have been banned",
+                description: `You have been banned from **${guild.name}**.`,
+                fields: [
+                  { name: "Reason", value: reason, inline: false },
+                  { name: "Moderator", value: this.author.tag, inline: true },
+                ],
+                timestamp: new Date().toISOString(),
+              },
+            ],
           });
           dmSent = true;
         }

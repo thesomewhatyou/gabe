@@ -46,9 +46,8 @@ class WarningsCommand extends Command {
   async viewWarnings(userInput) {
     const user = userInput ?? this.author;
 
-    const targetUser = typeof user === "string"
-      ? await this.client.rest.users.get(user.replace(/<@!?|>/g, "")).catch(() => null)
-      : user;
+    const targetUser =
+      typeof user === "string" ? await this.client.rest.users.get(user.replace(/<@!?|>/g, "")).catch(() => null) : user;
 
     if (!targetUser) {
       return "❌ Could not find that user.";
@@ -61,32 +60,34 @@ class WarningsCommand extends Command {
       return `✅ **${targetUser.tag}** has no warnings in this server.`;
     }
 
-    const warningList = warnings.slice(0, 10).map((w, i) => {
-      const date = new Date(w.created_at);
-      const timestamp = Math.floor(date.getTime() / 1000);
-      return `**#${w.id}** - <t:${timestamp}:R>\n┗ ${w.reason.length > 50 ? w.reason.slice(0, 50) + "..." : w.reason}`;
-    }).join("\n\n");
+    const warningList = warnings
+      .slice(0, 10)
+      .map((w, i) => {
+        const date = new Date(w.created_at);
+        const timestamp = Math.floor(date.getTime() / 1000);
+        return `**#${w.id}** - <t:${timestamp}:R>\n┗ ${w.reason.length > 50 ? w.reason.slice(0, 50) + "..." : w.reason}`;
+      })
+      .join("\n\n");
 
     this.success = true;
     return {
-      embeds: [{
-        color: 0xffa500,
-        title: `⚠️ Warnings for ${targetUser.tag}`,
-        description: warningList,
-        footer: {
-          text: `Total: ${warnings.length} warning${warnings.length !== 1 ? "s" : ""} • Use /warnings delete <id> to remove`,
+      embeds: [
+        {
+          color: 0xffa500,
+          title: `⚠️ Warnings for ${targetUser.tag}`,
+          description: warningList,
+          footer: {
+            text: `Total: ${warnings.length} warning${warnings.length !== 1 ? "s" : ""} • Use /warnings delete <id> to remove`,
+          },
+          timestamp: new Date().toISOString(),
         },
-        timestamp: new Date().toISOString(),
-      }],
+      ],
     };
   }
 
   async deleteWarning(warningId) {
     // Permission check for deletion
-    if (
-      !this.member.permissions.has(Constants.Permissions.MODERATE_MEMBERS) &&
-      !isOwner(this.author?.id)
-    ) {
+    if (!this.member.permissions.has(Constants.Permissions.MODERATE_MEMBERS) && !isOwner(this.author?.id)) {
       return "❌ You need Moderate Members permission to delete warnings.";
     }
 
@@ -106,10 +107,7 @@ class WarningsCommand extends Command {
 
   async clearWarnings(userInput) {
     // Permission check for clearing
-    if (
-      !this.member.permissions.has(Constants.Permissions.MODERATE_MEMBERS) &&
-      !isOwner(this.author?.id)
-    ) {
+    if (!this.member.permissions.has(Constants.Permissions.MODERATE_MEMBERS) && !isOwner(this.author?.id)) {
       return "❌ You need Moderate Members permission to clear warnings.";
     }
 
@@ -117,9 +115,10 @@ class WarningsCommand extends Command {
       return "❌ Please specify a user to clear warnings for.";
     }
 
-    const targetUser = typeof userInput === "string"
-      ? await this.client.rest.users.get(userInput.replace(/<@!?|>/g, "")).catch(() => null)
-      : userInput;
+    const targetUser =
+      typeof userInput === "string"
+        ? await this.client.rest.users.get(userInput.replace(/<@!?|>/g, "")).catch(() => null)
+        : userInput;
 
     if (!targetUser) {
       return "❌ Could not find that user.";
@@ -132,7 +131,13 @@ class WarningsCommand extends Command {
     }
 
     // Log the action
-    await this.database.addModLog(this.guild.id, targetUser.id, this.author.id, "clear_warnings", `Cleared ${count} warning(s)`);
+    await this.database.addModLog(
+      this.guild.id,
+      targetUser.id,
+      this.author.id,
+      "clear_warnings",
+      `Cleared ${count} warning(s)`,
+    );
 
     this.success = true;
     return `✅ Cleared **${count}** warning${count !== 1 ? "s" : ""} from ${targetUser.tag}.`;

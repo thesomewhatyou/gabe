@@ -78,7 +78,9 @@ class ServerInfoCommand extends Command {
           categories > 0 ? `📁 Categories: ${categories}` : null,
           forumChannels > 0 ? `📋 Forums: ${forumChannels}` : null,
           stageChannels > 0 ? `🎭 Stages: ${stageChannels}` : null,
-        ].filter(Boolean).join("\n"),
+        ]
+          .filter(Boolean)
+          .join("\n"),
         inline: true,
       },
       {
@@ -114,7 +116,12 @@ class ServerInfoCommand extends Command {
     const features = guild.features;
     if (features && features.length > 0) {
       const featureDisplay = features
-        .map((f) => f.toLowerCase().replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()))
+        .map((f) =>
+          f
+            .toLowerCase()
+            .replace(/_/g, " ")
+            .replace(/\b\w/g, (c) => c.toUpperCase()),
+        )
         .slice(0, 10)
         .join(", ");
 

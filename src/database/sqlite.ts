@@ -361,10 +361,10 @@ export default class SQLitePlugin implements DatabasePlugin {
     // SQLite does not support arrays, so instead we convert them from strings
     let guild:
       | ({
-        disabled: string;
-        disabled_commands: string;
-        tag_roles: string;
-      } & Omit<DBGuild, "disabled" | "disabled_commands" | "tag_roles">)
+          disabled: string;
+          disabled_commands: string;
+          tag_roles: string;
+        } & Omit<DBGuild, "disabled" | "disabled_commands" | "tag_roles">)
       | undefined;
     this.connection.transaction(() => {
       guild = this.connection.prepare("SELECT * FROM guilds WHERE guild_id = ?").get(query) as {
@@ -406,9 +406,9 @@ export default class SQLitePlugin implements DatabasePlugin {
   }
 
   async getUserPreferences(userId: string) {
-    const result = this.connection
-      .prepare("SELECT * FROM user_preferences WHERE user_id = ?")
-      .get(userId) as { user_id: string; locale: string | null; dm_notifications: number } | undefined;
+    const result = this.connection.prepare("SELECT * FROM user_preferences WHERE user_id = ?").get(userId) as
+      | { user_id: string; locale: string | null; dm_notifications: number }
+      | undefined;
 
     if (!result) {
       return {
@@ -426,16 +426,12 @@ export default class SQLitePlugin implements DatabasePlugin {
   }
 
   async setUserPreference(userId: string, key: "locale" | "dm_notifications", value: string | boolean | null) {
-    const existing = this.connection
-      .prepare("SELECT user_id FROM user_preferences WHERE user_id = ?")
-      .get(userId);
+    const existing = this.connection.prepare("SELECT user_id FROM user_preferences WHERE user_id = ?").get(userId);
 
     const dbValue = typeof value === "boolean" ? (value ? 1 : 0) : value;
 
     if (existing) {
-      this.connection
-        .prepare(`UPDATE user_preferences SET ${key} = ? WHERE user_id = ?`)
-        .run(dbValue, userId);
+      this.connection.prepare(`UPDATE user_preferences SET ${key} = ? WHERE user_id = ?`).run(dbValue, userId);
     } else {
       const defaults = {
         user_id: userId,
@@ -444,7 +440,9 @@ export default class SQLitePlugin implements DatabasePlugin {
       };
       defaults[key] = dbValue as never;
       this.connection
-        .prepare("INSERT INTO user_preferences (user_id, locale, dm_notifications) VALUES (:user_id, :locale, :dm_notifications)")
+        .prepare(
+          "INSERT INTO user_preferences (user_id, locale, dm_notifications) VALUES (:user_id, :locale, :dm_notifications)",
+        )
         .run(defaults);
     }
   }
@@ -459,44 +457,69 @@ export default class SQLitePlugin implements DatabasePlugin {
     if (userId) {
       return this.connection
         .prepare("SELECT * FROM mod_logs WHERE guild_id = ? AND user_id = ? ORDER BY created_at DESC LIMIT ?")
-        .all(guildId, userId, limit) as { id: number; guild_id: string; user_id: string; moderator_id: string; action: string; reason: string | null; created_at: string }[];
+        .all(guildId, userId, limit) as {
+        id: number;
+        guild_id: string;
+        user_id: string;
+        moderator_id: string;
+        action: string;
+        reason: string | null;
+        created_at: string;
+      }[];
     }
     return this.connection
       .prepare("SELECT * FROM mod_logs WHERE guild_id = ? ORDER BY created_at DESC LIMIT ?")
-      .all(guildId, limit) as { id: number; guild_id: string; user_id: string; moderator_id: string; action: string; reason: string | null; created_at: string }[];
+      .all(guildId, limit) as {
+      id: number;
+      guild_id: string;
+      user_id: string;
+      moderator_id: string;
+      action: string;
+      reason: string | null;
+      created_at: string;
+    }[];
   }
 
   async addWarning(guildId: string, userId: string, moderatorId: string, reason: string) {
     const result = this.connection
       .prepare("INSERT INTO warnings (guild_id, user_id, moderator_id, reason) VALUES (?, ?, ?, ?)")
       .run(guildId, userId, moderatorId, reason);
-    return (typeof result === 'number' ? result : result.lastInsertRowid) as number;
+    return (typeof result === "number" ? result : result.lastInsertRowid) as number;
   }
 
   async getWarnings(guildId: string, userId: string) {
     return this.connection
       .prepare("SELECT * FROM warnings WHERE guild_id = ? AND user_id = ? ORDER BY created_at DESC")
-      .all(guildId, userId) as { id: number; guild_id: string; user_id: string; moderator_id: string; reason: string; created_at: string }[];
+      .all(guildId, userId) as {
+      id: number;
+      guild_id: string;
+      user_id: string;
+      moderator_id: string;
+      reason: string;
+      created_at: string;
+    }[];
   }
 
   async removeWarning(guildId: string, warningId: number) {
     const result = this.connection
       .prepare("DELETE FROM warnings WHERE guild_id = ? AND id = ?")
       .run(guildId, warningId);
-    return (typeof result === 'number' ? result > 0 : result.changes > 0);
+    return typeof result === "number" ? result > 0 : result.changes > 0;
   }
 
   async clearWarnings(guildId: string, userId: string) {
     const result = this.connection
       .prepare("DELETE FROM warnings WHERE guild_id = ? AND user_id = ?")
       .run(guildId, userId);
-    return typeof result === 'number' ? result : result.changes;
+    return typeof result === "number" ? result : result.changes;
   }
 
   async getUserLevel(guildId: string, userId: string) {
     const result = this.connection
       .prepare("SELECT * FROM user_levels WHERE guild_id = ? AND user_id = ?")
-      .get(guildId, userId) as { guild_id: string; user_id: string; xp: number; level: number; last_xp_gain: string | null } | undefined;
+      .get(guildId, userId) as
+      | { guild_id: string; user_id: string; xp: number; level: number; last_xp_gain: string | null }
+      | undefined;
 
     if (!result) {
       return { guild_id: guildId, user_id: userId, xp: 0, level: 0, last_xp_gain: null };
@@ -533,19 +556,23 @@ export default class SQLitePlugin implements DatabasePlugin {
   async getLeaderboard(guildId: string, limit = 10) {
     return this.connection
       .prepare("SELECT * FROM user_levels WHERE guild_id = ? ORDER BY xp DESC LIMIT ?")
-      .all(guildId, limit) as { guild_id: string; user_id: string; xp: number; level: number; last_xp_gain: string | null }[];
+      .all(guildId, limit) as {
+      guild_id: string;
+      user_id: string;
+      xp: number;
+      level: number;
+      last_xp_gain: string | null;
+    }[];
   }
 
   async setLevelsEnabled(guildId: string, enabled: boolean) {
-    this.connection
-      .prepare("UPDATE guilds SET levels_enabled = ? WHERE guild_id = ?")
-      .run(enabled ? 1 : 0, guildId);
+    this.connection.prepare("UPDATE guilds SET levels_enabled = ? WHERE guild_id = ?").run(enabled ? 1 : 0, guildId);
   }
 
   async isLevelsEnabled(guildId: string) {
-    const result = this.connection
-      .prepare("SELECT levels_enabled FROM guilds WHERE guild_id = ?")
-      .get(guildId) as { levels_enabled: number } | undefined;
+    const result = this.connection.prepare("SELECT levels_enabled FROM guilds WHERE guild_id = ?").get(guildId) as
+      | { levels_enabled: number }
+      | undefined;
     return result?.levels_enabled === 1;
   }
 
@@ -563,9 +590,9 @@ export default class SQLitePlugin implements DatabasePlugin {
   }
 
   async getStarboardSettings(guildId: string) {
-    const result = this.connection
-      .prepare("SELECT * FROM starboard_settings WHERE guild_id = ?")
-      .get(guildId) as StarboardSettings | undefined;
+    const result = this.connection.prepare("SELECT * FROM starboard_settings WHERE guild_id = ?").get(guildId) as
+      | StarboardSettings
+      | undefined;
     if (result) return result;
     return {
       guild_id: guildId,
@@ -580,7 +607,8 @@ export default class SQLitePlugin implements DatabasePlugin {
 
   async setStarboardSettings(settings: StarboardSettings) {
     this.connection
-      .prepare(`INSERT INTO starboard_settings (guild_id, channel_id, emoji, threshold, allow_self, allow_bots, enabled)
+      .prepare(
+        `INSERT INTO starboard_settings (guild_id, channel_id, emoji, threshold, allow_self, allow_bots, enabled)
         VALUES (:guild_id, :channel_id, :emoji, :threshold, :allow_self, :allow_bots, :enabled)
         ON CONFLICT(guild_id) DO UPDATE SET
           channel_id = excluded.channel_id,
@@ -588,7 +616,8 @@ export default class SQLitePlugin implements DatabasePlugin {
           threshold = excluded.threshold,
           allow_self = excluded.allow_self,
           allow_bots = excluded.allow_bots,
-          enabled = excluded.enabled`)
+          enabled = excluded.enabled`,
+      )
       .run({
         ...settings,
         allow_self: settings.allow_self ? 1 : 0,
@@ -614,14 +643,16 @@ export default class SQLitePlugin implements DatabasePlugin {
     };
 
     this.connection
-      .prepare(`INSERT INTO starboard_messages
+      .prepare(
+        `INSERT INTO starboard_messages
         (guild_id, message_id, channel_id, starboard_message_id, star_count, author_id)
         VALUES (:guild_id, :message_id, :channel_id, :starboard_message_id, :star_count, :author_id)
         ON CONFLICT(guild_id, message_id) DO UPDATE SET
           channel_id = excluded.channel_id,
           starboard_message_id = excluded.starboard_message_id,
           star_count = excluded.star_count,
-          author_id = excluded.author_id`)
+          author_id = excluded.author_id`,
+      )
       .run(params);
   }
 
@@ -633,8 +664,6 @@ export default class SQLitePlugin implements DatabasePlugin {
 
   async pruneStarboardEntries(guildId: string, olderThan: number) {
     void olderThan;
-    this.connection
-      .prepare("DELETE FROM starboard_messages WHERE guild_id = ? AND star_count <= 0")
-      .run(guildId);
+    this.connection.prepare("DELETE FROM starboard_messages WHERE guild_id = ? AND star_count <= 0").run(guildId);
   }
 }

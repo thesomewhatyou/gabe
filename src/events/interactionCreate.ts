@@ -152,7 +152,9 @@ export default async ({ client, database }: EventParams, interaction: AnyInterac
         tags: {
           process: process.env.pm_id ? Number.parseInt(process.env.pm_id, 10) || 0 : 0,
           command,
-          args: JSON.stringify(interaction.data.options.raw, (key, value) => (typeof value === "bigint" ? value.toString() : value)),
+          args: JSON.stringify(interaction.data.options.raw, (key, value) =>
+            typeof value === "bigint" ? value.toString() : value,
+          ),
         },
       });
     if (error.toString().includes("Request entity too large")) {

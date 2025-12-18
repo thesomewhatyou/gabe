@@ -18,7 +18,8 @@ class KickCommand extends Command {
     const user = this.options?.user ?? this.getOptionUser("user") ?? this.args[0];
     if (!user) return "❌ Gabe says: Who am I supposed to kick? Tell me!";
 
-    const reason = this.options?.reason ?? this.getOptionString("reason") ?? this.args.slice(1).join(" ") ?? "Gabe's decision";
+    const reason =
+      this.options?.reason ?? this.getOptionString("reason") ?? this.args.slice(1).join(" ") ?? "Gabe's decision";
 
     try {
       const userToKick = typeof user === "string" ? await this.client.rest.users.get(user).catch(() => null) : user;
@@ -55,17 +56,19 @@ class KickCommand extends Command {
         if (userPrefs?.dm_notifications !== false) {
           const dmChannel = await userToKick.createDM();
           await dmChannel.createMessage({
-            embeds: [{
-              color: 0xffa500,
-              title: "👢 You have been kicked",
-              description: `You have been kicked from **${guild.name}**.`,
-              fields: [
-                { name: "Reason", value: reason, inline: false },
-                { name: "Moderator", value: this.author.tag, inline: true },
-              ],
-              footer: { text: "You can rejoin the server if you have an invite link." },
-              timestamp: new Date().toISOString(),
-            }],
+            embeds: [
+              {
+                color: 0xffa500,
+                title: "👢 You have been kicked",
+                description: `You have been kicked from **${guild.name}**.`,
+                fields: [
+                  { name: "Reason", value: reason, inline: false },
+                  { name: "Moderator", value: this.author.tag, inline: true },
+                ],
+                footer: { text: "You can rejoin the server if you have an invite link." },
+                timestamp: new Date().toISOString(),
+              },
+            ],
           });
           dmSent = true;
         }

@@ -1,8 +1,8 @@
 import process from "node:process";
 import { Constants } from "oceanic.js";
 import MusicCommand from "#cmd-classes/musicCommand.js";
-import { queues } from "#utils/soundplayer.js";
 import { isOwner } from "#utils/owners.js";
+import { queues } from "#utils/soundplayer.js";
 
 class MusicRemoveCommand extends MusicCommand {
   async run() {

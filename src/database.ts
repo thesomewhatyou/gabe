@@ -28,12 +28,37 @@ export declare class DatabasePlugin {
   getBroadcast: () => Promise<string | undefined>;
   setPrefix: (prefix: string, guild: Guild) => Promise<void>;
   getGuild: (query: string) => Promise<DBGuild>;
-  getUserPreferences: (userId: string) => Promise<{ user_id: string; locale: string | null; dm_notifications: boolean }>;
-  setUserPreference: (userId: string, key: "locale" | "dm_notifications", value: string | boolean | null) => Promise<void>;
+  getUserPreferences: (
+    userId: string,
+  ) => Promise<{ user_id: string; locale: string | null; dm_notifications: boolean }>;
+  setUserPreference: (
+    userId: string,
+    key: "locale" | "dm_notifications",
+    value: string | boolean | null,
+  ) => Promise<void>;
   addModLog: (guildId: string, userId: string, moderatorId: string, action: string, reason?: string) => Promise<void>;
-  getModLogs: (guildId: string, userId?: string, limit?: number) => Promise<{ id: number; guild_id: string; user_id: string; moderator_id: string; action: string; reason: string | null; created_at: string | Date }[]>;
+  getModLogs: (
+    guildId: string,
+    userId?: string,
+    limit?: number,
+  ) => Promise<
+    {
+      id: number;
+      guild_id: string;
+      user_id: string;
+      moderator_id: string;
+      action: string;
+      reason: string | null;
+      created_at: string | Date;
+    }[]
+  >;
   addWarning: (guildId: string, userId: string, moderatorId: string, reason: string) => Promise<number>;
-  getWarnings: (guildId: string, userId: string) => Promise<{ id: number; guild_id: string; user_id: string; moderator_id: string; reason: string; created_at: string | Date }[]>;
+  getWarnings: (
+    guildId: string,
+    userId: string,
+  ) => Promise<
+    { id: number; guild_id: string; user_id: string; moderator_id: string; reason: string; created_at: string | Date }[]
+  >;
   removeWarning: (guildId: string, warningId: number) => Promise<boolean>;
   clearWarnings: (guildId: string, userId: string) => Promise<number>;
   // Starboard support
@@ -44,9 +69,19 @@ export declare class DatabasePlugin {
   deleteStarboardEntry: (guildId: string, messageId: string) => Promise<void>;
   pruneStarboardEntries: (guildId: string, olderThan: number) => Promise<void>;
   // Leveling system
-  getUserLevel: (guildId: string, userId: string) => Promise<{ guild_id: string; user_id: string; xp: number; level: number; last_xp_gain: Date | string | null }>;
-  addXP: (guildId: string, userId: string, amount: number) => Promise<{ xp: number; level: number; leveledUp: boolean }>;
-  getLeaderboard: (guildId: string, limit?: number) => Promise<{ guild_id: string; user_id: string; xp: number; level: number; last_xp_gain: Date | string | null }[]>;
+  getUserLevel: (
+    guildId: string,
+    userId: string,
+  ) => Promise<{ guild_id: string; user_id: string; xp: number; level: number; last_xp_gain: Date | string | null }>;
+  addXP: (
+    guildId: string,
+    userId: string,
+    amount: number,
+  ) => Promise<{ xp: number; level: number; leveledUp: boolean }>;
+  getLeaderboard: (
+    guildId: string,
+    limit?: number,
+  ) => Promise<{ guild_id: string; user_id: string; xp: number; level: number; last_xp_gain: Date | string | null }[]>;
   setLevelsEnabled: (guildId: string, enabled: boolean) => Promise<void>;
   isLevelsEnabled: (guildId: string) => Promise<boolean>;
   setLevelUpNotifications: (guildId: string, enabled: boolean) => Promise<void>;

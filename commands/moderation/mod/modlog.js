@@ -33,9 +33,10 @@ class ModLogCommand extends Command {
     let logs;
 
     if (userInput) {
-      targetUser = typeof userInput === "string"
-        ? await this.client.rest.users.get(userInput.replace(/<@!?|>/g, "")).catch(() => null)
-        : userInput;
+      targetUser =
+        typeof userInput === "string"
+          ? await this.client.rest.users.get(userInput.replace(/<@!?|>/g, "")).catch(() => null)
+          : userInput;
 
       if (!targetUser) {
         return "❌ Could not find that user.";
@@ -62,36 +63,40 @@ class ModLogCommand extends Command {
       clear_warnings: "🧹",
     };
 
-    const logEntries = await Promise.all(logs.slice(0, 10).map(async (log) => {
-      const date = new Date(log.created_at);
-      const timestamp = Math.floor(date.getTime() / 1000);
-      const emoji = actionEmojis[log.action] ?? "📋";
-      
-      let userTag = `<@${log.user_id}>`;
-      let modTag = `<@${log.moderator_id}>`;
+    const logEntries = await Promise.all(
+      logs.slice(0, 10).map(async (log) => {
+        const date = new Date(log.created_at);
+        const timestamp = Math.floor(date.getTime() / 1000);
+        const emoji = actionEmojis[log.action] ?? "📋";
 
-      const reason = log.reason 
-        ? (log.reason.length > 40 ? log.reason.slice(0, 40) + "..." : log.reason)
-        : "No reason provided";
+        let userTag = `<@${log.user_id}>`;
+        let modTag = `<@${log.moderator_id}>`;
 
-      return `${emoji} **${log.action.toUpperCase()}** - <t:${timestamp}:R>\n┣ User: ${userTag}\n┣ Mod: ${modTag}\n┗ ${reason}`;
-    }));
+        const reason = log.reason
+          ? log.reason.length > 40
+            ? log.reason.slice(0, 40) + "..."
+            : log.reason
+          : "No reason provided";
 
-    const title = targetUser 
-      ? `📋 Mod Log for ${targetUser.tag}`
-      : `📋 Recent Mod Actions`;
+        return `${emoji} **${log.action.toUpperCase()}** - <t:${timestamp}:R>\n┣ User: ${userTag}\n┣ Mod: ${modTag}\n┗ ${reason}`;
+      }),
+    );
+
+    const title = targetUser ? `📋 Mod Log for ${targetUser.tag}` : `📋 Recent Mod Actions`;
 
     this.success = true;
     return {
-      embeds: [{
-        color: 0x5865f2,
-        title,
-        description: logEntries.join("\n\n"),
-        footer: {
-          text: `Showing ${logs.length} of ${logs.length} entries • ${this.guild.name}`,
+      embeds: [
+        {
+          color: 0x5865f2,
+          title,
+          description: logEntries.join("\n\n"),
+          footer: {
+            text: `Showing ${logs.length} of ${logs.length} entries • ${this.guild.name}`,
+          },
+          timestamp: new Date().toISOString(),
         },
-        timestamp: new Date().toISOString(),
-      }],
+      ],
     };
   }
 

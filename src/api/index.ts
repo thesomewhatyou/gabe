@@ -408,7 +408,10 @@ async function finishJob(
         // 404 typically indicates an expired or invalid interaction token
         if (res.status === 404) {
           isExpiredToken = true;
-          log(`Webhook request failed with 404 for job ${job.id}, token likely expired. Falling back to HTTP retrieval.`, job.num);
+          log(
+            `Webhook request failed with 404 for job ${job.id}, token likely expired. Falling back to HTTP retrieval.`,
+            job.num,
+          );
         }
         let resObj: string | object;
         try {

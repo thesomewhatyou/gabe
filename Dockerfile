@@ -62,11 +62,19 @@ RUN apk add --no-cache \
       git cmake python3 alpine-sdk \
       zlib-dev libpng-dev libjpeg-turbo-dev freetype-dev fontconfig-dev \
       libtool libwebp-dev libxml2-dev \
-      vips-dev libc6-compat zxing-cpp-dev
+      vips-dev libc6-compat zxing-cpp-dev \
+      pango-dev glib-dev
 
 # Build liblqr (needed for ImageMagick w/ liquid rescale) — only in this stage
-RUN git clone https://github.com/carlobaldassi/liblqr ~/liblqr \
+# NOTE: liblqr v0.4.2 ships a mismatched prototype for lqr_carver_generate_rcache()
+# in lqr_energy_priv.h (no LqrCarver argument), which causes ImageMagick builds
+# with --with-lqr to fail on Alpine / modern GCC due to a conflicting declaration.
+# The sed below updates the prototype to include `struct _LqrCarver *r` so that the
+# header matches the implementation and ImageMagick can link successfully.
+# I was advised by my lawyers to comment about this. I am being held at gunpoint.
+RUN git clone --branch v0.4.2 https://github.com/carlobaldassi/liblqr ~/liblqr \
  && cd ~/liblqr \
+ && sed -i 's/gdouble \*lqr_carver_generate_rcache\([_a-z]*\)();/gdouble *lqr_carver_generate_rcache\1(struct _LqrCarver *r);/g' lqr/lqr_energy_priv.h \
  && ./configure --prefix=/built \
  && make -j"$(getconf _NPROCESSORS_ONLN)" \
  && make install \

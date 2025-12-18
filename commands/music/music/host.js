@@ -3,8 +3,8 @@ import { Constants, User } from "oceanic.js";
 import MusicCommand from "#cmd-classes/musicCommand.js";
 import logger from "#utils/logger.js";
 import { safeBigInt } from "#utils/misc.js";
-import { players } from "#utils/soundplayer.js";
 import { isOwner } from "#utils/owners.js";
+import { players } from "#utils/soundplayer.js";
 
 class MusicHostCommand extends MusicCommand {
   async run() {

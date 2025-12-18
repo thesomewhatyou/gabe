@@ -31,9 +31,7 @@ class WarnCommand extends Command {
     if (!reason) return "❌ Please provide a reason for the warning.";
 
     try {
-      const userToWarn = typeof user === "string" 
-        ? await this.client.rest.users.get(user).catch(() => null) 
-        : user;
+      const userToWarn = typeof user === "string" ? await this.client.rest.users.get(user).catch(() => null) : user;
 
       if (!userToWarn) return "❌ I can't find that user.";
 
@@ -73,18 +71,20 @@ class WarnCommand extends Command {
         if (userPrefs?.dm_notifications !== false) {
           const dmChannel = await userToWarn.createDM();
           await dmChannel.createMessage({
-            embeds: [{
-              color: 0xffa500,
-              title: "⚠️ You have been warned",
-              description: `You have received a warning in **${guild.name}**.`,
-              fields: [
-                { name: "Reason", value: reason, inline: false },
-                { name: "Warning #", value: `${warningCount}`, inline: true },
-                { name: "Moderator", value: this.author.tag, inline: true },
-              ],
-              footer: { text: "Please follow the server rules to avoid further action." },
-              timestamp: new Date().toISOString(),
-            }],
+            embeds: [
+              {
+                color: 0xffa500,
+                title: "⚠️ You have been warned",
+                description: `You have received a warning in **${guild.name}**.`,
+                fields: [
+                  { name: "Reason", value: reason, inline: false },
+                  { name: "Warning #", value: `${warningCount}`, inline: true },
+                  { name: "Moderator", value: this.author.tag, inline: true },
+                ],
+                footer: { text: "Please follow the server rules to avoid further action." },
+                timestamp: new Date().toISOString(),
+              },
+            ],
           });
           dmSent = true;
         }

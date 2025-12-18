@@ -69,10 +69,7 @@ export function textEncode(string: string) {
 
 // textDecode(string) to decode HTML entities back to original characters
 export function textDecode(string: string) {
-  return string
-    .replaceAll("&lt;", "<")
-    .replaceAll("&gt;", ">")
-    .replaceAll("&amp;", "&");
+  return string.replaceAll("&lt;", "<").replaceAll("&gt;", ">").replaceAll("&amp;", "&");
 }
 
 // set activity (a.k.a. the gamer code)
