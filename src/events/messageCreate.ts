@@ -197,7 +197,7 @@ export default async ({ client, database }: EventParams, message: Message) => {
         message.channelID,
         Object.assign(
           {
-            content: result + ` [STR-${executionId}]`,
+            content: result,
           },
           reference,
         ),
