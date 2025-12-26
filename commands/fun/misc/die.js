@@ -1,0 +1,133 @@
+import { Constants } from "oceanic.js";
+import Command from "#cmd-classes/command.js";
+import { random } from "#utils/misc.js";
+
+class DieCommand extends Command {
+    static responses = [
+        "you must DIE (tonight)",
+        "you must DIE NOW",
+        "you must DIE at the ripe age of 42",
+        "you must DIE (but make sure to run `npx prettier -w .` on your code :3",
+        "you must DIE yesterday",
+        "you must DIE in 5 seconds",
+        "you must DIE in 5 minutes",
+        "you must DIE in 5 hours",
+        "you must DIE in 5 days",
+        "you must DIE in 5 weeks",
+        "you must DIE in 5 months",
+        "you must DIE in 5 years",
+        "you must DIE in 5 centuries",
+        "you must DIE in 5 millennia",
+        "you must DIE in 5 billion years",
+        "you must DIE in 5 trillion years",
+        "you must DIE in 5 quadrillion years",
+        "you must DIE in 5 quintillion years",
+        "you must DIE in 5 sextillion years",
+        "you must DIE in 5 septillion years",
+        "you must DIE in 5 octillion years",
+        "you must DIE in 5 nonillion years",
+        "you must DIE in 5 decillion years",
+        "you must DIE in 5 undecillion years",
+        "you must DIE in 5 duodecillion years",
+        "you must DIE in 5 tredecillion years",
+        "you must DIE in 5 quattuordecillion years",
+        "you must DIE in 5 quindecillion years",
+        "you must DIE in 5 sexdecillion years",
+        "you must DIE in 5 septendecillion years",
+        "you must DIE in 5 octodecillion years",
+        "you must DIE in 5 novemdecillion years",
+        "you must DIE in 5 vigintillion years",
+        "you must DIE in 5 unvigintillion years",
+        "you must DIE in 5 duovigintillion years",
+        "you must DIE in 5 trevigintillion years",
+        "you must DIE in 5 quattuorvigintillion years",
+        "you must DIE in 5 quinvigintillion years",
+        "you must DIE in 5 sexvigintillion years",
+        "you must DIE in 5 septenvigintillion years",
+        "you must DIE in 5 octovigintillion years",
+        "you must DIE in 5 novemvigintillion years",
+        "you must DIE in 5 vigintillion years",
+        "you must DIE in 5 unvigintillion years",
+        "you must DIE in 5 duovigintillion years",
+        "you must DIE in 5 trevigintillion years",
+        "you must DIE in 5 quattuorvigintillion years",
+        "you must DIE in 5 quinvigintillion years",
+        "you must DIE in 5 sexvigintillion years",
+        "you must DIE in 5 septenvigintillion years",
+        "you must DIE in 5 octovigintillion years",
+        "you must DIE in 5 novemvigintillion years",
+        "you must DIE in 5 vigintillion years",
+        "you must DIE in 5 unvigintillion years",
+        "you must DIE in 5 duovigintillion years",
+        "you must DIE in 5 trevigintillion years",
+        "you must DIE in 5 quattuorvigintillion years",
+        "you must DIE in 5 quinvigintillion years",
+        "you must DIE in 5 sexvigintillion years",
+        "you must DIE in 5 septenvigintillion years",
+        "you must DIE in 5 octovigintillion years",
+        "you must DIE in 5 novemvigintillion years",
+        "you must DIE in 5 vigintillion years",
+        "you must DIE in 5 unvigintillion years",
+        "you must DIE in 5 duovigintillion years",
+        "you must DIE in 5 trevigintillion years",
+        "you must DIE in 5 quattuorvigintillion years",
+        "you must DIE in 5 quinvigintillion years",
+        "you must DIE in 5 sexvigintillion years",
+        "you must DIE in 5 septenvigintillion years",
+        "you must DIE in 5 octovigintillion years",
+        "you must DIE in 5 novemvigintillion years",
+        "you must DIE in 5 vigintillion years",
+        "you must DIE in 5 unvigintillion years",
+        "you must DIE in 5 duovigintillion years",
+        "you must DIE in 5 trevigintillion years",
+        "you must DIE in 5 quattuorvigintillion years",
+        "you must DIE in 5 quinvigintillion years",
+        "you must DIE in 5 sexvigintillion years",
+        "you must DIE in 5 septenvigintillion years",
+        "you must DIE in 5 octovigintillion years",
+        "you must DIE in 5 novemvigintillion years",
+        "you must DIE in 5 vigintillion years",
+        "you must DIE in 5 unvigintillion years",
+        "you must DIE in 5 duovigintillion years",
+        "you must DIE in 5 trevigintillion years",
+        "you must DIE in 5 quattuorvigintillion years",
+        "you must DIE in 5 quinvigintillion years",
+        "you must DIE in 5 sexvigintillion years",
+        "you must DIE in 5 septenvigintillion years",
+        "you must DIE in 5 octovigintillion years",
+        "you must DIE in 5 novemvigintillion years",
+        "you must DIE in 5 vigintillion years",
+        "you must DIE in 5 unvigintillion years",
+        "you must DIE in 5 duovigintillion years",
+        "you must DIE in 5 trevigintillion years",
+        "you must DIE in 5 quattuorvigintillion years",
+        "you must DIE in 5 quinvigintillion years",
+        "you must DIE in 5 sexvigintillion years",
+        "you must DIE in 5 septenvigintillion years",
+        "you must DIE in 5 octovigintillion years",
+        "you must DIE in 5 novemvigintillion years",
+        "you must DIE in 5 vigintillion years",
+        "you must DIE in 5 unvigintillion years",
+        "you must DIE in 5 duovigintillion years",
+        "you must DIE in 5 trevigintillion years",
+        "you must DIE in 5 quattuorvigintillion years",
+        "you must DIE in 5 quinvigintillion years"
+    ];
+    static description = "why did i do this"
+    static aliases = ["kill", "die", "commitdeath", "dye", "dieofdeath"];
+    static dbRequired = false;
+    static cooldown = 5;
+    static cooldownMessage = "you cannot dye that fast"
+    static cooldownType = "user";
+
+    async run() {
+        return `${random(DieCommand.responses)}`;
+    }
+}
+
+export default DieCommand;
+
+// I cannot think of an efficient way to do this other than importing random from misc.js
+// chat should i implement this command or make a functional economy in gabe
+// alternatively i could implement tickets but nah hard pass 
+// tomorrow me problem 
