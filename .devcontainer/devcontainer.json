@@ -65,6 +65,10 @@
     "5173": {
       "label": "Vite Dev Server",
       "onAutoForward": "notify"
+    },
+    "42069": {
+      "label": "To be absolutely brutalist this is a joke",
+      "onAutoForward": "notify"
     }
   }
 }
