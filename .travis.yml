@@ -11,11 +11,21 @@ branches:
     - master
 
 env:
-  global: 
+  global:
     - REGISTRY=ghcr.io
     - IMAGE_NAME=$TRAVIS_REPO_SLUG
+    # ImageMagick build tuning to avoid arm64/qemu segfaults
+    - IMAGEMAGICK_VERSION=7.1.1-29
+    - IMAGEMAGICK_CONFIG="--disable-static --disable-openmp --with-threads --with-png --with-webp --with-modules --with-pango --disable-hdri --with-quantum-depth=16"
+    - MAKEFLAGS_IM="-j1"
+    - CFLAGS_IM="-O1"
+    # Platforms to build; adjust if arm64 remains unstable
+    - BUILDX_PLATFORMS=linux/amd64,linux/arm64
 
 before_install:
+  # Optional: add swap to mitigate OOM during qemu/arm64 builds
+  - sudo fallocate -l 2G /swapfile && sudo chmod 600 /swapfile && sudo mkswap /swapfile && sudo swapon /swapfile
+
   # Set up QEMU for cross-architecture builds
   - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
@@ -39,13 +49,16 @@ before_install:
   - echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_USERNAME" --password-stdin
 
 script:
-  # Build and push multi-arch image
+  # Build and push multi-arch image; build args tune ImageMagick build for stability
   - |
     docker buildx build \
       --builder mybuilder \
-      --platform linux/amd64,linux/arm64 \
+      --platform "$BUILDX_PLATFORMS" \
       --push \
+      --build-arg IMAGEMAGICK_VERSION="$IMAGEMAGICK_VERSION" \
+      --build-arg IMAGEMAGICK_CONFIG="$IMAGEMAGICK_CONFIG" \
+      --build-arg MAKEFLAGS="$MAKEFLAGS_IM" \
+      --build-arg CFLAGS="$CFLAGS_IM" \
       --tag "$REGISTRY/$IMAGE_NAME:latest" \
       --tag "$REGISTRY/$IMAGE_NAME:$TRAVIS_COMMIT" \
       .
-
