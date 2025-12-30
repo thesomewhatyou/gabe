@@ -1,0 +1,44 @@
+language: minimal
+
+os: linux
+dist: focal
+
+services:
+  - docker
+
+branches:
+  only:
+    - master
+
+env:
+  global: 
+    - REGISTRY=ghcr.io
+    - IMAGE_NAME=$TRAVIS_REPO_SLUG
+
+before_install:
+  # Set up QEMU for cross-architecture builds
+  - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+  
+  # Set up Docker Buildx
+  - export DOCKER_CLI_EXPERIMENTAL=enabled
+  - docker buildx version || (curl -Lo docker-buildx https://github.com/docker/buildx/releases/latest/download/buildx-$(uname -s | tr '[:upper:]' '[: lower:]')-$(uname -m) && mkdir -p ~/.docker/cli-plugins && mv docker-buildx ~/.docker/cli-plugins/docker-buildx && chmod +x ~/.docker/cli-plugins/docker-buildx)
+  
+  # Create and use a named buildx builder
+  - docker buildx rm mybuilder || true
+  - docker buildx create --name mybuilder --driver docker-container --use
+  - docker buildx inspect mybuilder --bootstrap
+  
+  # Log in to GitHub Container Registry
+  - echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_USERNAME" --password-stdin
+
+script:
+  # Build and push multi-arch image
+  - |
+    docker buildx build \
+      --builder mybuilder \
+      --platform linux/amd64,linux/arm64 \
+      --push \
+      --tag $REGISTRY/$IMAGE_NAME: latest \
+      --tag $REGISTRY/$IMAGE_NAME:$TRAVIS_COMMIT \
+      . 
+
