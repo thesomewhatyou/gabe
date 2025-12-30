@@ -168,6 +168,57 @@ const updates = [
     PRIMARY KEY (guild_id, message_id)
   );
   CREATE INDEX IF NOT EXISTS starboard_messages_guild_idx ON starboard_messages (guild_id);`,
+  // Economy system tables
+  `CREATE TABLE IF NOT EXISTS economy_users (
+    guild_id VARCHAR(30) NOT NULL,
+    user_id VARCHAR(30) NOT NULL,
+    balance INTEGER DEFAULT 0,
+    last_daily TIMESTAMP,
+    last_work TIMESTAMP,
+    PRIMARY KEY (guild_id, user_id)
+  );
+  CREATE TABLE IF NOT EXISTS economy_holdings (
+    guild_id VARCHAR(30) NOT NULL,
+    user_id VARCHAR(30) NOT NULL,
+    crypto VARCHAR(20) NOT NULL,
+    amount REAL DEFAULT 0,
+    PRIMARY KEY (guild_id, user_id, crypto)
+  );
+  CREATE TABLE IF NOT EXISTS economy_prices (
+    guild_id VARCHAR(30) NOT NULL,
+    crypto VARCHAR(20) NOT NULL,
+    price REAL DEFAULT 100,
+    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (guild_id, crypto)
+  );
+  CREATE TABLE IF NOT EXISTS economy_price_history (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    guild_id VARCHAR(30) NOT NULL,
+    crypto VARCHAR(20) NOT NULL,
+    price REAL NOT NULL,
+    recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+  CREATE INDEX IF NOT EXISTS idx_price_history_guild_crypto ON economy_price_history(guild_id, crypto);
+  CREATE TABLE IF NOT EXISTS economy_transactions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    guild_id VARCHAR(30) NOT NULL,
+    user_id VARCHAR(30) NOT NULL,
+    type VARCHAR(30) NOT NULL,
+    amount REAL NOT NULL,
+    crypto VARCHAR(20),
+    details TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+  CREATE INDEX IF NOT EXISTS idx_transactions_guild_user ON economy_transactions(guild_id, user_id);
+  CREATE TABLE IF NOT EXISTS economy_settings (
+    guild_id VARCHAR(30) NOT NULL PRIMARY KEY,
+    enabled INTEGER DEFAULT 0,
+    daily_amount INTEGER DEFAULT 100,
+    work_min INTEGER DEFAULT 10,
+    work_max INTEGER DEFAULT 50,
+    work_cooldown INTEGER DEFAULT 3600,
+    daily_cooldown INTEGER DEFAULT 86400
+  );`,
 ];
 
 export default class SQLitePlugin implements DatabasePlugin {
@@ -361,10 +412,10 @@ export default class SQLitePlugin implements DatabasePlugin {
     // SQLite does not support arrays, so instead we convert them from strings
     let guild:
       | ({
-          disabled: string;
-          disabled_commands: string;
-          tag_roles: string;
-        } & Omit<DBGuild, "disabled" | "disabled_commands" | "tag_roles">)
+        disabled: string;
+        disabled_commands: string;
+        tag_roles: string;
+      } & Omit<DBGuild, "disabled" | "disabled_commands" | "tag_roles">)
       | undefined;
     this.connection.transaction(() => {
       guild = this.connection.prepare("SELECT * FROM guilds WHERE guild_id = ?").get(query) as {
@@ -458,6 +509,18 @@ export default class SQLitePlugin implements DatabasePlugin {
       return this.connection
         .prepare("SELECT * FROM mod_logs WHERE guild_id = ? AND user_id = ? ORDER BY created_at DESC LIMIT ?")
         .all(guildId, userId, limit) as {
+          id: number;
+          guild_id: string;
+          user_id: string;
+          moderator_id: string;
+          action: string;
+          reason: string | null;
+          created_at: string;
+        }[];
+    }
+    return this.connection
+      .prepare("SELECT * FROM mod_logs WHERE guild_id = ? ORDER BY created_at DESC LIMIT ?")
+      .all(guildId, limit) as {
         id: number;
         guild_id: string;
         user_id: string;
@@ -466,18 +529,6 @@ export default class SQLitePlugin implements DatabasePlugin {
         reason: string | null;
         created_at: string;
       }[];
-    }
-    return this.connection
-      .prepare("SELECT * FROM mod_logs WHERE guild_id = ? ORDER BY created_at DESC LIMIT ?")
-      .all(guildId, limit) as {
-      id: number;
-      guild_id: string;
-      user_id: string;
-      moderator_id: string;
-      action: string;
-      reason: string | null;
-      created_at: string;
-    }[];
   }
 
   async addWarning(guildId: string, userId: string, moderatorId: string, reason: string) {
@@ -491,13 +542,13 @@ export default class SQLitePlugin implements DatabasePlugin {
     return this.connection
       .prepare("SELECT * FROM warnings WHERE guild_id = ? AND user_id = ? ORDER BY created_at DESC")
       .all(guildId, userId) as {
-      id: number;
-      guild_id: string;
-      user_id: string;
-      moderator_id: string;
-      reason: string;
-      created_at: string;
-    }[];
+        id: number;
+        guild_id: string;
+        user_id: string;
+        moderator_id: string;
+        reason: string;
+        created_at: string;
+      }[];
   }
 
   async removeWarning(guildId: string, warningId: number) {
@@ -557,12 +608,12 @@ export default class SQLitePlugin implements DatabasePlugin {
     return this.connection
       .prepare("SELECT * FROM user_levels WHERE guild_id = ? ORDER BY xp DESC LIMIT ?")
       .all(guildId, limit) as {
-      guild_id: string;
-      user_id: string;
-      xp: number;
-      level: number;
-      last_xp_gain: string | null;
-    }[];
+        guild_id: string;
+        user_id: string;
+        xp: number;
+        level: number;
+        last_xp_gain: string | null;
+      }[];
   }
 
   async setLevelsEnabled(guildId: string, enabled: boolean) {
@@ -665,5 +716,282 @@ export default class SQLitePlugin implements DatabasePlugin {
   async pruneStarboardEntries(guildId: string, olderThan: number) {
     void olderThan;
     this.connection.prepare("DELETE FROM starboard_messages WHERE guild_id = ? AND star_count <= 0").run(guildId);
+  }
+
+  // ==================== ECONOMY SYSTEM ====================
+
+  async getEconomyUser(guildId: string, userId: string) {
+    const result = this.connection
+      .prepare("SELECT * FROM economy_users WHERE guild_id = ? AND user_id = ?")
+      .get(guildId, userId) as
+      | { guild_id: string; user_id: string; balance: number; last_daily: string | null; last_work: string | null }
+      | undefined;
+
+    if (!result) {
+      return { guild_id: guildId, user_id: userId, balance: 0, last_daily: null, last_work: null };
+    }
+    return result;
+  }
+
+  async setBalance(guildId: string, userId: string, amount: number) {
+    this.connection
+      .prepare(
+        `INSERT INTO economy_users (guild_id, user_id, balance)
+         VALUES (?, ?, ?)
+         ON CONFLICT (guild_id, user_id) DO UPDATE SET balance = ?`,
+      )
+      .run(guildId, userId, amount, amount);
+  }
+
+  async addBalance(guildId: string, userId: string, amount: number) {
+    this.connection
+      .prepare(
+        `INSERT INTO economy_users (guild_id, user_id, balance)
+         VALUES (?, ?, ?)
+         ON CONFLICT (guild_id, user_id) DO UPDATE SET balance = balance + ?`,
+      )
+      .run(guildId, userId, amount, amount);
+    const result = this.connection
+      .prepare("SELECT balance FROM economy_users WHERE guild_id = ? AND user_id = ?")
+      .get(guildId, userId) as { balance: number };
+    return result.balance;
+  }
+
+  async transferBalance(guildId: string, fromUserId: string, toUserId: string, amount: number) {
+    try {
+      this.connection.transaction(() => {
+        const sender = this.connection
+          .prepare("SELECT balance FROM economy_users WHERE guild_id = ? AND user_id = ?")
+          .get(guildId, fromUserId) as { balance: number } | undefined;
+        if (!sender || sender.balance < amount) {
+          throw new Error("Insufficient balance");
+        }
+        this.connection
+          .prepare("UPDATE economy_users SET balance = balance - ? WHERE guild_id = ? AND user_id = ?")
+          .run(amount, guildId, fromUserId);
+        this.connection
+          .prepare(
+            `INSERT INTO economy_users (guild_id, user_id, balance)
+             VALUES (?, ?, ?)
+             ON CONFLICT (guild_id, user_id) DO UPDATE SET balance = balance + ?`,
+          )
+          .run(guildId, toUserId, amount, amount);
+      })();
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  async getEconomyLeaderboard(guildId: string, limit = 10) {
+    return this.connection
+      .prepare("SELECT guild_id, user_id, balance FROM economy_users WHERE guild_id = ? ORDER BY balance DESC LIMIT ?")
+      .all(guildId, limit) as { guild_id: string; user_id: string; balance: number }[];
+  }
+
+  async setLastDaily(guildId: string, userId: string) {
+    const now = new Date().toISOString();
+    this.connection
+      .prepare(
+        `INSERT INTO economy_users (guild_id, user_id, last_daily)
+         VALUES (?, ?, ?)
+         ON CONFLICT (guild_id, user_id) DO UPDATE SET last_daily = ?`,
+      )
+      .run(guildId, userId, now, now);
+  }
+
+  async setLastWork(guildId: string, userId: string) {
+    const now = new Date().toISOString();
+    this.connection
+      .prepare(
+        `INSERT INTO economy_users (guild_id, user_id, last_work)
+         VALUES (?, ?, ?)
+         ON CONFLICT (guild_id, user_id) DO UPDATE SET last_work = ?`,
+      )
+      .run(guildId, userId, now, now);
+  }
+
+  // ==================== CRYPTO SYSTEM ====================
+
+  async getCryptoHoldings(guildId: string, userId: string) {
+    return this.connection
+      .prepare("SELECT * FROM economy_holdings WHERE guild_id = ? AND user_id = ?")
+      .all(guildId, userId) as { guild_id: string; user_id: string; crypto: string; amount: number }[];
+  }
+
+  async getCryptoHolding(guildId: string, userId: string, crypto: string) {
+    return this.connection
+      .prepare("SELECT * FROM economy_holdings WHERE guild_id = ? AND user_id = ? AND crypto = ?")
+      .get(guildId, userId, crypto) as { guild_id: string; user_id: string; crypto: string; amount: number } | undefined;
+  }
+
+  async setCryptoHolding(guildId: string, userId: string, crypto: string, amount: number) {
+    if (amount <= 0) {
+      this.connection
+        .prepare("DELETE FROM economy_holdings WHERE guild_id = ? AND user_id = ? AND crypto = ?")
+        .run(guildId, userId, crypto);
+    } else {
+      this.connection
+        .prepare(
+          `INSERT INTO economy_holdings (guild_id, user_id, crypto, amount)
+           VALUES (?, ?, ?, ?)
+           ON CONFLICT (guild_id, user_id, crypto) DO UPDATE SET amount = ?`,
+        )
+        .run(guildId, userId, crypto, amount, amount);
+    }
+  }
+
+  async addCryptoHolding(guildId: string, userId: string, crypto: string, amount: number) {
+    this.connection
+      .prepare(
+        `INSERT INTO economy_holdings (guild_id, user_id, crypto, amount)
+         VALUES (?, ?, ?, ?)
+         ON CONFLICT (guild_id, user_id, crypto) DO UPDATE SET amount = amount + ?`,
+      )
+      .run(guildId, userId, crypto, amount, amount);
+    const result = this.connection
+      .prepare("SELECT amount FROM economy_holdings WHERE guild_id = ? AND user_id = ? AND crypto = ?")
+      .get(guildId, userId, crypto) as { amount: number };
+    return result.amount;
+  }
+
+  async getCryptoPrice(guildId: string, crypto: string) {
+    const result = this.connection
+      .prepare("SELECT price FROM economy_prices WHERE guild_id = ? AND crypto = ?")
+      .get(guildId, crypto) as { price: number } | undefined;
+    return result?.price ?? 100;
+  }
+
+  async setCryptoPrice(guildId: string, crypto: string, price: number) {
+    const now = new Date().toISOString();
+    this.connection
+      .prepare(
+        `INSERT INTO economy_prices (guild_id, crypto, price, last_updated)
+         VALUES (?, ?, ?, ?)
+         ON CONFLICT (guild_id, crypto) DO UPDATE SET price = ?, last_updated = ?`,
+      )
+      .run(guildId, crypto, price, now, price, now);
+  }
+
+  async getAllCryptoPrices(guildId: string) {
+    return this.connection.prepare("SELECT * FROM economy_prices WHERE guild_id = ?").all(guildId) as {
+      guild_id: string;
+      crypto: string;
+      price: number;
+      last_updated: string;
+    }[];
+  }
+
+  async getCryptoPriceHistory(guildId: string, crypto: string, limit = 50) {
+    return this.connection
+      .prepare(
+        "SELECT guild_id, crypto, price, recorded_at FROM economy_price_history WHERE guild_id = ? AND crypto = ? ORDER BY recorded_at DESC LIMIT ?",
+      )
+      .all(guildId, crypto, limit) as { guild_id: string; crypto: string; price: number; recorded_at: string }[];
+  }
+
+  async recordCryptoPrice(guildId: string, crypto: string, price: number) {
+    this.connection
+      .prepare("INSERT INTO economy_price_history (guild_id, crypto, price) VALUES (?, ?, ?)")
+      .run(guildId, crypto, price);
+  }
+
+  // ==================== TRANSACTION LOG ====================
+
+  async logTransaction(guildId: string, userId: string, type: string, amount: number, crypto?: string, details?: string) {
+    this.connection
+      .prepare("INSERT INTO economy_transactions (guild_id, user_id, type, amount, crypto, details) VALUES (?, ?, ?, ?, ?, ?)")
+      .run(guildId, userId, type, amount, crypto ?? null, details ?? null);
+  }
+
+  async getTransactions(guildId: string, userId: string, limit = 20) {
+    return this.connection
+      .prepare("SELECT * FROM economy_transactions WHERE guild_id = ? AND user_id = ? ORDER BY created_at DESC LIMIT ?")
+      .all(guildId, userId, limit) as {
+        id: number;
+        guild_id: string;
+        user_id: string;
+        type: string;
+        amount: number;
+        crypto: string | null;
+        details: string | null;
+        created_at: string;
+      }[];
+  }
+
+  // ==================== ECONOMY SETTINGS ====================
+
+  async getEconomySettings(guildId: string) {
+    const result = this.connection.prepare("SELECT * FROM economy_settings WHERE guild_id = ?").get(guildId) as
+      | { guild_id: string; enabled: number; daily_amount: number; work_min: number; work_max: number; work_cooldown: number; daily_cooldown: number }
+      | undefined;
+    if (!result) {
+      return {
+        guild_id: guildId,
+        enabled: false,
+        daily_amount: 100,
+        work_min: 10,
+        work_max: 50,
+        work_cooldown: 3600,
+        daily_cooldown: 86400,
+      };
+    }
+    return { ...result, enabled: result.enabled === 1 };
+  }
+
+  async setEconomySettings(settings: {
+    guild_id: string;
+    enabled: boolean;
+    daily_amount: number;
+    work_min: number;
+    work_max: number;
+    work_cooldown: number;
+    daily_cooldown: number;
+  }) {
+    this.connection
+      .prepare(
+        `INSERT INTO economy_settings (guild_id, enabled, daily_amount, work_min, work_max, work_cooldown, daily_cooldown)
+         VALUES (:guild_id, :enabled, :daily_amount, :work_min, :work_max, :work_cooldown, :daily_cooldown)
+         ON CONFLICT (guild_id) DO UPDATE SET
+           enabled = :enabled,
+           daily_amount = :daily_amount,
+           work_min = :work_min,
+           work_max = :work_max,
+           work_cooldown = :work_cooldown,
+           daily_cooldown = :daily_cooldown`,
+      )
+      .run({ ...settings, enabled: settings.enabled ? 1 : 0 });
+  }
+
+  async isEconomyEnabled(guildId: string) {
+    const result = this.connection.prepare("SELECT enabled FROM economy_settings WHERE guild_id = ?").get(guildId) as
+      | { enabled: number }
+      | undefined;
+    return result?.enabled === 1;
+  }
+
+  // ==================== ADMIN MARKET MANIPULATION ====================
+
+  async inflateAllBalances(guildId: string, percentage: number) {
+    const multiplier = 1 + percentage / 100;
+    const result = this.connection
+      .prepare("UPDATE economy_users SET balance = CAST(balance * ? AS INTEGER) WHERE guild_id = ?")
+      .run(multiplier, guildId);
+    return typeof result === "number" ? result : result.changes;
+  }
+
+  async wipeUserEconomy(guildId: string, userId: string) {
+    this.connection.prepare("DELETE FROM economy_users WHERE guild_id = ? AND user_id = ?").run(guildId, userId);
+    this.connection.prepare("DELETE FROM economy_holdings WHERE guild_id = ? AND user_id = ?").run(guildId, userId);
+  }
+
+  async wipeCrypto(guildId: string, crypto?: string) {
+    if (crypto) {
+      this.connection.prepare("DELETE FROM economy_holdings WHERE guild_id = ? AND crypto = ?").run(guildId, crypto);
+      this.connection.prepare("DELETE FROM economy_prices WHERE guild_id = ? AND crypto = ?").run(guildId, crypto);
+    } else {
+      this.connection.prepare("DELETE FROM economy_holdings WHERE guild_id = ?").run(guildId);
+      this.connection.prepare("DELETE FROM economy_prices WHERE guild_id = ?").run(guildId);
+    }
   }
 }

@@ -86,6 +86,79 @@ export declare class DatabasePlugin {
   isLevelsEnabled: (guildId: string) => Promise<boolean>;
   setLevelUpNotifications: (guildId: string, enabled: boolean) => Promise<void>;
   isLevelUpNotificationsEnabled: (guildId: string) => Promise<boolean>;
+  // Economy system
+  getEconomyUser: (
+    guildId: string,
+    userId: string,
+  ) => Promise<{ guild_id: string; user_id: string; balance: number; last_daily: Date | string | null; last_work: Date | string | null }>;
+  setBalance: (guildId: string, userId: string, amount: number) => Promise<void>;
+  addBalance: (guildId: string, userId: string, amount: number) => Promise<number>;
+  transferBalance: (guildId: string, fromUserId: string, toUserId: string, amount: number) => Promise<boolean>;
+  getEconomyLeaderboard: (
+    guildId: string,
+    limit?: number,
+  ) => Promise<{ guild_id: string; user_id: string; balance: number }[]>;
+  setLastDaily: (guildId: string, userId: string) => Promise<void>;
+  setLastWork: (guildId: string, userId: string) => Promise<void>;
+  // Crypto system
+  getCryptoHoldings: (
+    guildId: string,
+    userId: string,
+  ) => Promise<{ guild_id: string; user_id: string; crypto: string; amount: number }[]>;
+  getCryptoHolding: (
+    guildId: string,
+    userId: string,
+    crypto: string,
+  ) => Promise<{ guild_id: string; user_id: string; crypto: string; amount: number } | undefined>;
+  setCryptoHolding: (guildId: string, userId: string, crypto: string, amount: number) => Promise<void>;
+  addCryptoHolding: (guildId: string, userId: string, crypto: string, amount: number) => Promise<number>;
+  getCryptoPrice: (guildId: string, crypto: string) => Promise<number>;
+  setCryptoPrice: (guildId: string, crypto: string, price: number) => Promise<void>;
+  getAllCryptoPrices: (guildId: string) => Promise<{ guild_id: string; crypto: string; price: number; last_updated: Date | string }[]>;
+  getCryptoPriceHistory: (
+    guildId: string,
+    crypto: string,
+    limit?: number,
+  ) => Promise<{ guild_id: string; crypto: string; price: number; recorded_at: Date | string }[]>;
+  recordCryptoPrice: (guildId: string, crypto: string, price: number) => Promise<void>;
+  // Economy transactions log
+  logTransaction: (
+    guildId: string,
+    userId: string,
+    type: string,
+    amount: number,
+    crypto?: string,
+    details?: string,
+  ) => Promise<void>;
+  getTransactions: (
+    guildId: string,
+    userId: string,
+    limit?: number,
+  ) => Promise<{ id: number; guild_id: string; user_id: string; type: string; amount: number; crypto: string | null; details: string | null; created_at: Date | string }[]>;
+  // Economy settings
+  getEconomySettings: (guildId: string) => Promise<{
+    guild_id: string;
+    enabled: boolean;
+    daily_amount: number;
+    work_min: number;
+    work_max: number;
+    work_cooldown: number;
+    daily_cooldown: number;
+  }>;
+  setEconomySettings: (settings: {
+    guild_id: string;
+    enabled: boolean;
+    daily_amount: number;
+    work_min: number;
+    work_max: number;
+    work_cooldown: number;
+    daily_cooldown: number;
+  }) => Promise<void>;
+  isEconomyEnabled: (guildId: string) => Promise<boolean>;
+  // Market manipulation (admin tools)
+  inflateAllBalances: (guildId: string, percentage: number) => Promise<number>;
+  wipeUserEconomy: (guildId: string, userId: string) => Promise<void>;
+  wipeCrypto: (guildId: string, crypto?: string) => Promise<void>;
 }
 
 export async function init(): Promise<DatabasePlugin | undefined> {

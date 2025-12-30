@@ -143,6 +143,57 @@ const updates = [
     PRIMARY KEY (guild_id, message_id)
   );
   CREATE INDEX IF NOT EXISTS starboard_messages_guild_idx ON starboard_messages (guild_id);`,
+  // Economy system tables
+  `CREATE TABLE IF NOT EXISTS economy_users (
+    guild_id VARCHAR(30) NOT NULL,
+    user_id VARCHAR(30) NOT NULL,
+    balance BIGINT DEFAULT 0,
+    last_daily TIMESTAMP,
+    last_work TIMESTAMP,
+    PRIMARY KEY (guild_id, user_id)
+  );
+  CREATE TABLE IF NOT EXISTS economy_holdings (
+    guild_id VARCHAR(30) NOT NULL,
+    user_id VARCHAR(30) NOT NULL,
+    crypto VARCHAR(20) NOT NULL,
+    amount DOUBLE PRECISION DEFAULT 0,
+    PRIMARY KEY (guild_id, user_id, crypto)
+  );
+  CREATE TABLE IF NOT EXISTS economy_prices (
+    guild_id VARCHAR(30) NOT NULL,
+    crypto VARCHAR(20) NOT NULL,
+    price DOUBLE PRECISION DEFAULT 100,
+    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (guild_id, crypto)
+  );
+  CREATE TABLE IF NOT EXISTS economy_price_history (
+    id SERIAL PRIMARY KEY,
+    guild_id VARCHAR(30) NOT NULL,
+    crypto VARCHAR(20) NOT NULL,
+    price DOUBLE PRECISION NOT NULL,
+    recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+  CREATE INDEX IF NOT EXISTS idx_price_history_guild_crypto ON economy_price_history(guild_id, crypto);
+  CREATE TABLE IF NOT EXISTS economy_transactions (
+    id SERIAL PRIMARY KEY,
+    guild_id VARCHAR(30) NOT NULL,
+    user_id VARCHAR(30) NOT NULL,
+    type VARCHAR(30) NOT NULL,
+    amount DOUBLE PRECISION NOT NULL,
+    crypto VARCHAR(20),
+    details TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+  CREATE INDEX IF NOT EXISTS idx_transactions_guild_user ON economy_transactions(guild_id, user_id);
+  CREATE TABLE IF NOT EXISTS economy_settings (
+    guild_id VARCHAR(30) NOT NULL PRIMARY KEY,
+    enabled BOOLEAN DEFAULT FALSE,
+    daily_amount INTEGER DEFAULT 100,
+    work_min INTEGER DEFAULT 10,
+    work_max INTEGER DEFAULT 50,
+    work_cooldown INTEGER DEFAULT 3600,
+    daily_cooldown INTEGER DEFAULT 86400
+  );`,
 ];
 
 export default class PostgreSQLPlugin implements DatabasePlugin {
@@ -150,7 +201,7 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
 
   constructor(connectString: string) {
     this.sql = Postgres(connectString, {
-      onnotice: () => {},
+      onnotice: () => { },
     });
   }
 
@@ -554,5 +605,249 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
       SELECT level_up_notifications FROM guilds WHERE guild_id = ${guildId}
     `;
     return result?.level_up_notifications !== false; // Default to true if not set
+  }
+
+  // ==================== ECONOMY SYSTEM ====================
+
+  async getEconomyUser(guildId: string, userId: string) {
+    const [result] = await this.sql<
+      { guild_id: string; user_id: string; balance: string; last_daily: Date | null; last_work: Date | null }[]
+    >`
+      SELECT * FROM economy_users WHERE guild_id = ${guildId} AND user_id = ${userId}
+    `;
+
+    if (!result) {
+      return { guild_id: guildId, user_id: userId, balance: 0, last_daily: null, last_work: null };
+    }
+    return { ...result, balance: parseInt(result.balance) || 0 };
+  }
+
+  async setBalance(guildId: string, userId: string, amount: number) {
+    await this.sql`
+      INSERT INTO economy_users (guild_id, user_id, balance)
+      VALUES (${guildId}, ${userId}, ${amount})
+      ON CONFLICT (guild_id, user_id) DO UPDATE SET balance = ${amount}
+    `;
+  }
+
+  async addBalance(guildId: string, userId: string, amount: number) {
+    const [result] = await this.sql<{ balance: string }[]>`
+      INSERT INTO economy_users (guild_id, user_id, balance)
+      VALUES (${guildId}, ${userId}, ${amount})
+      ON CONFLICT (guild_id, user_id) DO UPDATE SET balance = economy_users.balance + ${amount}
+      RETURNING balance
+    `;
+    return parseInt(result.balance) || 0;
+  }
+
+  async transferBalance(guildId: string, fromUserId: string, toUserId: string, amount: number) {
+    try {
+      await this.sql.begin(async (sql) => {
+        // Deduct from sender
+        const [sender] = await sql<{ balance: string }[]>`
+          SELECT balance FROM economy_users WHERE guild_id = ${guildId} AND user_id = ${fromUserId}
+        `;
+        if (!sender || parseInt(sender.balance) < amount) {
+          throw new Error("Insufficient balance");
+        }
+        await sql`UPDATE economy_users SET balance = balance - ${amount} WHERE guild_id = ${guildId} AND user_id = ${fromUserId}`;
+        // Add to recipient
+        await sql`
+          INSERT INTO economy_users (guild_id, user_id, balance)
+          VALUES (${guildId}, ${toUserId}, ${amount})
+          ON CONFLICT (guild_id, user_id) DO UPDATE SET balance = economy_users.balance + ${amount}
+        `;
+      });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  async getEconomyLeaderboard(guildId: string, limit = 10) {
+    const results = await this.sql<{ guild_id: string; user_id: string; balance: string }[]>`
+      SELECT guild_id, user_id, balance FROM economy_users WHERE guild_id = ${guildId} ORDER BY balance DESC LIMIT ${limit}
+    `;
+    return results.map((r) => ({ ...r, balance: parseInt(r.balance) || 0 }));
+  }
+
+  async setLastDaily(guildId: string, userId: string) {
+    await this.sql`
+      INSERT INTO economy_users (guild_id, user_id, last_daily)
+      VALUES (${guildId}, ${userId}, CURRENT_TIMESTAMP)
+      ON CONFLICT (guild_id, user_id) DO UPDATE SET last_daily = CURRENT_TIMESTAMP
+    `;
+  }
+
+  async setLastWork(guildId: string, userId: string) {
+    await this.sql`
+      INSERT INTO economy_users (guild_id, user_id, last_work)
+      VALUES (${guildId}, ${userId}, CURRENT_TIMESTAMP)
+      ON CONFLICT (guild_id, user_id) DO UPDATE SET last_work = CURRENT_TIMESTAMP
+    `;
+  }
+
+  // ==================== CRYPTO SYSTEM ====================
+
+  async getCryptoHoldings(guildId: string, userId: string) {
+    return await this.sql<{ guild_id: string; user_id: string; crypto: string; amount: number }[]>`
+      SELECT * FROM economy_holdings WHERE guild_id = ${guildId} AND user_id = ${userId}
+    `;
+  }
+
+  async getCryptoHolding(guildId: string, userId: string, crypto: string) {
+    const [result] = await this.sql<{ guild_id: string; user_id: string; crypto: string; amount: number }[]>`
+      SELECT * FROM economy_holdings WHERE guild_id = ${guildId} AND user_id = ${userId} AND crypto = ${crypto}
+    `;
+    return result;
+  }
+
+  async setCryptoHolding(guildId: string, userId: string, crypto: string, amount: number) {
+    if (amount <= 0) {
+      await this.sql`DELETE FROM economy_holdings WHERE guild_id = ${guildId} AND user_id = ${userId} AND crypto = ${crypto}`;
+    } else {
+      await this.sql`
+        INSERT INTO economy_holdings (guild_id, user_id, crypto, amount)
+        VALUES (${guildId}, ${userId}, ${crypto}, ${amount})
+        ON CONFLICT (guild_id, user_id, crypto) DO UPDATE SET amount = ${amount}
+      `;
+    }
+  }
+
+  async addCryptoHolding(guildId: string, userId: string, crypto: string, amount: number) {
+    const [result] = await this.sql<{ amount: number }[]>`
+      INSERT INTO economy_holdings (guild_id, user_id, crypto, amount)
+      VALUES (${guildId}, ${userId}, ${crypto}, ${amount})
+      ON CONFLICT (guild_id, user_id, crypto) DO UPDATE SET amount = economy_holdings.amount + ${amount}
+      RETURNING amount
+    `;
+    return result.amount;
+  }
+
+  async getCryptoPrice(guildId: string, crypto: string) {
+    const [result] = await this.sql<{ price: number }[]>`
+      SELECT price FROM economy_prices WHERE guild_id = ${guildId} AND crypto = ${crypto}
+    `;
+    return result?.price ?? 100; // Default price of 100
+  }
+
+  async setCryptoPrice(guildId: string, crypto: string, price: number) {
+    await this.sql`
+      INSERT INTO economy_prices (guild_id, crypto, price, last_updated)
+      VALUES (${guildId}, ${crypto}, ${price}, CURRENT_TIMESTAMP)
+      ON CONFLICT (guild_id, crypto) DO UPDATE SET price = ${price}, last_updated = CURRENT_TIMESTAMP
+    `;
+  }
+
+  async getAllCryptoPrices(guildId: string) {
+    return await this.sql<{ guild_id: string; crypto: string; price: number; last_updated: Date }[]>`
+      SELECT * FROM economy_prices WHERE guild_id = ${guildId}
+    `;
+  }
+
+  async getCryptoPriceHistory(guildId: string, crypto: string, limit = 50) {
+    return await this.sql<{ guild_id: string; crypto: string; price: number; recorded_at: Date }[]>`
+      SELECT guild_id, crypto, price, recorded_at FROM economy_price_history
+      WHERE guild_id = ${guildId} AND crypto = ${crypto}
+      ORDER BY recorded_at DESC LIMIT ${limit}
+    `;
+  }
+
+  async recordCryptoPrice(guildId: string, crypto: string, price: number) {
+    await this.sql`
+      INSERT INTO economy_price_history (guild_id, crypto, price)
+      VALUES (${guildId}, ${crypto}, ${price})
+    `;
+  }
+
+  // ==================== TRANSACTION LOG ====================
+
+  async logTransaction(guildId: string, userId: string, type: string, amount: number, crypto?: string, details?: string) {
+    await this.sql`
+      INSERT INTO economy_transactions (guild_id, user_id, type, amount, crypto, details)
+      VALUES (${guildId}, ${userId}, ${type}, ${amount}, ${crypto ?? null}, ${details ?? null})
+    `;
+  }
+
+  async getTransactions(guildId: string, userId: string, limit = 20) {
+    return await this.sql<
+      { id: number; guild_id: string; user_id: string; type: string; amount: number; crypto: string | null; details: string | null; created_at: Date }[]
+    >`
+      SELECT * FROM economy_transactions WHERE guild_id = ${guildId} AND user_id = ${userId}
+      ORDER BY created_at DESC LIMIT ${limit}
+    `;
+  }
+
+  // ==================== ECONOMY SETTINGS ====================
+
+  async getEconomySettings(guildId: string) {
+    const [result] = await this.sql<
+      { guild_id: string; enabled: boolean; daily_amount: number; work_min: number; work_max: number; work_cooldown: number; daily_cooldown: number }[]
+    >`
+      SELECT * FROM economy_settings WHERE guild_id = ${guildId}
+    `;
+    return result ?? {
+      guild_id: guildId,
+      enabled: false,
+      daily_amount: 100,
+      work_min: 10,
+      work_max: 50,
+      work_cooldown: 3600,
+      daily_cooldown: 86400,
+    };
+  }
+
+  async setEconomySettings(settings: {
+    guild_id: string;
+    enabled: boolean;
+    daily_amount: number;
+    work_min: number;
+    work_max: number;
+    work_cooldown: number;
+    daily_cooldown: number;
+  }) {
+    await this.sql`
+      INSERT INTO economy_settings (guild_id, enabled, daily_amount, work_min, work_max, work_cooldown, daily_cooldown)
+      VALUES (${settings.guild_id}, ${settings.enabled}, ${settings.daily_amount}, ${settings.work_min}, ${settings.work_max}, ${settings.work_cooldown}, ${settings.daily_cooldown})
+      ON CONFLICT (guild_id) DO UPDATE SET
+        enabled = ${settings.enabled},
+        daily_amount = ${settings.daily_amount},
+        work_min = ${settings.work_min},
+        work_max = ${settings.work_max},
+        work_cooldown = ${settings.work_cooldown},
+        daily_cooldown = ${settings.daily_cooldown}
+    `;
+  }
+
+  async isEconomyEnabled(guildId: string) {
+    const [result] = await this.sql<{ enabled: boolean }[]>`
+      SELECT enabled FROM economy_settings WHERE guild_id = ${guildId}
+    `;
+    return result?.enabled === true;
+  }
+
+  // ==================== ADMIN MARKET MANIPULATION ====================
+
+  async inflateAllBalances(guildId: string, percentage: number) {
+    const multiplier = 1 + (percentage / 100);
+    const result = await this.sql`
+      UPDATE economy_users SET balance = FLOOR(balance * ${multiplier}) WHERE guild_id = ${guildId}
+    `;
+    return result.count;
+  }
+
+  async wipeUserEconomy(guildId: string, userId: string) {
+    await this.sql`DELETE FROM economy_users WHERE guild_id = ${guildId} AND user_id = ${userId}`;
+    await this.sql`DELETE FROM economy_holdings WHERE guild_id = ${guildId} AND user_id = ${userId}`;
+  }
+
+  async wipeCrypto(guildId: string, crypto?: string) {
+    if (crypto) {
+      await this.sql`DELETE FROM economy_holdings WHERE guild_id = ${guildId} AND crypto = ${crypto}`;
+      await this.sql`DELETE FROM economy_prices WHERE guild_id = ${guildId} AND crypto = ${crypto}`;
+    } else {
+      await this.sql`DELETE FROM economy_holdings WHERE guild_id = ${guildId}`;
+      await this.sql`DELETE FROM economy_prices WHERE guild_id = ${guildId}`;
+    }
   }
 }
