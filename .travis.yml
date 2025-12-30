@@ -45,7 +45,7 @@ script:
       --builder mybuilder \
       --platform linux/amd64,linux/arm64 \
       --push \
-      --tag $REGISTRY/$IMAGE_NAME: latest \
-      --tag $REGISTRY/$IMAGE_NAME:$TRAVIS_COMMIT \
-      . 
+      --tag "$REGISTRY/$IMAGE_NAME:latest" \
+      --tag "$REGISTRY/$IMAGE_NAME:$TRAVIS_COMMIT" \
+      .
 
