@@ -29,7 +29,8 @@ class GiveRepCommand extends Command {
         // Check if the command was invoked as "-rep"
         const isNegative = this.commandName?.startsWith("-") || this.getOptionString("type") === "negative";
         const amount = isNegative ? -1 : 1;
-        const reason = this.getOptionString("reason") ?? this.args.slice(1).join(" ") || null;
+        const reasonArg = this.getOptionString("reason") ?? this.args.slice(1).join(" ");
+        const reason = reasonArg ? reasonArg : null;
 
         await this.database.giveRep(this.guild.id, user.id, this.author.id, amount, reason ?? undefined);
         const newScore = await this.database.getRepScore(this.guild.id, user.id);

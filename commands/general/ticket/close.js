@@ -31,7 +31,8 @@ class CloseTicketCommand extends Command {
             return "❌ You don't have permission to close this ticket.";
         }
 
-        const reason = this.getOptionString("reason") ?? this.args.join(" ") || "No reason provided";
+        const reasonArg = this.getOptionString("reason") ?? this.args.join(" ");
+        const reason = reasonArg ? reasonArg : "No reason provided";
 
         try {
             // Close the ticket in database
