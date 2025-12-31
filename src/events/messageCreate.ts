@@ -13,11 +13,12 @@ import {
 } from "#utils/collections.js";
 import detectRuntime from "#utils/detectRuntime.js";
 import { getString } from "#utils/i18n.js";
-import { error as _error, log } from "#utils/logger.js";
+import { error as _error, log, warn } from "#utils/logger.js";
 import { clean } from "#utils/misc.js";
 import parseCommand from "#utils/parseCommand.js";
 import { upload } from "#utils/tempimages.js";
 import type { DBGuild, EventParams } from "#utils/types.js";
+import { checkMessageSpam, handleThreat, handleOwnerThreat, isWhitelisted } from "#utils/antinuke.js";
 
 let Sentry: typeof import("@sentry/node");
 if (process.env.SENTRY_DSN && process.env.SENTRY_DSN !== "") {
@@ -41,6 +42,40 @@ export default async ({ client, database }: EventParams, message: Message) => {
 
   const executionId = Math.random().toString(36).substring(7);
   log("info", `[${executionId}] messageCreate triggered for message ${message.id} from ${message.author.id}`);
+
+  // ==================== ANTI-NUKE MESSAGE SPAM DETECTION ====================
+  if (database && message.guildID) {
+    try {
+      const spamResult = await checkMessageSpam(database, message.guildID, message.author.id, message.channelID);
+
+      if (spamResult.exceeded) {
+        const guild = client.guilds.get(message.guildID);
+        if (guild) {
+          const isOwner = message.author.id === guild.ownerID;
+          const member = guild.members.get(message.author.id);
+          const memberRoles = member?.roles ?? [];
+
+          // Check whitelist (trusted user is always exempt), but owner is NOT exempt
+          if (!isOwner && await isWhitelisted(database, message.guildID, message.author.id, memberRoles)) {
+            // Whitelisted user, skip
+          } else {
+            warn(`Anti-nuke: Message spam detected in ${message.guildID} by ${message.author.id} (${spamResult.count} msgs in 10s)`);
+
+            if (isOwner) {
+              // Owner is spamming - delete the channel and trigger fallback
+              await handleOwnerThreat(client, database, guild, message.channelID);
+            } else {
+              // Regular user - escalating response
+              await handleThreat(client, database, guild, message.author.id, "message_spam");
+            }
+          }
+        }
+      }
+    } catch (err) {
+      _error(`Anti-nuke spam check error: ${(err as Error).stack || err}`);
+    }
+  }
+  // ==================== END ANTI-NUKE ====================
 
   // don't run command if bot can't send messages
   let permChannel: AnyTextableChannel | undefined;

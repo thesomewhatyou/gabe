@@ -276,12 +276,12 @@ class Command {
     }
     if (this.type === "application") {
       const opt = this.getRawOption(key) as any;
-      if (opt?.value) return this.interaction?.data.resolved.channels.get(opt.value as string);
+      if (opt?.value) return this.interaction?.data.resolved.channels.get(opt.value as string) as AnyGuildChannel | undefined;
       return undefined;
     }
     throw Error("Unknown command type");
   }
-// kobe :throw:
+  // kobe :throw:
   // Note: the key is unused in a classic command context.
   getOptionAttachment(key: string): Attachment | undefined {
     if (this.type === "classic") {

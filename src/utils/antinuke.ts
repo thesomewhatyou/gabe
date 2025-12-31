@@ -13,9 +13,16 @@ import logger from "./logger.js";
 // In-memory rate tracking: guild -> executor -> timestamps[]
 const actionTracker = new Map<string, Map<string, number[]>>();
 
+// SEPARATE message spam tracking: guild -> user -> timestamps[]
+const messageTracker = new Map<string, Map<string, number[]>>();
+
 // Constants
 const MUTE_DURATION_MS = 30 * 60 * 1000; // 30 minutes
 const FALLBACK_ROLE_NAME = "Gabe Fallback Admin";
+
+// Message spam constants (separate from action threshold)
+const MESSAGE_SPAM_THRESHOLD = 20;
+const MESSAGE_SPAM_WINDOW_MS = 10 * 1000; // 10 seconds
 
 /**
  * Log an action and check if threshold is exceeded
@@ -334,7 +341,53 @@ async function kickOffender(
 export function clearActionTracker(guildId?: string): void {
     if (guildId) {
         actionTracker.delete(guildId);
+        messageTracker.delete(guildId);
     } else {
         actionTracker.clear();
+        messageTracker.clear();
     }
+}
+
+/**
+ * Check if a user is message spamming (SEPARATE from action threshold)
+ * Threshold: 20 messages in 10 seconds
+ * Returns the channel ID if spam is detected (for channel deletion on owner threat)
+ */
+export async function checkMessageSpam(
+    database: DatabasePlugin,
+    guildId: string,
+    userId: string,
+    channelId: string
+): Promise<{ exceeded: boolean; count: number; channelId: string }> {
+    const settings = await database.getAntinukeSettings(guildId);
+
+    if (!settings.enabled) {
+        return { exceeded: false, count: 0, channelId };
+    }
+
+    const now = Date.now();
+
+    if (!messageTracker.has(guildId)) {
+        messageTracker.set(guildId, new Map());
+    }
+    const guildTracker = messageTracker.get(guildId)!;
+
+    if (!guildTracker.has(userId)) {
+        guildTracker.set(userId, []);
+    }
+    const timestamps = guildTracker.get(userId)!;
+
+    // Add current timestamp and filter old ones
+    timestamps.push(now);
+    const recentTimestamps = timestamps.filter((t) => now - t < MESSAGE_SPAM_WINDOW_MS);
+    guildTracker.set(userId, recentTimestamps);
+
+    const exceeded = recentTimestamps.length >= MESSAGE_SPAM_THRESHOLD;
+
+    if (exceeded) {
+        // Log the spam action for records
+        await database.logAntinukeAction(guildId, userId, "message_spam", channelId);
+    }
+
+    return { exceeded, count: recentTimestamps.length, channelId };
 }
