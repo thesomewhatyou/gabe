@@ -6,8 +6,7 @@ import detectRuntime from "#utils/detectRuntime.js";
 import logger from "#utils/logger.js";
 import { type DBGuild, type StarboardEntry, type StarboardSettings, isError, type Tag } from "#utils/types.js";
 
-export declare class DatabasePlugin {
-  constructor(connectString: string);
+export interface DatabasePlugin {
   setup: () => Promise<void>;
   stop: () => Promise<void>;
   upgrade: () => Promise<number | undefined>;
