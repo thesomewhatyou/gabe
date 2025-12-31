@@ -2,6 +2,7 @@ import process from "node:process";
 import {
   type AllowedMentions,
   type AnyTextableChannel,
+  type AnyGuildChannel,
   type ApplicationCommandOptions,
   type Attachment,
   type Client,
@@ -266,6 +267,21 @@ class Command {
     throw Error("Unknown command type");
   }
 
+  getOptionChannel(key: string, defaultArg?: boolean): AnyGuildChannel | undefined {
+
+
+    if (this.type === "classic") {
+      const id = defaultArg ? this.args.join(" ").trim() : this.options?.[key];
+      return this.guild?.channels.get(id as string);
+    }
+    if (this.type === "application") {
+      const opt = this.getRawOption(key) as any;
+      if (opt?.value) return this.interaction?.data.resolved.channels.get(opt.value as string);
+      return undefined;
+    }
+    throw Error("Unknown command type");
+  }
+// kobe :throw:
   // Note: the key is unused in a classic command context.
   getOptionAttachment(key: string): Attachment | undefined {
     if (this.type === "classic") {
