@@ -273,6 +273,33 @@ const updates = [
     message TEXT
   );
   CREATE INDEX IF NOT EXISTS idx_birthdays_date ON birthdays(birth_month, birth_day);`,
+  // Anti-nuke system
+  `CREATE TABLE IF NOT EXISTS antinuke_settings (
+    guild_id VARCHAR(30) PRIMARY KEY,
+    enabled INTEGER DEFAULT 0,
+    threshold INTEGER DEFAULT 15,
+    time_window INTEGER DEFAULT 5,
+    log_channel_id VARCHAR(30),
+    trusted_user VARCHAR(50),
+    whitelisted_users TEXT DEFAULT '[]',
+    whitelisted_roles TEXT DEFAULT '[]'
+  );
+  CREATE TABLE IF NOT EXISTS antinuke_offenses (
+    guild_id VARCHAR(30) NOT NULL,
+    user_id VARCHAR(30) NOT NULL,
+    offense_count INTEGER DEFAULT 0,
+    last_offense TIMESTAMP,
+    PRIMARY KEY (guild_id, user_id)
+  );
+  CREATE TABLE IF NOT EXISTS antinuke_actions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    guild_id VARCHAR(30) NOT NULL,
+    executor_id VARCHAR(30) NOT NULL,
+    action_type VARCHAR(30) NOT NULL,
+    target_id VARCHAR(30),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+  CREATE INDEX IF NOT EXISTS idx_antinuke_actions_lookup ON antinuke_actions(guild_id, executor_id, created_at);`,
 ];
 
 export default class SQLitePlugin implements DatabasePlugin {
@@ -1322,5 +1349,165 @@ export default class SQLitePlugin implements DatabasePlugin {
            message = :message`
       )
       .run({ ...settings, enabled: settings.enabled ? 1 : 0 });
+  }
+
+  // ==================== ANTI-NUKE SYSTEM ====================
+
+  async getAntinukeSettings(guildId: string) {
+    const result = this.connection
+      .prepare("SELECT * FROM antinuke_settings WHERE guild_id = ?")
+      .get(guildId) as {
+        guild_id: string;
+        enabled: number;
+        threshold: number;
+        time_window: number;
+        log_channel_id: string | null;
+        trusted_user: string | null;
+        whitelisted_users: string;
+        whitelisted_roles: string;
+      } | undefined;
+
+    if (!result) {
+      return {
+        guild_id: guildId,
+        enabled: false,
+        threshold: 15,
+        time_window: 5,
+        log_channel_id: null,
+        trusted_user: null,
+        whitelisted_users: [] as string[],
+        whitelisted_roles: [] as string[],
+      };
+    }
+
+    return {
+      guild_id: result.guild_id,
+      enabled: result.enabled === 1,
+      threshold: result.threshold,
+      time_window: result.time_window,
+      log_channel_id: result.log_channel_id,
+      trusted_user: result.trusted_user,
+      whitelisted_users: JSON.parse(result.whitelisted_users) as string[],
+      whitelisted_roles: JSON.parse(result.whitelisted_roles) as string[],
+    };
+  }
+
+  async setAntinukeSettings(settings: {
+    guild_id: string;
+    enabled: boolean;
+    threshold: number;
+    time_window: number;
+    log_channel_id: string | null;
+    trusted_user: string | null;
+    whitelisted_users: string[];
+    whitelisted_roles: string[];
+  }) {
+    this.connection
+      .prepare(
+        `INSERT INTO antinuke_settings (guild_id, enabled, threshold, time_window, log_channel_id, trusted_user, whitelisted_users, whitelisted_roles)
+         VALUES (:guild_id, :enabled, :threshold, :time_window, :log_channel_id, :trusted_user, :whitelisted_users, :whitelisted_roles)
+         ON CONFLICT (guild_id) DO UPDATE SET
+           enabled = :enabled,
+           threshold = :threshold,
+           time_window = :time_window,
+           log_channel_id = :log_channel_id,
+           trusted_user = :trusted_user,
+           whitelisted_users = :whitelisted_users,
+           whitelisted_roles = :whitelisted_roles`
+      )
+      .run({
+        guild_id: settings.guild_id,
+        enabled: settings.enabled ? 1 : 0,
+        threshold: settings.threshold,
+        time_window: settings.time_window,
+        log_channel_id: settings.log_channel_id,
+        trusted_user: settings.trusted_user,
+        whitelisted_users: JSON.stringify(settings.whitelisted_users),
+        whitelisted_roles: JSON.stringify(settings.whitelisted_roles),
+      });
+  }
+
+  async logAntinukeAction(guildId: string, executorId: string, actionType: string, targetId?: string) {
+    this.connection
+      .prepare("INSERT INTO antinuke_actions (guild_id, executor_id, action_type, target_id) VALUES (?, ?, ?, ?)")
+      .run(guildId, executorId, actionType, targetId ?? null);
+  }
+
+  async getRecentActions(guildId: string, executorId: string, windowSeconds: number) {
+    const cutoff = new Date(Date.now() - windowSeconds * 1000).toISOString();
+    return this.connection
+      .prepare(
+        "SELECT * FROM antinuke_actions WHERE guild_id = ? AND executor_id = ? AND created_at > ? ORDER BY created_at DESC"
+      )
+      .all(guildId, executorId, cutoff) as {
+        id: number;
+        guild_id: string;
+        executor_id: string;
+        action_type: string;
+        target_id: string | null;
+        created_at: string;
+      }[];
+  }
+
+  async getOffenseCount(guildId: string, userId: string) {
+    const result = this.connection
+      .prepare("SELECT offense_count FROM antinuke_offenses WHERE guild_id = ? AND user_id = ?")
+      .get(guildId, userId) as { offense_count: number } | undefined;
+    return result?.offense_count ?? 0;
+  }
+
+  async incrementOffense(guildId: string, userId: string) {
+    const now = new Date().toISOString();
+    const existing = this.connection
+      .prepare("SELECT offense_count FROM antinuke_offenses WHERE guild_id = ? AND user_id = ?")
+      .get(guildId, userId) as { offense_count: number } | undefined;
+
+    if (existing) {
+      const newCount = existing.offense_count + 1;
+      this.connection
+        .prepare("UPDATE antinuke_offenses SET offense_count = ?, last_offense = ? WHERE guild_id = ? AND user_id = ?")
+        .run(newCount, now, guildId, userId);
+      return newCount;
+    } else {
+      this.connection
+        .prepare("INSERT INTO antinuke_offenses (guild_id, user_id, offense_count, last_offense) VALUES (?, ?, ?, ?)")
+        .run(guildId, userId, 1, now);
+      return 1;
+    }
+  }
+
+  async addToAntinukeWhitelist(guildId: string, type: "users" | "roles", id: string) {
+    const settings = await this.getAntinukeSettings(guildId);
+    const list = type === "users" ? settings.whitelisted_users : settings.whitelisted_roles;
+    if (!list.includes(id)) {
+      list.push(id);
+      if (type === "users") {
+        settings.whitelisted_users = list;
+      } else {
+        settings.whitelisted_roles = list;
+      }
+      await this.setAntinukeSettings(settings);
+    }
+  }
+
+  async removeFromAntinukeWhitelist(guildId: string, type: "users" | "roles", id: string) {
+    const settings = await this.getAntinukeSettings(guildId);
+    if (type === "users") {
+      settings.whitelisted_users = settings.whitelisted_users.filter(u => u !== id);
+    } else {
+      settings.whitelisted_roles = settings.whitelisted_roles.filter(r => r !== id);
+    }
+    await this.setAntinukeSettings(settings);
+  }
+
+  async clearAntinukeActions(guildId: string, olderThanSeconds?: number) {
+    if (olderThanSeconds) {
+      const cutoff = new Date(Date.now() - olderThanSeconds * 1000).toISOString();
+      this.connection
+        .prepare("DELETE FROM antinuke_actions WHERE guild_id = ? AND created_at < ?")
+        .run(guildId, cutoff);
+    } else {
+      this.connection.prepare("DELETE FROM antinuke_actions WHERE guild_id = ?").run(guildId);
+    }
   }
 }
