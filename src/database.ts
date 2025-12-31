@@ -159,6 +159,117 @@ export declare class DatabasePlugin {
   inflateAllBalances: (guildId: string, percentage: number) => Promise<number>;
   wipeUserEconomy: (guildId: string, userId: string) => Promise<void>;
   wipeCrypto: (guildId: string, crypto?: string) => Promise<void>;
+  // Ticket system
+  getTicket: (channelId: string) => Promise<
+    | {
+      id: number;
+      guild_id: string;
+      channel_id: string;
+      user_id: string;
+      category: string;
+      status: string;
+      claimed_by: string | null;
+      created_at: Date | string;
+      closed_at: Date | string | null;
+      close_reason: string | null;
+    }
+    | undefined
+  >;
+  getTicketById: (ticketId: number) => Promise<
+    | {
+      id: number;
+      guild_id: string;
+      channel_id: string;
+      user_id: string;
+      category: string;
+      status: string;
+      claimed_by: string | null;
+      created_at: Date | string;
+      closed_at: Date | string | null;
+      close_reason: string | null;
+    }
+    | undefined
+  >;
+  createTicket: (guildId: string, channelId: string, userId: string, category?: string) => Promise<number>;
+  claimTicket: (channelId: string, staffId: string) => Promise<void>;
+  closeTicket: (channelId: string, reason?: string) => Promise<void>;
+  getOpenTickets: (guildId: string) => Promise<
+    {
+      id: number;
+      guild_id: string;
+      channel_id: string;
+      user_id: string;
+      category: string;
+      status: string;
+      claimed_by: string | null;
+      created_at: Date | string;
+    }[]
+  >;
+  getUserTickets: (guildId: string, userId: string) => Promise<
+    {
+      id: number;
+      guild_id: string;
+      channel_id: string;
+      user_id: string;
+      category: string;
+      status: string;
+      claimed_by: string | null;
+      created_at: Date | string;
+    }[]
+  >;
+  getTicketSettings: (guildId: string) => Promise<{
+    guild_id: string;
+    enabled: boolean;
+    category_id: string | null;
+    support_role_id: string | null;
+    log_channel_id: string | null;
+    ticket_message: string | null;
+    auto_close_hours: number | null;
+    max_open_per_user: number;
+  }>;
+  setTicketSettings: (settings: {
+    guild_id: string;
+    enabled: boolean;
+    category_id: string | null;
+    support_role_id: string | null;
+    log_channel_id: string | null;
+    ticket_message: string | null;
+    auto_close_hours: number | null;
+    max_open_per_user: number;
+  }) => Promise<void>;
+  isTicketsEnabled: (guildId: string) => Promise<boolean>;
+  // Reputation system
+  giveRep: (guildId: string, userId: string, fromUserId: string, amount: number, reason?: string) => Promise<number>;
+  getRepScore: (guildId: string, userId: string) => Promise<number>;
+  getRepHistory: (guildId: string, userId: string, limit?: number) => Promise<
+    { id: number; from_user_id: string; amount: number; reason: string | null; created_at: Date | string }[]
+  >;
+  getRepLeaderboard: (guildId: string, limit?: number) => Promise<{ user_id: string; total: number | string }[]>;
+  canGiveRep: (guildId: string, fromUserId: string, toUserId: string) => Promise<boolean>;
+  // Birthday system
+  setBirthday: (guildId: string, userId: string, month: number, day: number, year?: number) => Promise<void>;
+  removeBirthday: (guildId: string, userId: string) => Promise<void>;
+  getBirthday: (guildId: string, userId: string) => Promise<
+    { guild_id: string; user_id: string; birth_month: number; birth_day: number; birth_year: number | null } | undefined
+  >;
+  getTodaysBirthdays: (guildId: string) => Promise<{ user_id: string; birth_year: number | null }[]>;
+  getUpcomingBirthdays: (guildId: string, days?: number) => Promise<
+    { user_id: string; birth_month: number; birth_day: number; birth_year: number | null }[]
+  >;
+  getBirthdaySettings: (guildId: string) => Promise<{
+    guild_id: string;
+    enabled: boolean;
+    channel_id: string | null;
+    role_id: string | null;
+    message: string | null;
+  }>;
+  setBirthdaySettings: (settings: {
+    guild_id: string;
+    enabled: boolean;
+    channel_id: string | null;
+    role_id: string | null;
+    message: string | null;
+  }) => Promise<void>;
 }
 
 export async function init(): Promise<DatabasePlugin | undefined> {

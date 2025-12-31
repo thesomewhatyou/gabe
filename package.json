@@ -1,6 +1,6 @@
 {
   "name": "gabe",
-  "version": "2025.11.0",
+  "version": "2026.1.0",
   "description": "Gabe - Your multi-functional Discord binary, enemy, or both all at once",
   "exports": "./dist/app.js",
   "bin": "./dist/app.js",
@@ -39,7 +39,7 @@
     "start-api:deno:debug": "DEBUG=true deno -P src/api/index.ts",
     "test": "pnpm build:ts && node --test tests"
   },
-  "author": "Gabriel Piss",
+  "author": "thesomewhatyou",
   "license": "MIT",
   "repository": {
     "type": "git",

@@ -6,9 +6,6 @@ dist: focal
 services:
   - docker
 
-vm:
-  size: [large]
-
 branches:
   only:
     - master

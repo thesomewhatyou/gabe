@@ -194,6 +194,60 @@ const updates = [
     work_cooldown INTEGER DEFAULT 3600,
     daily_cooldown INTEGER DEFAULT 86400
   );`,
+  // Ticket system tables
+  `CREATE TABLE IF NOT EXISTS tickets (
+    id SERIAL PRIMARY KEY,
+    guild_id VARCHAR(30) NOT NULL,
+    channel_id VARCHAR(30) UNIQUE NOT NULL,
+    user_id VARCHAR(30) NOT NULL,
+    category VARCHAR(50) DEFAULT 'general',
+    status VARCHAR(20) DEFAULT 'open',
+    claimed_by VARCHAR(30),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    closed_at TIMESTAMP,
+    close_reason TEXT
+  );
+  CREATE TABLE IF NOT EXISTS ticket_settings (
+    guild_id VARCHAR(30) PRIMARY KEY,
+    enabled BOOLEAN DEFAULT FALSE,
+    category_id VARCHAR(30),
+    support_role_id VARCHAR(30),
+    log_channel_id VARCHAR(30),
+    ticket_message TEXT,
+    auto_close_hours INTEGER,
+    max_open_per_user INTEGER DEFAULT 1
+  );
+  CREATE INDEX IF NOT EXISTS idx_tickets_guild ON tickets(guild_id);
+  CREATE INDEX IF NOT EXISTS idx_tickets_user ON tickets(guild_id, user_id);`,
+  // Reputation system
+  `CREATE TABLE IF NOT EXISTS reputation (
+    id SERIAL PRIMARY KEY,
+    guild_id VARCHAR(30) NOT NULL,
+    user_id VARCHAR(30) NOT NULL,
+    from_user_id VARCHAR(30) NOT NULL,
+    amount INTEGER NOT NULL,
+    reason TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+  CREATE INDEX IF NOT EXISTS idx_rep_guild_user ON reputation(guild_id, user_id);
+  CREATE INDEX IF NOT EXISTS idx_rep_from ON reputation(guild_id, from_user_id, user_id);`,
+  // Birthday system
+  `CREATE TABLE IF NOT EXISTS birthdays (
+    guild_id VARCHAR(30) NOT NULL,
+    user_id VARCHAR(30) NOT NULL,
+    birth_month INTEGER NOT NULL,
+    birth_day INTEGER NOT NULL,
+    birth_year INTEGER,
+    PRIMARY KEY (guild_id, user_id)
+  );
+  CREATE TABLE IF NOT EXISTS birthday_settings (
+    guild_id VARCHAR(30) PRIMARY KEY,
+    enabled BOOLEAN DEFAULT FALSE,
+    channel_id VARCHAR(30),
+    role_id VARCHAR(30),
+    message TEXT
+  );
+  CREATE INDEX IF NOT EXISTS idx_birthdays_date ON birthdays(birth_month, birth_day);`,
 ];
 
 export default class PostgreSQLPlugin implements DatabasePlugin {
@@ -849,5 +903,289 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
       await this.sql`DELETE FROM economy_holdings WHERE guild_id = ${guildId}`;
       await this.sql`DELETE FROM economy_prices WHERE guild_id = ${guildId}`;
     }
+  }
+
+  // ==================== TICKET SYSTEM ====================
+
+  async getTicket(channelId: string) {
+    const [result] = await this.sql<
+      {
+        id: number;
+        guild_id: string;
+        channel_id: string;
+        user_id: string;
+        category: string;
+        status: string;
+        claimed_by: string | null;
+        created_at: Date;
+        closed_at: Date | null;
+        close_reason: string | null;
+      }[]
+    >`SELECT * FROM tickets WHERE channel_id = ${channelId}`;
+    return result;
+  }
+
+  async getTicketById(ticketId: number) {
+    const [result] = await this.sql<
+      {
+        id: number;
+        guild_id: string;
+        channel_id: string;
+        user_id: string;
+        category: string;
+        status: string;
+        claimed_by: string | null;
+        created_at: Date;
+        closed_at: Date | null;
+        close_reason: string | null;
+      }[]
+    >`SELECT * FROM tickets WHERE id = ${ticketId}`;
+    return result;
+  }
+
+  async createTicket(guildId: string, channelId: string, userId: string, category = "general") {
+    const [result] = await this.sql<{ id: number }[]>`
+      INSERT INTO tickets (guild_id, channel_id, user_id, category)
+      VALUES (${guildId}, ${channelId}, ${userId}, ${category})
+      RETURNING id
+    `;
+    return result.id;
+  }
+
+  async claimTicket(channelId: string, staffId: string) {
+    await this.sql`
+      UPDATE tickets SET claimed_by = ${staffId}, status = 'claimed'
+      WHERE channel_id = ${channelId}
+    `;
+  }
+
+  async closeTicket(channelId: string, reason?: string) {
+    await this.sql`
+      UPDATE tickets SET status = 'closed', closed_at = CURRENT_TIMESTAMP, close_reason = ${reason ?? null}
+      WHERE channel_id = ${channelId}
+    `;
+  }
+
+  async getOpenTickets(guildId: string) {
+    return await this.sql<
+      {
+        id: number;
+        guild_id: string;
+        channel_id: string;
+        user_id: string;
+        category: string;
+        status: string;
+        claimed_by: string | null;
+        created_at: Date;
+      }[]
+    >`SELECT * FROM tickets WHERE guild_id = ${guildId} AND status != 'closed' ORDER BY created_at ASC`;
+  }
+
+  async getUserTickets(guildId: string, userId: string) {
+    return await this.sql<
+      {
+        id: number;
+        guild_id: string;
+        channel_id: string;
+        user_id: string;
+        category: string;
+        status: string;
+        claimed_by: string | null;
+        created_at: Date;
+      }[]
+    >`SELECT * FROM tickets WHERE guild_id = ${guildId} AND user_id = ${userId} AND status != 'closed'`;
+  }
+
+  async getTicketSettings(guildId: string) {
+    const [result] = await this.sql<
+      {
+        guild_id: string;
+        enabled: boolean;
+        category_id: string | null;
+        support_role_id: string | null;
+        log_channel_id: string | null;
+        ticket_message: string | null;
+        auto_close_hours: number | null;
+        max_open_per_user: number;
+      }[]
+    >`SELECT * FROM ticket_settings WHERE guild_id = ${guildId}`;
+    return result ?? {
+      guild_id: guildId,
+      enabled: false,
+      category_id: null,
+      support_role_id: null,
+      log_channel_id: null,
+      ticket_message: null,
+      auto_close_hours: null,
+      max_open_per_user: 1,
+    };
+  }
+
+  async setTicketSettings(settings: {
+    guild_id: string;
+    enabled: boolean;
+    category_id: string | null;
+    support_role_id: string | null;
+    log_channel_id: string | null;
+    ticket_message: string | null;
+    auto_close_hours: number | null;
+    max_open_per_user: number;
+  }) {
+    await this.sql`
+      INSERT INTO ticket_settings (guild_id, enabled, category_id, support_role_id, log_channel_id, ticket_message, auto_close_hours, max_open_per_user)
+      VALUES (${settings.guild_id}, ${settings.enabled}, ${settings.category_id}, ${settings.support_role_id}, ${settings.log_channel_id}, ${settings.ticket_message}, ${settings.auto_close_hours}, ${settings.max_open_per_user})
+      ON CONFLICT (guild_id) DO UPDATE SET
+        enabled = ${settings.enabled},
+        category_id = ${settings.category_id},
+        support_role_id = ${settings.support_role_id},
+        log_channel_id = ${settings.log_channel_id},
+        ticket_message = ${settings.ticket_message},
+        auto_close_hours = ${settings.auto_close_hours},
+        max_open_per_user = ${settings.max_open_per_user}
+    `;
+  }
+
+  async isTicketsEnabled(guildId: string) {
+    const [result] = await this.sql<{ enabled: boolean }[]>`
+      SELECT enabled FROM ticket_settings WHERE guild_id = ${guildId}
+    `;
+    return result?.enabled === true;
+  }
+
+  // ==================== REPUTATION SYSTEM ====================
+
+  async giveRep(guildId: string, userId: string, fromUserId: string, amount: number, reason?: string) {
+    const [result] = await this.sql<{ id: number }[]>`
+      INSERT INTO reputation (guild_id, user_id, from_user_id, amount, reason)
+      VALUES (${guildId}, ${userId}, ${fromUserId}, ${amount}, ${reason ?? null})
+      RETURNING id
+    `;
+    return result.id;
+  }
+
+  async getRepScore(guildId: string, userId: string) {
+    const [result] = await this.sql<{ total: string }[]>`
+      SELECT COALESCE(SUM(amount), 0) as total FROM reputation
+      WHERE guild_id = ${guildId} AND user_id = ${userId}
+    `;
+    return parseInt(result?.total ?? "0");
+  }
+
+  async getRepHistory(guildId: string, userId: string, limit = 10) {
+    return await this.sql<
+      { id: number; from_user_id: string; amount: number; reason: string | null; created_at: Date }[]
+    >`
+      SELECT id, from_user_id, amount, reason, created_at FROM reputation
+      WHERE guild_id = ${guildId} AND user_id = ${userId}
+      ORDER BY created_at DESC LIMIT ${limit}
+    `;
+  }
+
+  async getRepLeaderboard(guildId: string, limit = 10) {
+    return await this.sql<{ user_id: string; total: string }[]>`
+      SELECT user_id, SUM(amount) as total FROM reputation
+      WHERE guild_id = ${guildId}
+      GROUP BY user_id
+      ORDER BY total DESC LIMIT ${limit}
+    `;
+  }
+
+  async canGiveRep(guildId: string, fromUserId: string, toUserId: string) {
+    const [result] = await this.sql<{ count: string }[]>`
+      SELECT COUNT(*) as count FROM reputation
+      WHERE guild_id = ${guildId} AND from_user_id = ${fromUserId} AND user_id = ${toUserId}
+      AND created_at > NOW() - INTERVAL '24 hours'
+    `;
+    return parseInt(result?.count ?? "0") === 0;
+  }
+
+  // ==================== BIRTHDAY SYSTEM ====================
+
+  async setBirthday(guildId: string, userId: string, month: number, day: number, year?: number) {
+    await this.sql`
+      INSERT INTO birthdays (guild_id, user_id, birth_month, birth_day, birth_year)
+      VALUES (${guildId}, ${userId}, ${month}, ${day}, ${year ?? null})
+      ON CONFLICT (guild_id, user_id) DO UPDATE SET
+        birth_month = ${month}, birth_day = ${day}, birth_year = ${year ?? null}
+    `;
+  }
+
+  async removeBirthday(guildId: string, userId: string) {
+    await this.sql`DELETE FROM birthdays WHERE guild_id = ${guildId} AND user_id = ${userId}`;
+  }
+
+  async getBirthday(guildId: string, userId: string) {
+    const [result] = await this.sql<
+      { guild_id: string; user_id: string; birth_month: number; birth_day: number; birth_year: number | null }[]
+    >`SELECT * FROM birthdays WHERE guild_id = ${guildId} AND user_id = ${userId}`;
+    return result;
+  }
+
+  async getTodaysBirthdays(guildId: string) {
+    const now = new Date();
+    const month = now.getMonth() + 1;
+    const day = now.getDate();
+    return await this.sql<
+      { user_id: string; birth_year: number | null }[]
+    >`
+      SELECT user_id, birth_year FROM birthdays
+      WHERE guild_id = ${guildId} AND birth_month = ${month} AND birth_day = ${day}
+    `;
+  }
+
+  async getUpcomingBirthdays(guildId: string, days = 30) {
+    const now = new Date();
+    const results = await this.sql<
+      { user_id: string; birth_month: number; birth_day: number; birth_year: number | null }[]
+    >`SELECT user_id, birth_month, birth_day, birth_year FROM birthdays WHERE guild_id = ${guildId}`;
+
+    // Filter and sort by upcoming date
+    const upcoming = results.filter(b => {
+      const thisYear = now.getFullYear();
+      let bday = new Date(thisYear, b.birth_month - 1, b.birth_day);
+      if (bday < now) bday = new Date(thisYear + 1, b.birth_month - 1, b.birth_day);
+      const diffDays = Math.ceil((bday.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+      return diffDays >= 0 && diffDays <= days;
+    }).sort((a, b) => {
+      const thisYear = now.getFullYear();
+      let dateA = new Date(thisYear, a.birth_month - 1, a.birth_day);
+      let dateB = new Date(thisYear, b.birth_month - 1, b.birth_day);
+      if (dateA < now) dateA = new Date(thisYear + 1, a.birth_month - 1, a.birth_day);
+      if (dateB < now) dateB = new Date(thisYear + 1, b.birth_month - 1, b.birth_day);
+      return dateA.getTime() - dateB.getTime();
+    });
+
+    return upcoming.slice(0, 10);
+  }
+
+  async getBirthdaySettings(guildId: string) {
+    const [result] = await this.sql<
+      { guild_id: string; enabled: boolean; channel_id: string | null; role_id: string | null; message: string | null }[]
+    >`SELECT * FROM birthday_settings WHERE guild_id = ${guildId}`;
+    return result ?? {
+      guild_id: guildId,
+      enabled: false,
+      channel_id: null,
+      role_id: null,
+      message: null,
+    };
+  }
+
+  async setBirthdaySettings(settings: {
+    guild_id: string;
+    enabled: boolean;
+    channel_id: string | null;
+    role_id: string | null;
+    message: string | null;
+  }) {
+    await this.sql`
+      INSERT INTO birthday_settings (guild_id, enabled, channel_id, role_id, message)
+      VALUES (${settings.guild_id}, ${settings.enabled}, ${settings.channel_id}, ${settings.role_id}, ${settings.message})
+      ON CONFLICT (guild_id) DO UPDATE SET
+        enabled = ${settings.enabled},
+        channel_id = ${settings.channel_id},
+        role_id = ${settings.role_id},
+        message = ${settings.message}
+    `;
   }
 }

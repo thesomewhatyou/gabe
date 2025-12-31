@@ -145,6 +145,8 @@ export async function reloadImageConnections() {
 
 async function getIdeal(object: ImageParams): Promise<ImageConnection | undefined> {
   const idealServers = [];
+  // Normalize MIME type to short format (e.g., "image/png" -> "png")
+  const inputFormat = object.input?.type?.split("/").pop();
   for (const connection of connections.values()) {
     if (connection.conn.readyState !== 0 && connection.conn.readyState !== 1) {
       continue;
@@ -153,7 +155,7 @@ async function getIdeal(object: ImageParams): Promise<ImageConnection | undefine
       idealServers.push(null);
       continue;
     }
-    if (object.input?.type && !connection.formats[object.cmd]?.includes(object.input.type)) continue;
+    if (inputFormat && !connection.formats[object.cmd]?.includes(inputFormat)) continue;
     idealServers.push(connection);
   }
   if (idealServers.length === 0) throw "No available servers";
