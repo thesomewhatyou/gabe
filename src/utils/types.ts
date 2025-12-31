@@ -61,10 +61,10 @@ export type ExtendedCommandOptions = {
 
 export type Param =
   | {
-      name: string;
-      desc: string;
-      params: Param[];
-    }
+    name: string;
+    desc: string;
+    params: Param[];
+  }
   | string;
 
 export interface CommandInfo {
@@ -126,3 +126,21 @@ export function isError(error: unknown): error is NodeJS.ErrnoException {
 }
 
 export type StarboardDirection = "add" | "remove";
+
+export interface AntinukeSettings {
+  guild_id: string;
+  enabled: boolean;
+  threshold: number;
+  time_window: number;
+  log_channel_id: string | null;
+  trusted_user: string | null;
+  whitelisted_users: string[];
+  whitelisted_roles: string[];
+}
+
+export interface AntinukeOffense {
+  guild_id: string;
+  user_id: string;
+  offense_count: number;
+  last_offense: string | null;
+}

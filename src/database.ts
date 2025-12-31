@@ -270,6 +270,45 @@ export declare class DatabasePlugin {
     role_id: string | null;
     message: string | null;
   }) => Promise<void>;
+  // Anti-nuke system
+  getAntinukeSettings: (guildId: string) => Promise<{
+    guild_id: string;
+    enabled: boolean;
+    threshold: number;
+    time_window: number;
+    log_channel_id: string | null;
+    trusted_user: string | null;
+    whitelisted_users: string[];
+    whitelisted_roles: string[];
+  }>;
+  setAntinukeSettings: (settings: {
+    guild_id: string;
+    enabled: boolean;
+    threshold: number;
+    time_window: number;
+    log_channel_id: string | null;
+    trusted_user: string | null;
+    whitelisted_users: string[];
+    whitelisted_roles: string[];
+  }) => Promise<void>;
+  logAntinukeAction: (guildId: string, executorId: string, actionType: string, targetId?: string) => Promise<void>;
+  getRecentActions: (
+    guildId: string,
+    executorId: string,
+    windowSeconds: number,
+  ) => Promise<{
+    id: number;
+    guild_id: string;
+    executor_id: string;
+    action_type: string;
+    target_id: string | null;
+    created_at: string;
+  }[]>;
+  getOffenseCount: (guildId: string, userId: string) => Promise<number>;
+  incrementOffense: (guildId: string, userId: string) => Promise<number>;
+  addToAntinukeWhitelist: (guildId: string, type: "users" | "roles", id: string) => Promise<void>;
+  removeFromAntinukeWhitelist: (guildId: string, type: "users" | "roles", id: string) => Promise<void>;
+  clearAntinukeActions: (guildId: string, olderThanSeconds?: number) => Promise<void>;
 }
 
 export async function init(): Promise<DatabasePlugin | undefined> {
