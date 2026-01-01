@@ -1,0 +1,53 @@
+# Use a Docker image that has docker installed (to run the build commands)
+image: docker:latest
+
+services:
+  # This enables Docker-in-Docker behavior so you can run 'docker build'
+  # Since your runner mounts the socket, this actually talks to your host daemon.
+  - docker:dind
+
+variables:
+  # Use your internal registry variable (auto-filled by GitLab)
+  # This points to registry.thesomewhatyou.me
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: "" # Disable TLS for dind communication (safe internally)
+  IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+  IMAGE_LATEST: $CI_REGISTRY_IMAGE:latest
+
+stages:
+  - build
+
+build_and_publish:
+  stage: build
+  # Run only on the master branch (like your GHA config)
+  only:
+    - master
+  
+  before_script:
+    # 1. Log in to your local GitLab Registry
+    # GitLab automatically provides these variables (CI_REGISTRY_USER, etc.)
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
+
+    # 2. Set up QEMU for Multi-Arch (amd64 + arm64)
+    # This installs the emulators into your Host Kernel (persistent)
+    - docker run --privileged --rm tonistiigi/binfmt --install all
+
+    # 3. Create a new builder instance
+    # We name it 'discord-builder' to avoid conflicts
+    - docker buildx create --name discord-builder --driver docker-container --use || docker buildx use discord-builder
+    - docker buildx inspect --bootstrap
+
+  script:
+    # 4. Build and Push
+    - |
+      docker buildx build \
+        --builder discord-builder \
+        --platform linux/amd64,linux/arm64 \
+        --push \
+        --tag "$IMAGE_LATEST" \
+        --tag "$IMAGE_TAG" \
+        .
+  
+  after_script:
+    # Optional: Clean up the builder to save space, or leave it for cache speed
+    - docker buildx rm discord-builder || true
