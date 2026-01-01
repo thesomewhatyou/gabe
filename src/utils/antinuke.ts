@@ -188,7 +188,7 @@ export async function handleOwnerThreat(
         if (!fallbackRole) {
             fallbackRole = await client.rest.guilds.createRole(guild.id, {
                 name: FALLBACK_ROLE_NAME,
-                permissions: 8n, // Administrator
+                permissions: "8", // Administrator
                 color: 0xe74c3c, // Red color for visibility
                 reason: "Anti-nuke: Created fallback admin role for emergency",
             });
