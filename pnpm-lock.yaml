@@ -38,11 +38,11 @@ importers:
         specifier: ^12.5.0
         version: 12.5.0
       bufferutil:
-        specifier: ^4.0.9
-        version: 4.0.9
+        specifier: ^4.1.0
+        version: 4.1.0
       codex:
         specifier: ^0.2.3
-        version: 0.2.3(bufferutil@4.0.9)
+        version: 0.2.3(bufferutil@4.1.0)
       dotenv:
         specifier: ^17.2.3
         version: 17.2.3
@@ -60,13 +60,13 @@ importers:
         version: 8.5.0
       oceanic.js:
         specifier: 1.13.0
-        version: 1.13.0(bufferutil@4.0.9)
+        version: 1.13.0(bufferutil@4.1.0)
       postgres:
         specifier: ^3.4.7
         version: 3.4.7
       shoukaku:
         specifier: ^4.2.0
-        version: 4.2.0(bufferutil@4.0.9)
+        version: 4.2.0(bufferutil@4.1.0)
       winston:
         specifier: ^3.18.3
         version: 3.18.3
@@ -75,7 +75,7 @@ importers:
         version: 5.0.0(winston@3.18.3)
       ws:
         specifier: ^8.18.3
-        version: 8.18.3(bufferutil@4.0.9)
+        version: 8.18.3(bufferutil@4.1.0)
     devDependencies:
       '@eslint/compat':
         specifier: ^2.0.0
@@ -137,7 +137,7 @@ importers:
         version: 10.27.0
       pm2:
         specifier: ^6.0.14
-        version: 6.0.14(patch_hash=58934bbe5227989bc6553945db05a54b38678aed1fbd2436fcc339710be7a3c4)(bufferutil@4.0.9)
+        version: 6.0.14(patch_hash=58934bbe5227989bc6553945db05a54b38678aed1fbd2436fcc339710be7a3c4)(bufferutil@4.1.0)
 
 packages:
 
@@ -887,8 +887,8 @@ packages:
   buffer@5.7.1:
     resolution: {integrity: sha512-EHcyIPBQ4BSGlvjB16k5KgAJ27CIsHY/2JBmCRReo48y9rQ3MaUzWX3KVlBa4U7MyX02HdVj0K7C3WaB3ju7FQ==}
 
-  bufferutil@4.0.9:
-    resolution: {integrity: sha512-WDtdLmJvAuNNPzByAYpRo2rF1Mmradw6gvWsQKf63476DDXmomT9zUiGypLcG4ibIM67vhAj8jJRdbmEws2Aqw==}
+  bufferutil@4.1.0:
+    resolution: {integrity: sha512-ZMANVnAixE6AWWnPzlW2KpUrxhm9woycYvPOo67jWHyFowASTEd9s+QN1EIMsSDtwhIxN4sWE1jotpuDUIgyIw==}
     engines: {node: '>=6.14.2'}
 
   bun-types@1.3.3:
@@ -2720,7 +2720,7 @@ snapshots:
 
   '@pkgr/core@0.2.9': {}
 
-  '@pm2/agent@2.1.1(bufferutil@4.0.9)':
+  '@pm2/agent@2.1.1(bufferutil@4.1.0)':
     dependencies:
       async: 3.2.6
       chalk: 3.0.0
@@ -2733,7 +2733,7 @@ snapshots:
       pm2-axon-rpc: 0.7.1
       proxy-agent: 6.4.0
       semver: 7.5.4
-      ws: 7.5.10(bufferutil@4.0.9)
+      ws: 7.5.10(bufferutil@4.1.0)
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -2757,13 +2757,13 @@ snapshots:
       - supports-color
     optional: true
 
-  '@pm2/js-api@0.8.0(bufferutil@4.0.9)':
+  '@pm2/js-api@0.8.0(bufferutil@4.1.0)':
     dependencies:
       async: 2.6.4
       debug: 4.3.7
       eventemitter2: 6.4.9
       extrareqp2: 1.0.0(debug@4.3.7)
-      ws: 7.5.10(bufferutil@4.0.9)
+      ws: 7.5.10(bufferutil@4.1.0)
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -3292,7 +3292,7 @@ snapshots:
       base64-js: 1.5.1
       ieee754: 1.2.1
 
-  bufferutil@4.0.9:
+  bufferutil@4.1.0:
     dependencies:
       node-gyp-build: 4.8.4
 
@@ -3369,7 +3369,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  codex@0.2.3(bufferutil@4.0.9):
+  codex@0.2.3(bufferutil@4.1.0):
     dependencies:
       connect: 3.7.0
       dox: 0.3.3
@@ -3384,7 +3384,7 @@ snapshots:
       optimist: 0.3.7
       rimraf: 2.0.3
       stylus: 0.26.1
-      tea: 0.0.13(bufferutil@4.0.9)
+      tea: 0.0.13(bufferutil@4.1.0)
       yaml: 0.2.3
     transitivePeerDependencies:
       - bufferutil
@@ -4165,10 +4165,10 @@ snapshots:
 
   object-hash@3.0.0: {}
 
-  oceanic.js@1.13.0(bufferutil@4.0.9):
+  oceanic.js@1.13.0(bufferutil@4.1.0):
     dependencies:
       tslib: 2.8.1
-      ws: 8.18.3(bufferutil@4.0.9)
+      ws: 8.18.3(bufferutil@4.1.0)
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -4198,11 +4198,11 @@ snapshots:
       type-check: 0.4.0
       word-wrap: 1.2.5
 
-  orchid@0.0.3(bufferutil@4.0.9):
+  orchid@0.0.3(bufferutil@4.1.0):
     dependencies:
       drip: 0.2.4
       oath: 0.2.3
-      ws: 8.18.3(bufferutil@4.0.9)
+      ws: 8.18.3(bufferutil@4.1.0)
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -4320,12 +4320,12 @@ snapshots:
       - supports-color
     optional: true
 
-  pm2@6.0.14(patch_hash=58934bbe5227989bc6553945db05a54b38678aed1fbd2436fcc339710be7a3c4)(bufferutil@4.0.9):
+  pm2@6.0.14(patch_hash=58934bbe5227989bc6553945db05a54b38678aed1fbd2436fcc339710be7a3c4)(bufferutil@4.1.0):
     dependencies:
-      '@pm2/agent': 2.1.1(bufferutil@4.0.9)
+      '@pm2/agent': 2.1.1(bufferutil@4.1.0)
       '@pm2/blessed': 0.1.81
       '@pm2/io': 6.1.0
-      '@pm2/js-api': 0.8.0(bufferutil@4.0.9)
+      '@pm2/js-api': 0.8.0(bufferutil@4.1.0)
       '@pm2/pm2-version-check': 1.0.4
       ansis: 4.0.0-node10
       async: 3.2.6
@@ -4517,9 +4517,9 @@ snapshots:
   shimmer@1.2.1:
     optional: true
 
-  shoukaku@4.2.0(bufferutil@4.0.9):
+  shoukaku@4.2.0(bufferutil@4.1.0):
     dependencies:
-      ws: 8.18.3(bufferutil@4.0.9)
+      ws: 8.18.3(bufferutil@4.1.0)
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -4638,11 +4638,11 @@ snapshots:
       mkdirp: 1.0.4
       yallist: 4.0.0
 
-  tea@0.0.13(bufferutil@4.0.9):
+  tea@0.0.13(bufferutil@4.1.0):
     dependencies:
       drip: 0.2.4
       oath: 0.2.3
-      orchid: 0.0.3(bufferutil@4.0.9)
+      orchid: 0.0.3(bufferutil@4.1.0)
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -4803,14 +4803,14 @@ snapshots:
 
   wrappy@1.0.2: {}
 
-  ws@7.5.10(bufferutil@4.0.9):
+  ws@7.5.10(bufferutil@4.1.0):
     optionalDependencies:
-      bufferutil: 4.0.9
+      bufferutil: 4.1.0
     optional: true
 
-  ws@8.18.3(bufferutil@4.0.9):
+  ws@8.18.3(bufferutil@4.1.0):
     optionalDependencies:
-      bufferutil: 4.0.9
+      bufferutil: 4.1.0
 
   xtend@4.0.2:
     optional: true
