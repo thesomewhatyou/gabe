@@ -27,7 +27,7 @@ class GiveRepCommand extends Command {
 
         // Determine if positive or negative rep
         // Check if the command was invoked as "-rep"
-        const isNegative = this.commandName?.startsWith("-") || this.getOptionString("type") === "negative";
+        const isNegative = this.cmdName?.startsWith("-") || this.getOptionString("type") === "negative";
         const amount = isNegative ? -1 : 1;
         const reasonArg = this.getOptionString("reason") ?? this.args.slice(1).join(" ");
         const reason = reasonArg ? reasonArg : null;

@@ -1044,9 +1044,19 @@ export default class SQLitePlugin implements DatabasePlugin {
 
   async getStarboardSettings(guildId: string) {
     const result = this.connection.prepare("SELECT * FROM starboard_settings WHERE guild_id = ?").get(guildId) as
-      | StarboardSettings
+      | { guild_id: string; channel_id: string | null; emoji: string; threshold: number; allow_self: number; allow_bots: number; enabled: number }
       | undefined;
-    if (result) return result;
+    if (result) {
+      return {
+        guild_id: result.guild_id,
+        channel_id: result.channel_id,
+        emoji: result.emoji,
+        threshold: result.threshold,
+        allow_self: result.allow_self === 1,
+        allow_bots: result.allow_bots === 1,
+        enabled: result.enabled === 1,
+      };
+    }
     return {
       guild_id: guildId,
       channel_id: null,
@@ -1756,6 +1766,21 @@ export default class SQLitePlugin implements DatabasePlugin {
 
   async getRecentActions(guildId: string, executorId: string, windowSeconds: number) {
     const cutoff = new Date(Date.now() - windowSeconds * 1000).toISOString();
+    // If executorId is empty, return all actions for the guild
+    if (!executorId) {
+      return this.connection
+        .prepare(
+          "SELECT * FROM antinuke_actions WHERE guild_id = ? AND created_at > ? ORDER BY created_at DESC"
+        )
+        .all(guildId, cutoff) as {
+          id: number;
+          guild_id: string;
+          executor_id: string;
+          action_type: string;
+          target_id: string | null;
+          created_at: string;
+        }[];
+    }
     return this.connection
       .prepare(
         "SELECT * FROM antinuke_actions WHERE guild_id = ? AND executor_id = ? AND created_at > ? ORDER BY created_at DESC"

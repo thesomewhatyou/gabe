@@ -60,7 +60,7 @@ export async function mentionToObject(
 }
 
 function validID(id: string) {
-  return safeBigInt(id) > 21154535154122752n;
+  return (safeBigInt(id) ?? 0n) > 21154535154122752n;
 }
 
 async function getChannel(client: Client, id: string) {

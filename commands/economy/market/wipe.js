@@ -24,7 +24,8 @@ class WipeCommand extends Command {
         }
 
         // Get target user
-        let targetId = this.options.user;
+        const userOption = this.getOptionUser("user");
+        let targetId = userOption?.id;
         if (!targetId && this.message?.mentions?.length > 0) {
             targetId = this.message.mentions[0].id;
         }

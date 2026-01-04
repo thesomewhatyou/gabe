@@ -349,6 +349,47 @@ export function clearActionTracker(guildId?: string): void {
 }
 
 /**
+ * Prune old entries from trackers to prevent memory leaks
+ * This runs automatically every 5 minutes
+ */
+function pruneTrackers(): void {
+    const now = Date.now();
+    const maxAge = 60 * 1000; // 1 minute - remove entries older than this
+
+    for (const [guildId, guildTracker] of actionTracker) {
+        for (const [userId, timestamps] of guildTracker) {
+            const recent = timestamps.filter((t) => now - t < maxAge);
+            if (recent.length === 0) {
+                guildTracker.delete(userId);
+            } else {
+                guildTracker.set(userId, recent);
+            }
+        }
+        if (guildTracker.size === 0) {
+            actionTracker.delete(guildId);
+        }
+    }
+
+    for (const [guildId, guildTracker] of messageTracker) {
+        for (const [userId, timestamps] of guildTracker) {
+            const recent = timestamps.filter((t) => now - t < maxAge);
+            if (recent.length === 0) {
+                guildTracker.delete(userId);
+            } else {
+                guildTracker.set(userId, recent);
+            }
+        }
+        if (guildTracker.size === 0) {
+            messageTracker.delete(guildId);
+        }
+    }
+}
+
+// Auto-prune trackers every 5 minutes to prevent memory leaks
+// Use unref() so this doesn't prevent Node.js from exiting
+setInterval(pruneTrackers, 5 * 60 * 1000).unref();
+
+/**
  * Check if a user is message spamming (SEPARATE from action threshold)
  * Threshold: 20 messages in 10 seconds
  * Returns the channel ID if spam is detected (for channel deletion on owner threat)

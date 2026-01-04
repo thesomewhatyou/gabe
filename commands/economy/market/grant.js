@@ -24,7 +24,8 @@ class GrantCommand extends Command {
         }
 
         // Get target user
-        let targetId = this.options.user;
+        const userOption = this.getOptionUser("user");
+        let targetId = userOption?.id;
         if (!targetId && this.message?.mentions?.length > 0) {
             targetId = this.message.mentions[0].id;
         }
@@ -35,7 +36,7 @@ class GrantCommand extends Command {
         }
 
         // Get amount
-        let amount = this.options.amount ?? parseInt(this.args?.[0]);
+        let amount = this.getOptionInteger("amount") ?? parseInt(this.args?.[0]);
         if (!amount || isNaN(amount)) {
             this.success = false;
             return "❌ Please provide a valid amount.";

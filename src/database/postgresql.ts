@@ -422,14 +422,14 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
   async disableChannel(channel: GuildChannel) {
     const guildDB = await this.getGuild(channel.guildID);
     await this
-      .sql`UPDATE guilds SET disabled_commands = ${[...guildDB.disabled, channel.id]} WHERE guild_id = ${channel.guildID}`;
+      .sql`UPDATE guilds SET disabled = ${[...guildDB.disabled, channel.id]} WHERE guild_id = ${channel.guildID}`;
     disabledCache.set(channel.guildID, [...guildDB.disabled, channel.id]);
   }
 
   async enableChannel(channel: GuildChannel) {
     const guildDB = await this.getGuild(channel.guildID);
     const newDisabled = guildDB.disabled.filter((item) => item !== channel.id);
-    await this.sql`UPDATE guilds SET disabled_commands = ${newDisabled} WHERE guild_id = ${channel.guildID}`;
+    await this.sql`UPDATE guilds SET disabled = ${newDisabled} WHERE guild_id = ${channel.guildID}`;
     disabledCache.set(channel.guildID, newDisabled);
   }
 
@@ -1279,6 +1279,21 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
 
   async getRecentActions(guildId: string, executorId: string, windowSeconds: number) {
     const cutoff = new Date(Date.now() - windowSeconds * 1000);
+    // If executorId is empty, return all actions for the guild
+    if (!executorId) {
+      return await this.sql<{
+        id: number;
+        guild_id: string;
+        executor_id: string;
+        action_type: string;
+        target_id: string | null;
+        created_at: string;
+      }[]>`
+        SELECT * FROM antinuke_actions
+        WHERE guild_id = ${guildId} AND created_at > ${cutoff}
+        ORDER BY created_at DESC
+      `;
+    }
     return await this.sql<{
       id: number;
       guild_id: string;

@@ -19,9 +19,10 @@ class RemoveXPCommand extends Command {
       return "❌ You need the **Administrator** permission to manage the leveling system.";
     }
 
-    // Get parameters
-    let userId = this.options.user;
-    let amount = this.options.amount;
+    // Get parameters - use getOptionUser/getOptionInteger for slash commands
+    const userOption = this.getOptionUser("user");
+    let userId = userOption?.id;
+    let amount = this.getOptionInteger("amount");
 
     // For classic commands, parse from args
     if (!userId && this.message) {

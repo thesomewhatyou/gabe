@@ -35,12 +35,12 @@ test("isEmpty detects empty or whitespace-only strings", () => {
   assert.equal(isEmpty(" Gabe "), false);
 });
 
-test("safeBigInt parses valid inputs and returns -1n on failure", () => {
+test("safeBigInt parses valid inputs and returns null on failure", () => {
   assert.equal(safeBigInt("123"), 123n);
   assert.equal(safeBigInt(456), 456n);
   assert.equal(safeBigInt(789n), 789n);
   assert.equal(safeBigInt(true), 1n);
 
-  // Invalid BigInt input should not throw and instead return -1n
-  assert.equal(safeBigInt("not-a-number"), -1n);
+  // Invalid BigInt input should not throw and instead return null
+  assert.equal(safeBigInt("not-a-number"), null);
 });
