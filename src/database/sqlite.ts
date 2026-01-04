@@ -1435,6 +1435,21 @@ export default class SQLitePlugin implements DatabasePlugin {
 
   async getRecentActions(guildId: string, executorId: string, windowSeconds: number) {
     const cutoff = new Date(Date.now() - windowSeconds * 1000).toISOString();
+    // If executorId is empty, return all actions for the guild
+    if (!executorId) {
+      return this.connection
+        .prepare(
+          "SELECT * FROM antinuke_actions WHERE guild_id = ? AND created_at > ? ORDER BY created_at DESC"
+        )
+        .all(guildId, cutoff) as {
+          id: number;
+          guild_id: string;
+          executor_id: string;
+          action_type: string;
+          target_id: string | null;
+          created_at: string;
+        }[];
+    }
     return this.connection
       .prepare(
         "SELECT * FROM antinuke_actions WHERE guild_id = ? AND executor_id = ? AND created_at > ? ORDER BY created_at DESC"

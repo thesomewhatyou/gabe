@@ -20,7 +20,8 @@ class BalanceCommand extends Command {
         }
 
         // Get target user (mentioned or self)
-        let targetId = this.options.user ?? this.author?.id;
+        const userOption = this.getOptionUser("user");
+        let targetId = userOption?.id ?? this.author?.id;
         if (!targetId && this.message?.mentions?.length > 0) {
             targetId = this.message.mentions[0].id;
         }
