@@ -15,7 +15,7 @@ export const collectors = new Map<string, InteractionCollector>();
 
 export const locales = new Map();
 
-class TimedMap<K, V> extends Map {
+export class TimedMap<K, V> extends Map {
   time: number;
   constructor(time: number) {
     super();

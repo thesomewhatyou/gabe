@@ -37,7 +37,7 @@
     "start-api:debug": "DEBUG=true node dist/api/index.js",
     "start-api:bun:debug": "DEBUG=true bun src/api/index.ts",
     "start-api:deno:debug": "DEBUG=true deno -P src/api/index.ts",
-    "test": "pnpm build:ts && node --test tests"
+    "test": "pnpm build:ts && node --test tests/*.test.js"
   },
   "author": "thesomewhatyou",
   "license": "MIT",
