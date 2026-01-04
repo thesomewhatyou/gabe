@@ -1222,6 +1222,51 @@
     "waitingForSomeone": "Waiting 10 seconds for someone to return...",
     "yes": "Yes"
   },
+  "twitter": {
+    "user": "Twitter profile for {{username}}",
+    "tweet": "Tweet from @{{author}}",
+    "latest": "Latest tweets from @{{username}}",
+    "search": "Search results for \"{{query}}\"",
+    "allFailed": "❌ Gabe says: All Nitter instances failed. Twitter might be having issues or instances are down. Try again later.",
+    "noResults": "No tweets found.",
+    "noUser": "❌ Gabe says: Couldn't parse that Twitter profile. The user might not exist.",
+    "noTweet": "❌ Gabe says: Couldn't parse that tweet. It might not exist.",
+    "invalidUrl": "❌ Gabe says: That doesn't look like a valid Twitter URL. Format: https://twitter.com/username/status/123456",
+    "invalidId": "❌ Gabe says: Please provide the full Twitter URL, not just the tweet ID.",
+    "noTweets": "❌ Gabe says: No tweets found for that user."
+  },
+  "reddit": {
+    "post": "Post from r/{{subreddit}}",
+    "top": "Top posts in r/{{subreddit}} ({{time}})",
+    "new": "New posts in r/{{subreddit}}",
+    "search": "Search results for \"{{query}}\"",
+    "user": "Reddit user profile for {{username}}",
+    "nsfwBlocked": "❌ Gabe says: All results were NSFW. I blocked them for your safety.",
+    "notFound": "❌ Gabe says: Couldn't find that subreddit or post.",
+    "noResults": "No posts found.",
+    "invalidUrl": "❌ Gabe says: That doesn't look like a valid Reddit URL. Format: https://reddit.com/r/subreddit/comments/postid",
+    "noPosts": "❌ Gabe says: No posts found in that subreddit.",
+    "invalidTime": "❌ Gabe says: Time must be one of: hour, day, week, month, year, all",
+    "noUser": "❌ Gabe says: Couldn't find that Reddit user.",
+    "noSubreddit": "❌ Gabe says: You forgot to tell me which subreddit to fetch!"
+  },
+  "github": {
+    "repo": "Repository: {{owner}}/{{repo}}",
+    "user": "GitHub user: {{username}}",
+    "issue": "Issue #{{number}}",
+    "pr": "Pull Request #{{number}}",
+    "search": "Search results for \"{{query}}\"",
+    "readme": "README for {{owner}}/{{repo}}",
+    "notFound": "❌ Gabe says: Repository, user, or issue not found.",
+    "noResults": "No repositories found.",
+    "rateLimit": "⚠️ Gabe says: GitHub API rate limit low. Try again in a few minutes.",
+    "invalidRepo": "❌ Gabe says: Invalid repository format. Use: owner/repo (e.g., facebook/react)",
+    "invalidIssue": "❌ Gabe says: Invalid format. Use: owner/repo#123 (e.g., facebook/react#1234)",
+    "issueNotFound": "❌ Gabe says: Issue not found.",
+    "prNotFound": "❌ Gabe says: Pull request not found.",
+    "readmeNotFound": "❌ Gabe says: Repository or README not found.",
+    "noReadme": "❌ Gabe says: No README found in this repository."
+  },
   "timeFormat": "{{days}} days, {{hours}} hrs, {{minutes}} mins, {{seconds}} secs",
   "tooLarge": "The result was too large, so here it is as a file:"
 }
