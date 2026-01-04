@@ -241,10 +241,10 @@ export function isEmpty(string: string) {
   return string.length === 0 || string.replace(/[\s\u2800\p{C}]/gu, "").length === 0;
 }
 
-export function safeBigInt(input: string | number | bigint | boolean) {
+export function safeBigInt(input: string | number | bigint | boolean): bigint | null {
   try {
     return BigInt(input);
   } catch {
-    return -1;
+    return null;
   }
 }

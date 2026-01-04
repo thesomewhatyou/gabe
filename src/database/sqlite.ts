@@ -723,9 +723,19 @@ export default class SQLitePlugin implements DatabasePlugin {
 
   async getStarboardSettings(guildId: string) {
     const result = this.connection.prepare("SELECT * FROM starboard_settings WHERE guild_id = ?").get(guildId) as
-      | StarboardSettings
+      | { guild_id: string; channel_id: string | null; emoji: string; threshold: number; allow_self: number; allow_bots: number; enabled: number }
       | undefined;
-    if (result) return result;
+    if (result) {
+      return {
+        guild_id: result.guild_id,
+        channel_id: result.channel_id,
+        emoji: result.emoji,
+        threshold: result.threshold,
+        allow_self: result.allow_self === 1,
+        allow_bots: result.allow_bots === 1,
+        enabled: result.enabled === 1,
+      };
+    }
     return {
       guild_id: guildId,
       channel_id: null,

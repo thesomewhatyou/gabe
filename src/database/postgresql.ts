@@ -422,14 +422,14 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
   async disableChannel(channel: GuildChannel) {
     const guildDB = await this.getGuild(channel.guildID);
     await this
-      .sql`UPDATE guilds SET disabled_commands = ${[...guildDB.disabled, channel.id]} WHERE guild_id = ${channel.guildID}`;
+      .sql`UPDATE guilds SET disabled = ${[...guildDB.disabled, channel.id]} WHERE guild_id = ${channel.guildID}`;
     disabledCache.set(channel.guildID, [...guildDB.disabled, channel.id]);
   }
 
   async enableChannel(channel: GuildChannel) {
     const guildDB = await this.getGuild(channel.guildID);
     const newDisabled = guildDB.disabled.filter((item) => item !== channel.id);
-    await this.sql`UPDATE guilds SET disabled_commands = ${newDisabled} WHERE guild_id = ${channel.guildID}`;
+    await this.sql`UPDATE guilds SET disabled = ${newDisabled} WHERE guild_id = ${channel.guildID}`;
     disabledCache.set(channel.guildID, newDisabled);
   }
 
