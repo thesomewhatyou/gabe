@@ -1,602 +1,552 @@
 /**
- * Video Processing Module for Gabe Discord Bot
- * 
- * This module provides video manipulation capabilities using FFmpeg.
- * Operations include: caption, speed, reverse, trim, and gif conversion.
- * 
- * Requires: libavcodec, libavformat, libavutil, libavfilter, libswscale
+ * FFmpeg Video Processing Module for Gabe Discord Bot
+ *
+ * This module provides video manipulation capabilities using FFmpeg CLI.
+ * All operations write to temporary files, process with ffmpeg, and return buffers.
+ *
+ * Operations: speed, reverse, caption, togif, trim, meme, stitch, audio extraction
  */
 
-#include <cstdint>
+#include <chrono>
 #include <cstdlib>
-#include <cstring>
+#include <filesystem>
 #include <fstream>
-#include <map>
+#include <random>
 #include <sstream>
 #include <string>
-#include <vector>
-#include <filesystem>
-#include <random>
-#include <chrono>
-
-extern "C" {
-#include <libavcodec/avcodec.h>
-#include <libavformat/avformat.h>
-#include <libavutil/imgutils.h>
-#include <libavutil/opt.h>
-#include <libavutil/timestamp.h>
-#include <libavfilter/avfilter.h>
-#include <libavfilter/buffersink.h>
-#include <libavfilter/buffersrc.h>
-#include <libswscale/swscale.h>
-}
 
 #include "common.h"
 
 using namespace std;
-
 namespace fs = std::filesystem;
 
-// Generate a unique temporary filename
-string generateTempFilename(const string& extension) {
-    auto now = chrono::system_clock::now();
-    auto timestamp = chrono::duration_cast<chrono::nanoseconds>(now.time_since_epoch()).count();
-    random_device rd;
-    mt19937 gen(rd());
-    uniform_int_distribution<> dis(0, 999999);
-    
-    ostringstream oss;
-    oss << "/tmp/gabe_video_" << timestamp << "_" << dis(gen) << extension;
-    return oss.str();
+// Helper: Generate unique temporary filename
+static string makeTempPath(const string &ext) {
+  auto now = chrono::high_resolution_clock::now();
+  auto ns = chrono::duration_cast<chrono::nanoseconds>(now.time_since_epoch()).count();
+  random_device rd;
+  mt19937 gen(rd());
+  uniform_int_distribution<> dist(100000, 999999);
+
+  ostringstream oss;
+  oss << "/tmp/gabe_" << ns << "_" << dist(gen) << ext;
+  return oss.str();
 }
 
-// Cleanup temporary files
-void cleanupTempFile(const string& path) {
-    try {
-        if (fs::exists(path)) {
-            fs::remove(path);
-        }
-    } catch (...) {
-        // Ignore cleanup errors
-    }
+// Helper: Write buffer to file
+static bool writeFile(const string &path, const char *data, size_t len) {
+  ofstream out(path, ios::binary);
+  if (!out) return false;
+  out.write(data, static_cast<streamsize>(len));
+  return out.good();
 }
 
-/**
- * Apply speed modification to video using FFmpeg filter
- * Supports both speedup and slowdown
- */
-ArgumentMap VideoSpeed(const string &type, string &outType, const char *bufferData,
-                       size_t bufferLength, ArgumentMap arguments, [[maybe_unused]] bool *shouldKill) {
-    float speed = GetArgumentWithFallback<float>(arguments, "speed", 2.0f);
-    bool slow = GetArgumentWithFallback<bool>(arguments, "slow", false);
-    
-    // Clamp speed to reasonable values
-    if (speed < 0.25f) speed = 0.25f;
-    if (speed > 4.0f) speed = 4.0f;
-    
-    // If slowing down, invert the speed factor
-    float actualSpeed = slow ? (1.0f / speed) : speed;
-    
-    // Determine input/output extensions based on type
-    string inputExt = "." + type;
-    string outputExt = inputExt;
-    outType = type;
-    
-    // Write input buffer to temp file
-    string inputPath = generateTempFilename(inputExt);
-    string outputPath = generateTempFilename(outputExt);
-    
-    {
-        ofstream outFile(inputPath, ios::binary);
-        outFile.write(bufferData, bufferLength);
+// Helper: Read file into malloc'd buffer, returns nullptr on failure
+static char *readFile(const string &path, size_t &outSize) {
+  ifstream in(path, ios::binary | ios::ate);
+  if (!in) return nullptr;
+
+  auto size = in.tellg();
+  if (size <= 0) return nullptr;
+
+  in.seekg(0, ios::beg);
+  char *buf = static_cast<char *>(malloc(static_cast<size_t>(size)));
+  if (!buf) return nullptr;
+
+  in.read(buf, size);
+  if (!in) {
+    free(buf);
+    return nullptr;
+  }
+
+  outSize = static_cast<size_t>(size);
+  return buf;
+}
+
+// Helper: Remove temp file if it exists
+static void removeTempFile(const string &path) {
+  try {
+    fs::remove(path);
+  } catch (...) {
+  }
+}
+
+// Helper: Escape text for FFmpeg drawtext filter
+static string escapeDrawtext(const string &text) {
+  string out;
+  out.reserve(text.size() * 2);
+  for (char c : text) {
+    // Escape characters that have special meaning in drawtext
+    if (c == '\'' || c == '\\' || c == ':' || c == '%') {
+      out += '\\';
     }
-    
-    // Build FFmpeg filter string for speed adjustment
-    // Video: setpts=PTS/speed, Audio: atempo=speed (atempo only supports 0.5-2.0)
-    ostringstream filterCmd;
-    filterCmd << "ffmpeg -y -i \"" << inputPath << "\" ";
-    
-    // Build complex filter for video speed
-    filterCmd << "-filter_complex \"[0:v]setpts=" << (1.0f / actualSpeed) << "*PTS[v]";
-    
-    // Handle audio tempo (atempo filter has limits, chain multiple for extreme speeds)
-    float audioSpeed = actualSpeed;
-    filterCmd << ";[0:a]";
-    
-    // atempo only supports 0.5 to 2.0, chain multiple filters for extreme speeds
-    while (audioSpeed > 2.0f) {
-        filterCmd << "atempo=2.0,";
-        audioSpeed /= 2.0f;
-    }
-    while (audioSpeed < 0.5f) {
-        filterCmd << "atempo=0.5,";
-        audioSpeed *= 2.0f;
-    }
-    filterCmd << "atempo=" << audioSpeed << "[a]\" ";
-    
-    filterCmd << "-map \"[v]\" -map \"[a]\" ";
-    filterCmd << "-c:v libx264 -preset fast -crf 23 ";
-    filterCmd << "-c:a aac -b:a 128k ";
-    filterCmd << "-movflags +faststart ";
-    filterCmd << "\"" << outputPath << "\" 2>/dev/null";
-    
-    int result = system(filterCmd.str().c_str());
-    
-    ArgumentMap output;
-    
-    if (result == 0 && fs::exists(outputPath)) {
-        // Read output file into buffer
-        ifstream inFile(outputPath, ios::binary | ios::ate);
-        size_t fileSize = inFile.tellg();
-        inFile.seekg(0, ios::beg);
-        
-        char *outputBuffer = (char *)malloc(fileSize);
-        inFile.read(outputBuffer, fileSize);
-        
-        output["buf"] = outputBuffer;
-        output["len"] = fileSize;
-    } else {
-        output["error"] = string("Video speed adjustment failed");
-    }
-    
-    // Cleanup
-    cleanupTempFile(inputPath);
-    cleanupTempFile(outputPath);
-    
-    return output;
+    out += c;
+  }
+  return out;
+}
+
+// Helper: Run ffmpeg command and return success status
+static bool runFfmpeg(const string &cmd) {
+  string fullCmd = cmd + " 2>/dev/null";
+  return system(fullCmd.c_str()) == 0;
+}
+
+// Helper: Build output map with buffer
+static ArgumentMap makeOutput(char *buf, size_t size) {
+  ArgumentMap out;
+  out["buf"] = buf;
+  out["size"] = size;
+  return out;
+}
+
+// Helper: Build error output map
+static ArgumentMap makeError(const string &msg) {
+  ArgumentMap out;
+  out["error"] = msg;
+  return out;
 }
 
 /**
- * Reverse a video
+ * VideoSpeed - Adjust playback speed of video
+ * Parameters: speed (float), slow (bool)
  */
-ArgumentMap VideoReverse(const string &type, string &outType, const char *bufferData,
-                         size_t bufferLength, ArgumentMap arguments, [[maybe_unused]] bool *shouldKill) {
-    string inputExt = "." + type;
-    string outputExt = inputExt;
-    outType = type;
-    
-    string inputPath = generateTempFilename(inputExt);
-    string outputPath = generateTempFilename(outputExt);
-    
-    {
-        ofstream outFile(inputPath, ios::binary);
-        outFile.write(bufferData, bufferLength);
-    }
-    
-    // Reverse video and audio
-    ostringstream cmd;
-    cmd << "ffmpeg -y -i \"" << inputPath << "\" ";
-    cmd << "-vf reverse -af areverse ";
-    cmd << "-c:v libx264 -preset fast -crf 23 ";
-    cmd << "-c:a aac -b:a 128k ";
-    cmd << "-movflags +faststart ";
-    cmd << "\"" << outputPath << "\" 2>/dev/null";
-    
-    int result = system(cmd.str().c_str());
-    
-    ArgumentMap output;
-    
-    if (result == 0 && fs::exists(outputPath)) {
-        ifstream inFile(outputPath, ios::binary | ios::ate);
-        size_t fileSize = inFile.tellg();
-        inFile.seekg(0, ios::beg);
-        
-        char *outputBuffer = (char *)malloc(fileSize);
-        inFile.read(outputBuffer, fileSize);
-        
-        output["buf"] = outputBuffer;
-        output["len"] = fileSize;
+ArgumentMap VideoSpeed(const string &type, string &outType, const char *bufferData, size_t bufferLength,
+                       ArgumentMap arguments, [[maybe_unused]] bool *shouldKill) {
+  float speed = GetArgumentWithFallback<float>(arguments, "speed", 2.0f);
+  bool slow = GetArgumentWithFallback<bool>(arguments, "slow", false);
+
+  // Clamp speed
+  if (speed < 0.25f) speed = 0.25f;
+  if (speed > 4.0f) speed = 4.0f;
+
+  float factor = slow ? (1.0f / speed) : speed;
+  outType = type;
+
+  string inPath = makeTempPath("." + type);
+  string outPath = makeTempPath("." + type);
+
+  if (!writeFile(inPath, bufferData, bufferLength)) {
+    return makeError("Failed to write input file");
+  }
+
+  // Build ffmpeg command with video and audio speed adjustment
+  ostringstream cmd;
+  cmd << "ffmpeg -y -i \"" << inPath << "\" -filter_complex \"";
+
+  // Video speed: setpts=PTS/factor
+  cmd << "[0:v]setpts=" << (1.0f / factor) << "*PTS[v];";
+
+  // Audio speed: atempo (limited to 0.5-2.0, chain for extremes)
+  cmd << "[0:a]";
+  float audioFactor = factor;
+  while (audioFactor > 2.0f) {
+    cmd << "atempo=2.0,";
+    audioFactor /= 2.0f;
+  }
+  while (audioFactor < 0.5f) {
+    cmd << "atempo=0.5,";
+    audioFactor *= 2.0f;
+  }
+  cmd << "atempo=" << audioFactor << "[a]\" ";
+
+  cmd << "-map \"[v]\" -map \"[a]\" ";
+  cmd << "-c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k ";
+  cmd << "-movflags +faststart \"" << outPath << "\"";
+
+  bool ok = runFfmpeg(cmd.str());
+
+  ArgumentMap result;
+  if (ok && fs::exists(outPath)) {
+    size_t outSize = 0;
+    char *outBuf = readFile(outPath, outSize);
+    if (outBuf) {
+      result = makeOutput(outBuf, outSize);
     } else {
-        output["error"] = string("Video reverse failed");
+      result = makeError("Failed to read output file");
     }
-    
-    cleanupTempFile(inputPath);
-    cleanupTempFile(outputPath);
-    
-    return output;
+  } else {
+    result = makeError("FFmpeg speed adjustment failed");
+  }
+
+  removeTempFile(inPath);
+  removeTempFile(outPath);
+  return result;
 }
 
 /**
- * Add caption to video (top or bottom text)
+ * VideoReverse - Reverse video and audio playback
  */
-ArgumentMap VideoCaption(const string &type, string &outType, const char *bufferData,
-                         size_t bufferLength, ArgumentMap arguments, [[maybe_unused]] bool *shouldKill) {
-    string caption = GetArgumentWithFallback<string>(arguments, "caption", string(""));
-    string position = GetArgumentWithFallback<string>(arguments, "position", string("top"));
-    int fontSize = GetArgumentWithFallback<int>(arguments, "font_size", 32);
-    
-    string inputExt = "." + type;
-    string outputExt = inputExt;
-    outType = type;
-    
-    string inputPath = generateTempFilename(inputExt);
-    string outputPath = generateTempFilename(outputExt);
-    
-    {
-        ofstream outFile(inputPath, ios::binary);
-        outFile.write(bufferData, bufferLength);
-    }
-    
-    // Escape special characters for FFmpeg drawtext filter
-    string escapedCaption;
-    for (char c : caption) {
-        if (c == '\'' || c == ':' || c == '\\') {
-            escapedCaption += '\\';
-        }
-        escapedCaption += c;
-    }
-    
-    // Calculate Y position
-    string yPos = (position == "bottom") ? "(h-th-20)" : "20";
-    
-    ostringstream cmd;
-    cmd << "ffmpeg -y -i \"" << inputPath << "\" ";
-    cmd << "-vf \"drawtext=text='" << escapedCaption << "'";
-    cmd << ":fontsize=" << fontSize;
-    cmd << ":fontcolor=white:borderw=3:bordercolor=black";
-    cmd << ":x=(w-tw)/2:y=" << yPos << "\" ";
-    cmd << "-c:v libx264 -preset fast -crf 23 ";
-    cmd << "-c:a copy ";
-    cmd << "-movflags +faststart ";
-    cmd << "\"" << outputPath << "\" 2>/dev/null";
-    
-    int result = system(cmd.str().c_str());
-    
-    ArgumentMap output;
-    
-    if (result == 0 && fs::exists(outputPath)) {
-        ifstream inFile(outputPath, ios::binary | ios::ate);
-        size_t fileSize = inFile.tellg();
-        inFile.seekg(0, ios::beg);
-        
-        char *outputBuffer = (char *)malloc(fileSize);
-        inFile.read(outputBuffer, fileSize);
-        
-        output["buf"] = outputBuffer;
-        output["len"] = fileSize;
+ArgumentMap VideoReverse(const string &type, string &outType, const char *bufferData, size_t bufferLength,
+                         [[maybe_unused]] ArgumentMap arguments, [[maybe_unused]] bool *shouldKill) {
+  outType = type;
+
+  string inPath = makeTempPath("." + type);
+  string outPath = makeTempPath("." + type);
+
+  if (!writeFile(inPath, bufferData, bufferLength)) {
+    return makeError("Failed to write input file");
+  }
+
+  ostringstream cmd;
+  cmd << "ffmpeg -y -i \"" << inPath << "\" ";
+  cmd << "-vf reverse -af areverse ";
+  cmd << "-c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k ";
+  cmd << "-movflags +faststart \"" << outPath << "\"";
+
+  bool ok = runFfmpeg(cmd.str());
+
+  ArgumentMap result;
+  if (ok && fs::exists(outPath)) {
+    size_t outSize = 0;
+    char *outBuf = readFile(outPath, outSize);
+    if (outBuf) {
+      result = makeOutput(outBuf, outSize);
     } else {
-        output["error"] = string("Video caption failed");
+      result = makeError("Failed to read output file");
     }
-    
-    cleanupTempFile(inputPath);
-    cleanupTempFile(outputPath);
-    
-    return output;
+  } else {
+    result = makeError("FFmpeg reverse failed");
+  }
+
+  removeTempFile(inPath);
+  removeTempFile(outPath);
+  return result;
 }
 
 /**
- * Convert video to GIF
+ * VideoCaption - Add text caption to video
+ * Parameters: caption (string), position (string: "top"/"bottom"), font_size (int)
  */
-ArgumentMap VideoToGif(const string &type, string &outType, const char *bufferData,
-                       size_t bufferLength, ArgumentMap arguments, [[maybe_unused]] bool *shouldKill) {
-    int fps = GetArgumentWithFallback<int>(arguments, "fps", 15);
-    int width = GetArgumentWithFallback<int>(arguments, "width", 480);
-    
-    // Clamp values
-    if (fps < 5) fps = 5;
-    if (fps > 30) fps = 30;
-    if (width < 120) width = 120;
-    if (width > 720) width = 720;
-    
-    string inputExt = "." + type;
-    outType = "gif";
-    
-    string inputPath = generateTempFilename(inputExt);
-    string palettePath = generateTempFilename(".png");
-    string outputPath = generateTempFilename(".gif");
-    
-    {
-        ofstream outFile(inputPath, ios::binary);
-        outFile.write(bufferData, bufferLength);
-    }
-    
-    // Two-pass GIF generation for better quality
-    // Pass 1: Generate palette
-    ostringstream paletteCmd;
-    paletteCmd << "ffmpeg -y -i \"" << inputPath << "\" ";
-    paletteCmd << "-vf \"fps=" << fps << ",scale=" << width << ":-1:flags=lanczos,palettegen\" ";
-    paletteCmd << "\"" << palettePath << "\" 2>/dev/null";
-    
-    int result = system(paletteCmd.str().c_str());
-    
-    ArgumentMap output;
-    
-    if (result != 0) {
-        output["error"] = string("GIF palette generation failed");
-        cleanupTempFile(inputPath);
-        cleanupTempFile(palettePath);
-        return output;
-    }
-    
-    // Pass 2: Generate GIF using palette
-    ostringstream gifCmd;
-    gifCmd << "ffmpeg -y -i \"" << inputPath << "\" -i \"" << palettePath << "\" ";
-    gifCmd << "-lavfi \"fps=" << fps << ",scale=" << width << ":-1:flags=lanczos[x];[x][1:v]paletteuse\" ";
-    gifCmd << "\"" << outputPath << "\" 2>/dev/null";
-    
-    result = system(gifCmd.str().c_str());
-    
-    if (result == 0 && fs::exists(outputPath)) {
-        ifstream inFile(outputPath, ios::binary | ios::ate);
-        size_t fileSize = inFile.tellg();
-        inFile.seekg(0, ios::beg);
-        
-        char *outputBuffer = (char *)malloc(fileSize);
-        inFile.read(outputBuffer, fileSize);
-        
-        output["buf"] = outputBuffer;
-        output["len"] = fileSize;
+ArgumentMap VideoCaption(const string &type, string &outType, const char *bufferData, size_t bufferLength,
+                         ArgumentMap arguments, [[maybe_unused]] bool *shouldKill) {
+  string caption = GetArgumentWithFallback<string>(arguments, "caption", string(""));
+  string position = GetArgumentWithFallback<string>(arguments, "position", string("top"));
+  int fontSize = GetArgumentWithFallback<int>(arguments, "font_size", 32);
+
+  if (fontSize < 12) fontSize = 12;
+  if (fontSize > 72) fontSize = 72;
+
+  outType = type;
+
+  string inPath = makeTempPath("." + type);
+  string outPath = makeTempPath("." + type);
+
+  if (!writeFile(inPath, bufferData, bufferLength)) {
+    return makeError("Failed to write input file");
+  }
+
+  string escaped = escapeDrawtext(caption);
+  string yPos = (position == "bottom") ? "(h-th-20)" : "20";
+
+  ostringstream cmd;
+  cmd << "ffmpeg -y -i \"" << inPath << "\" ";
+  cmd << "-vf \"drawtext=text='" << escaped << "'";
+  cmd << ":fontsize=" << fontSize;
+  cmd << ":fontcolor=white:borderw=3:bordercolor=black";
+  cmd << ":x=(w-tw)/2:y=" << yPos << "\" ";
+  cmd << "-c:v libx264 -preset fast -crf 23 -c:a copy ";
+  cmd << "-movflags +faststart \"" << outPath << "\"";
+
+  bool ok = runFfmpeg(cmd.str());
+
+  ArgumentMap result;
+  if (ok && fs::exists(outPath)) {
+    size_t outSize = 0;
+    char *outBuf = readFile(outPath, outSize);
+    if (outBuf) {
+      result = makeOutput(outBuf, outSize);
     } else {
-        output["error"] = string("GIF conversion failed");
+      result = makeError("Failed to read output file");
     }
-    
-    cleanupTempFile(inputPath);
-    cleanupTempFile(palettePath);
-    cleanupTempFile(outputPath);
-    
-    return output;
+  } else {
+    result = makeError("FFmpeg caption failed");
+  }
+
+  removeTempFile(inPath);
+  removeTempFile(outPath);
+  return result;
 }
 
 /**
- * Trim/cut video to specified duration
+ * VideoToGif - Convert video to animated GIF
+ * Parameters: fps (int), width (int)
  */
-ArgumentMap VideoTrim(const string &type, string &outType, const char *bufferData,
-                      size_t bufferLength, ArgumentMap arguments, [[maybe_unused]] bool *shouldKill) {
-    float start = GetArgumentWithFallback<float>(arguments, "start", 0.0f);
-    float duration = GetArgumentWithFallback<float>(arguments, "duration", 10.0f);
-    
-    // Clamp values
-    if (start < 0) start = 0;
-    if (duration < 0.5f) duration = 0.5f;
-    if (duration > 60.0f) duration = 60.0f;  // Max 60 seconds
-    
-    string inputExt = "." + type;
-    string outputExt = inputExt;
-    outType = type;
-    
-    string inputPath = generateTempFilename(inputExt);
-    string outputPath = generateTempFilename(outputExt);
-    
-    {
-        ofstream outFile(inputPath, ios::binary);
-        outFile.write(bufferData, bufferLength);
-    }
-    
-    ostringstream cmd;
-    cmd << "ffmpeg -y -ss " << start << " -i \"" << inputPath << "\" ";
-    cmd << "-t " << duration << " ";
-    cmd << "-c:v libx264 -preset fast -crf 23 ";
-    cmd << "-c:a aac -b:a 128k ";
-    cmd << "-movflags +faststart ";
-    cmd << "\"" << outputPath << "\" 2>/dev/null";
-    
-    int result = system(cmd.str().c_str());
-    
-    ArgumentMap output;
-    
-    if (result == 0 && fs::exists(outputPath)) {
-        ifstream inFile(outputPath, ios::binary | ios::ate);
-        size_t fileSize = inFile.tellg();
-        inFile.seekg(0, ios::beg);
-        
-        char *outputBuffer = (char *)malloc(fileSize);
-        inFile.read(outputBuffer, fileSize);
-        
-        output["buf"] = outputBuffer;
-        output["len"] = fileSize;
+ArgumentMap VideoToGif(const string &type, string &outType, const char *bufferData, size_t bufferLength,
+                       ArgumentMap arguments, [[maybe_unused]] bool *shouldKill) {
+  int fps = GetArgumentWithFallback<int>(arguments, "fps", 15);
+  int width = GetArgumentWithFallback<int>(arguments, "width", 480);
+
+  if (fps < 5) fps = 5;
+  if (fps > 30) fps = 30;
+  if (width < 120) width = 120;
+  if (width > 720) width = 720;
+
+  outType = "gif";
+
+  string inPath = makeTempPath("." + type);
+  string palettePath = makeTempPath(".png");
+  string outPath = makeTempPath(".gif");
+
+  if (!writeFile(inPath, bufferData, bufferLength)) {
+    return makeError("Failed to write input file");
+  }
+
+  // Pass 1: Generate palette
+  ostringstream paletteCmd;
+  paletteCmd << "ffmpeg -y -i \"" << inPath << "\" ";
+  paletteCmd << "-vf \"fps=" << fps << ",scale=" << width << ":-1:flags=lanczos,palettegen\" ";
+  paletteCmd << "\"" << palettePath << "\"";
+
+  if (!runFfmpeg(paletteCmd.str())) {
+    removeTempFile(inPath);
+    removeTempFile(palettePath);
+    return makeError("FFmpeg palette generation failed");
+  }
+
+  // Pass 2: Generate GIF with palette
+  ostringstream gifCmd;
+  gifCmd << "ffmpeg -y -i \"" << inPath << "\" -i \"" << palettePath << "\" ";
+  gifCmd << "-lavfi \"fps=" << fps << ",scale=" << width << ":-1:flags=lanczos[x];[x][1:v]paletteuse\" ";
+  gifCmd << "\"" << outPath << "\"";
+
+  bool ok = runFfmpeg(gifCmd.str());
+
+  ArgumentMap result;
+  if (ok && fs::exists(outPath)) {
+    size_t outSize = 0;
+    char *outBuf = readFile(outPath, outSize);
+    if (outBuf) {
+      result = makeOutput(outBuf, outSize);
     } else {
-        output["error"] = string("Video trim failed");
+      result = makeError("Failed to read output file");
     }
-    
-    cleanupTempFile(inputPath);
-    cleanupTempFile(outputPath);
-    
-    return output;
+  } else {
+    result = makeError("FFmpeg GIF conversion failed");
+  }
+
+  removeTempFile(inPath);
+  removeTempFile(palettePath);
+  removeTempFile(outPath);
+  return result;
 }
 
 /**
- * Add classic top/bottom meme text to video
+ * VideoTrim - Trim video to specified duration
+ * Parameters: start (float), duration (float)
  */
-ArgumentMap VideoMeme(const string &type, string &outType, const char *bufferData,
-                      size_t bufferLength, ArgumentMap arguments, [[maybe_unused]] bool *shouldKill) {
-    string topText = GetArgumentWithFallback<string>(arguments, "top", string(""));
-    string bottomText = GetArgumentWithFallback<string>(arguments, "bottom", string(""));
-    int fontSize = GetArgumentWithFallback<int>(arguments, "font_size", 48);
-    
-    string inputExt = "." + type;
-    string outputExt = inputExt;
-    outType = type;
-    
-    string inputPath = generateTempFilename(inputExt);
-    string outputPath = generateTempFilename(outputExt);
-    
-    {
-        ofstream outFile(inputPath, ios::binary);
-        outFile.write(bufferData, bufferLength);
-    }
-    
-    // Escape text for FFmpeg
-    auto escapeText = [](const string& text) {
-        string escaped;
-        for (char c : text) {
-            if (c == '\'' || c == ':' || c == '\\') {
-                escaped += '\\';
-            }
-            escaped += c;
-        }
-        return escaped;
-    };
-    
-    string escapedTop = escapeText(topText);
-    string escapedBottom = escapeText(bottomText);
-    
-    // Build filter chain
-    ostringstream filter;
-    filter << "-vf \"";
-    
-    if (!topText.empty()) {
-        filter << "drawtext=text='" << escapedTop << "'";
-        filter << ":fontsize=" << fontSize;
-        filter << ":fontcolor=white:borderw=4:bordercolor=black";
-        filter << ":x=(w-tw)/2:y=20";
-    }
-    
-    if (!bottomText.empty()) {
-        if (!topText.empty()) filter << ",";
-        filter << "drawtext=text='" << escapedBottom << "'";
-        filter << ":fontsize=" << fontSize;
-        filter << ":fontcolor=white:borderw=4:bordercolor=black";
-        filter << ":x=(w-tw)/2:y=(h-th-20)";
-    }
-    
-    filter << "\"";
-    
-    ostringstream cmd;
-    cmd << "ffmpeg -y -i \"" << inputPath << "\" ";
-    cmd << filter.str() << " ";
-    cmd << "-c:v libx264 -preset fast -crf 23 ";
-    cmd << "-c:a copy ";
-    cmd << "-movflags +faststart ";
-    cmd << "\"" << outputPath << "\" 2>/dev/null";
-    
-    int result = system(cmd.str().c_str());
-    
-    ArgumentMap output;
-    
-    if (result == 0 && fs::exists(outputPath)) {
-        ifstream inFile(outputPath, ios::binary | ios::ate);
-        size_t fileSize = inFile.tellg();
-        inFile.seekg(0, ios::beg);
-        
-        char *outputBuffer = (char *)malloc(fileSize);
-        inFile.read(outputBuffer, fileSize);
-        
-        output["buf"] = outputBuffer;
-        output["len"] = fileSize;
+ArgumentMap VideoTrim(const string &type, string &outType, const char *bufferData, size_t bufferLength,
+                      ArgumentMap arguments, [[maybe_unused]] bool *shouldKill) {
+  float start = GetArgumentWithFallback<float>(arguments, "start", 0.0f);
+  float duration = GetArgumentWithFallback<float>(arguments, "duration", 10.0f);
+
+  if (start < 0.0f) start = 0.0f;
+  if (duration < 0.5f) duration = 0.5f;
+  if (duration > 60.0f) duration = 60.0f;
+
+  outType = type;
+
+  string inPath = makeTempPath("." + type);
+  string outPath = makeTempPath("." + type);
+
+  if (!writeFile(inPath, bufferData, bufferLength)) {
+    return makeError("Failed to write input file");
+  }
+
+  ostringstream cmd;
+  cmd << "ffmpeg -y -ss " << start << " -i \"" << inPath << "\" ";
+  cmd << "-t " << duration << " ";
+  cmd << "-c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k ";
+  cmd << "-movflags +faststart \"" << outPath << "\"";
+
+  bool ok = runFfmpeg(cmd.str());
+
+  ArgumentMap result;
+  if (ok && fs::exists(outPath)) {
+    size_t outSize = 0;
+    char *outBuf = readFile(outPath, outSize);
+    if (outBuf) {
+      result = makeOutput(outBuf, outSize);
     } else {
-        output["error"] = string("Video meme creation failed");
+      result = makeError("Failed to read output file");
     }
-    
-    cleanupTempFile(inputPath);
-    cleanupTempFile(outputPath);
-    
-    return output;
+  } else {
+    result = makeError("FFmpeg trim failed");
+  }
+
+  removeTempFile(inPath);
+  removeTempFile(outPath);
+  return result;
 }
 
 /**
- * Stitch/concatenate two videos together
+ * VideoMeme - Add top/bottom meme text to video
+ * Parameters: top (string), bottom (string), font_size (int)
  */
-ArgumentMap VideoStitch(const string &type, string &outType, const char *bufferData,
-                        size_t bufferLength, ArgumentMap arguments, [[maybe_unused]] bool *shouldKill) {
-    // Second video data passed as arguments
-    char *buffer2Data = GetArgumentWithFallback<char*>(arguments, "buffer2", nullptr);
-    size_t buffer2Length = GetArgumentWithFallback<size_t>(arguments, "buffer2_len", (size_t)0);
-    
-    if (buffer2Data == nullptr || buffer2Length == 0) {
-        ArgumentMap output;
-        output["error"] = string("Second video required for stitching");
-        return output;
-    }
-    
-    string inputExt = "." + type;
-    string outputExt = inputExt;
-    outType = type;
-    
-    string inputPath1 = generateTempFilename(inputExt);
-    string inputPath2 = generateTempFilename(inputExt);
-    string listPath = generateTempFilename(".txt");
-    string outputPath = generateTempFilename(outputExt);
-    
-    // Write both videos to temp files
-    {
-        ofstream outFile1(inputPath1, ios::binary);
-        outFile1.write(bufferData, bufferLength);
-        
-        ofstream outFile2(inputPath2, ios::binary);
-        outFile2.write(buffer2Data, buffer2Length);
-        
-        // Write concat list file
-        ofstream listFile(listPath);
-        listFile << "file '" << inputPath1 << "'\n";
-        listFile << "file '" << inputPath2 << "'\n";
-    }
-    
-    // Use concat demuxer for same-codec videos
-    ostringstream cmd;
-    cmd << "ffmpeg -y -f concat -safe 0 -i \"" << listPath << "\" ";
-    cmd << "-c:v libx264 -preset fast -crf 23 ";
-    cmd << "-c:a aac -b:a 128k ";
-    cmd << "-movflags +faststart ";
-    cmd << "\"" << outputPath << "\" 2>/dev/null";
-    
-    int result = system(cmd.str().c_str());
-    
-    ArgumentMap output;
-    
-    if (result == 0 && fs::exists(outputPath)) {
-        ifstream inFile(outputPath, ios::binary | ios::ate);
-        size_t fileSize = inFile.tellg();
-        inFile.seekg(0, ios::beg);
-        
-        char *outputBuffer = (char *)malloc(fileSize);
-        inFile.read(outputBuffer, fileSize);
-        
-        output["buf"] = outputBuffer;
-        output["len"] = fileSize;
+ArgumentMap VideoMeme(const string &type, string &outType, const char *bufferData, size_t bufferLength,
+                      ArgumentMap arguments, [[maybe_unused]] bool *shouldKill) {
+  string topText = GetArgumentWithFallback<string>(arguments, "top", string(""));
+  string bottomText = GetArgumentWithFallback<string>(arguments, "bottom", string(""));
+  int fontSize = GetArgumentWithFallback<int>(arguments, "font_size", 48);
+
+  if (fontSize < 16) fontSize = 16;
+  if (fontSize > 96) fontSize = 96;
+
+  outType = type;
+
+  string inPath = makeTempPath("." + type);
+  string outPath = makeTempPath("." + type);
+
+  if (!writeFile(inPath, bufferData, bufferLength)) {
+    return makeError("Failed to write input file");
+  }
+
+  string escapedTop = escapeDrawtext(topText);
+  string escapedBottom = escapeDrawtext(bottomText);
+
+  // Build filter chain
+  ostringstream filter;
+  bool hasFilter = false;
+
+  if (!topText.empty()) {
+    filter << "drawtext=text='" << escapedTop << "'";
+    filter << ":fontsize=" << fontSize;
+    filter << ":fontcolor=white:borderw=4:bordercolor=black";
+    filter << ":x=(w-tw)/2:y=20";
+    hasFilter = true;
+  }
+
+  if (!bottomText.empty()) {
+    if (hasFilter) filter << ",";
+    filter << "drawtext=text='" << escapedBottom << "'";
+    filter << ":fontsize=" << fontSize;
+    filter << ":fontcolor=white:borderw=4:bordercolor=black";
+    filter << ":x=(w-tw)/2:y=(h-th-20)";
+    hasFilter = true;
+  }
+
+  ostringstream cmd;
+  cmd << "ffmpeg -y -i \"" << inPath << "\" ";
+  if (hasFilter) {
+    cmd << "-vf \"" << filter.str() << "\" ";
+  }
+  cmd << "-c:v libx264 -preset fast -crf 23 -c:a copy ";
+  cmd << "-movflags +faststart \"" << outPath << "\"";
+
+  bool ok = runFfmpeg(cmd.str());
+
+  ArgumentMap result;
+  if (ok && fs::exists(outPath)) {
+    size_t outSize = 0;
+    char *outBuf = readFile(outPath, outSize);
+    if (outBuf) {
+      result = makeOutput(outBuf, outSize);
     } else {
-        output["error"] = string("Video stitch failed");
+      result = makeError("Failed to read output file");
     }
-    
-    cleanupTempFile(inputPath1);
-    cleanupTempFile(inputPath2);
-    cleanupTempFile(listPath);
-    cleanupTempFile(outputPath);
-    
-    return output;
+  } else {
+    result = makeError("FFmpeg meme failed");
+  }
+
+  removeTempFile(inPath);
+  removeTempFile(outPath);
+  return result;
 }
 
 /**
- * Extract audio from video
+ * VideoStitch - Concatenate two videos
+ * Parameters: buffer2 (char*), buffer2_len (size_t)
  */
-ArgumentMap VideoAudio(const string &type, string &outType, const char *bufferData,
-                       size_t bufferLength, [[maybe_unused]] ArgumentMap arguments, 
-                       [[maybe_unused]] bool *shouldKill) {
-    string inputExt = "." + type;
-    outType = "mp3";
-    
-    string inputPath = generateTempFilename(inputExt);
-    string outputPath = generateTempFilename(".mp3");
-    
-    {
-        ofstream outFile(inputPath, ios::binary);
-        outFile.write(bufferData, bufferLength);
-    }
-    
-    ostringstream cmd;
-    cmd << "ffmpeg -y -i \"" << inputPath << "\" ";
-    cmd << "-vn -acodec libmp3lame -b:a 192k ";
-    cmd << "\"" << outputPath << "\" 2>/dev/null";
-    
-    int result = system(cmd.str().c_str());
-    
-    ArgumentMap output;
-    
-    if (result == 0 && fs::exists(outputPath)) {
-        ifstream inFile(outputPath, ios::binary | ios::ate);
-        size_t fileSize = inFile.tellg();
-        inFile.seekg(0, ios::beg);
-        
-        char *outputBuffer = (char *)malloc(fileSize);
-        inFile.read(outputBuffer, fileSize);
-        
-        output["buf"] = outputBuffer;
-        output["len"] = fileSize;
+ArgumentMap VideoStitch(const string &type, string &outType, const char *bufferData, size_t bufferLength,
+                        ArgumentMap arguments, [[maybe_unused]] bool *shouldKill) {
+  char *buffer2 = GetArgumentWithFallback<char *>(arguments, "buffer2", nullptr);
+  size_t buffer2Len = GetArgumentWithFallback<size_t>(arguments, "buffer2_len", static_cast<size_t>(0));
+
+  if (!buffer2 || buffer2Len == 0) {
+    return makeError("Second video required for stitching");
+  }
+
+  outType = type;
+
+  string inPath1 = makeTempPath("." + type);
+  string inPath2 = makeTempPath("." + type);
+  string listPath = makeTempPath(".txt");
+  string outPath = makeTempPath("." + type);
+
+  if (!writeFile(inPath1, bufferData, bufferLength) || !writeFile(inPath2, buffer2, buffer2Len)) {
+    removeTempFile(inPath1);
+    removeTempFile(inPath2);
+    return makeError("Failed to write input files");
+  }
+
+  // Write concat list
+  {
+    ofstream listFile(listPath);
+    listFile << "file '" << inPath1 << "'\n";
+    listFile << "file '" << inPath2 << "'\n";
+  }
+
+  ostringstream cmd;
+  cmd << "ffmpeg -y -f concat -safe 0 -i \"" << listPath << "\" ";
+  cmd << "-c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k ";
+  cmd << "-movflags +faststart \"" << outPath << "\"";
+
+  bool ok = runFfmpeg(cmd.str());
+
+  ArgumentMap result;
+  if (ok && fs::exists(outPath)) {
+    size_t outSize = 0;
+    char *outBuf = readFile(outPath, outSize);
+    if (outBuf) {
+      result = makeOutput(outBuf, outSize);
     } else {
-        output["error"] = string("Audio extraction failed");
+      result = makeError("Failed to read output file");
     }
-    
-    cleanupTempFile(inputPath);
-    cleanupTempFile(outputPath);
-    
-    return output;
+  } else {
+    result = makeError("FFmpeg stitch failed");
+  }
+
+  removeTempFile(inPath1);
+  removeTempFile(inPath2);
+  removeTempFile(listPath);
+  removeTempFile(outPath);
+  return result;
+}
+
+/**
+ * VideoAudio - Extract audio from video as MP3
+ */
+ArgumentMap VideoAudio(const string &type, string &outType, const char *bufferData, size_t bufferLength,
+                       [[maybe_unused]] ArgumentMap arguments, [[maybe_unused]] bool *shouldKill) {
+  outType = "mp3";
+
+  string inPath = makeTempPath("." + type);
+  string outPath = makeTempPath(".mp3");
+
+  if (!writeFile(inPath, bufferData, bufferLength)) {
+    return makeError("Failed to write input file");
+  }
+
+  ostringstream cmd;
+  cmd << "ffmpeg -y -i \"" << inPath << "\" ";
+  cmd << "-vn -acodec libmp3lame -b:a 192k ";
+  cmd << "\"" << outPath << "\"";
+
+  bool ok = runFfmpeg(cmd.str());
+
+  ArgumentMap result;
+  if (ok && fs::exists(outPath)) {
+    size_t outSize = 0;
+    char *outBuf = readFile(outPath, outSize);
+    if (outBuf) {
+      result = makeOutput(outBuf, outSize);
+    } else {
+      result = makeError("Failed to read output file");
+    }
+  } else {
+    result = makeError("FFmpeg audio extraction failed");
+  }
+
+  removeTempFile(inPath);
+  removeTempFile(outPath);
+  return result;
 }

@@ -1,8 +1,8 @@
 import ImageCommand from "#cmd-classes/imageCommand.js";
 
-class VideoAudioCommand extends ImageCommand {
-  static description = "Extract audio from a video as MP3";
-  static aliases = ["vaudio", "videoaudio", "extractaudio", "tomp3"];
+class AudioCommand extends ImageCommand {
+  static description = "Extract the audio track from a video as MP3";
+  static aliases = ["extractaudio", "tomp3", "mp3"];
 
   static requiresImage = true;
   static requiresVideo = true;
@@ -10,4 +10,4 @@ class VideoAudioCommand extends ImageCommand {
   static command = "videoaudio";
 }
 
-export default VideoAudioCommand;
+export default AudioCommand;
