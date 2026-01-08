@@ -149,3 +149,4 @@ dist/
 
 # GitHub workflows, templates, etc
 **/.github
+_codeql_detected_source_root
