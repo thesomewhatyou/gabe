@@ -1,8 +1,8 @@
 import Command from "#cmd-classes/command.js";
 
 class VideoCommand extends Command {
-  static description = "Process and edit videos";
-  static aliases = ["vid"];
+  static description = "Video processing and editing commands";
+  static aliases = ["vid", "v"];
   static slashAllowed = true;
 }
 
