@@ -5,45 +5,52 @@ import {
   getInstances,
   getTwitterCache,
   setTwitterCache,
-  parseProfileHtml,
-  formatProfile,
+  parseTweetsHtml,
+  formatTweetsList,
 } from "#utils/twitter.js";
 
-class TwitterUserCommand extends Command {
+class TwitterLatestCommand extends Command {
   async run() {
     this.success = false;
     const username = this.getOptionString("username", true);
+    const count = this.getOptionInteger("count") || 5;
 
     if (!username) {
       return "❌ Gabe says: You forgot to tell me which Twitter user to fetch!";
     }
 
+    if (count < 1 || count > 10) {
+      return "❌ Gabe says: Count must be between 1 and 10!";
+    }
+
     await this.acknowledge();
 
-    const cacheKey = `twitter:user:${username}`;
+    const cacheKey = `twitter:latest:${username}:${count}`;
     if (getTwitterCache(cacheKey)) {
-      const profile = getTwitterCache(cacheKey);
-      return formatProfile(profile, username);
+      const tweets = getTwitterCache(cacheKey);
+      this.success = true;
+      return formatTweetsList(tweets, username);
     }
 
     try {
-      const urls = getInstances().map((i) => `${i}/${username}`);
+      const urls = getInstances().map((i) => `${i}/${username}/with_replies`);
       const response = await fetchWithFallback(urls);
 
       if (!response.ok) {
-        return "❌ Gabe says: Couldn't fetch that Twitter profile. Try again later.";
+        return "❌ Gabe says: Couldn't fetch tweets. Try again later.";
       }
 
       const html = await response.text();
-      const profile = parseProfileHtml(html);
+      const tweets = parseTweetsHtml(html);
 
-      if (!profile.name && !profile.handle) {
-        return "❌ Gabe says: Couldn't parse that Twitter profile. The user might not exist.";
+      if (tweets.length === 0) {
+        return "❌ Gabe says: No tweets found for that user.";
       }
 
-      setTwitterCache(cacheKey, profile, 180000);
+      const limitedTweets = tweets.slice(0, count);
+      setTwitterCache(cacheKey, limitedTweets, 180000);
       this.success = true;
-      return formatProfile(profile, username);
+      return formatTweetsList(limitedTweets, username);
     } catch (error) {
       if (error instanceof Error && error.message.includes("All instances failed")) {
         return "❌ Gabe says: All Nitter instances failed. Twitter might be having issues or instances are down. Try again later.";
@@ -59,10 +66,17 @@ class TwitterUserCommand extends Command {
       description: "Twitter username (without @)",
       required: true,
     },
+    {
+      name: "count",
+      type: Constants.ApplicationCommandOptionTypes.INTEGER,
+      description: "Number of tweets to fetch (1-10)",
+      minValue: 1,
+      maxValue: 10,
+    },
   ];
-  static description = "Fetch Twitter/X profile information";
-  static aliases = ["tw", "twitter"];
+  static description = "Fetch latest tweets from a user";
+  static aliases = ["latest"];
   static category = "internet";
 }
 
-export default TwitterUserCommand;
+export default TwitterLatestCommand;

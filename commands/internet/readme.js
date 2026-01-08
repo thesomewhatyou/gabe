@@ -6,10 +6,10 @@ import {
   getGithubRepoCache,
   setGithubRepoCache,
   checkRateLimit,
-  formatRepo,
+  formatReadme,
 } from "#utils/github.js";
 
-class GitHubRepoCommand extends Command {
+class GitHubReadmeCommand extends Command {
   async run() {
     this.success = false;
     const input = this.getOptionString("repo", true);
@@ -28,10 +28,11 @@ class GitHubRepoCommand extends Command {
     const owner = repoMatch[1];
     const repo = repoMatch[2];
 
-    const cacheKey = `github:repo:${owner}:${repo}`;
+    const cacheKey = `github:readme:${owner}:${repo}`;
     if (getGithubRepoCache(cacheKey)) {
-      const repoData = getGithubRepoCache(cacheKey);
-      return formatRepo(repoData);
+      const readmeData = getGithubRepoCache(cacheKey);
+      this.success = true;
+      return formatReadme(readmeData, owner, repo);
     }
 
     try {
@@ -45,22 +46,22 @@ class GitHubRepoCommand extends Command {
       }
 
       const response = await fetchWithFallback([
-        `https://api.github.com/repos/${owner}/${repo}`,
+        `https://api.github.com/repos/${owner}/${repo}/readme`,
       ], { headers });
 
       checkRateLimit(response);
 
       if (!response.ok) {
         if (response.status === 404) {
-          return "❌ Gabe says: Repository not found. Check the owner/repo format.";
+          return "❌ Gabe says: Repository or README not found.";
         }
-        return "❌ Gabe says: Couldn't fetch repository. Try again later.";
+        return "❌ Gabe says: Couldn't fetch README. Try again later.";
       }
 
-      const repoData = await response.json();
-      setGithubRepoCache(cacheKey, repoData, 600000);
+      const readmeData = await response.json();
+      setGithubRepoCache(cacheKey, readmeData, 600000);
       this.success = true;
-      return formatRepo(repoData);
+      return formatReadme(readmeData, owner, repo);
     } catch (error) {
       return `❌ Gabe says: Something went wrong. ${error.message}`;
     }
@@ -75,9 +76,9 @@ class GitHubRepoCommand extends Command {
     },
   ];
 
-  static description = "Fetch GitHub repository information";
-  static aliases = ["gh", "github", "repo"];
+  static description = "Fetch GitHub repository README";
+  static aliases = ["readme"];
   static category = "internet";
 }
 
-export default GitHubRepoCommand;
+export default GitHubReadmeCommand;

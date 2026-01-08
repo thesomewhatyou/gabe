@@ -6,32 +6,33 @@ import {
   getGithubRepoCache,
   setGithubRepoCache,
   checkRateLimit,
-  formatRepo,
+  formatPR,
 } from "#utils/github.js";
 
-class GitHubRepoCommand extends Command {
+class GitHubPRCommand extends Command {
   async run() {
     this.success = false;
-    const input = this.getOptionString("repo", true);
+    const input = this.getOptionString("pr", true);
 
     if (!input) {
-      return "❌ Gabe says: You forgot to tell me which repository to fetch!";
+      return "❌ Gabe says: You forgot to tell me which PR to fetch!";
     }
 
     await this.acknowledge();
 
-    const repoMatch = input.match(/^([\w.-]+)\/([\w.-]+)$/);
-    if (!repoMatch) {
-      return "❌ Gabe says: Invalid repository format. Use: owner/repo (e.g., facebook/react)";
+    const prMatch = input.match(/^([\w.-]+)\/([\w.-]+)#(\d+)$/);
+    if (!prMatch) {
+      return "❌ Gabe says: Invalid format. Use: owner/repo#123 (e.g., facebook/react#1234)";
     }
 
-    const owner = repoMatch[1];
-    const repo = repoMatch[2];
+    const owner = prMatch[1];
+    const repo = prMatch[2];
+    const prNumber = prMatch[3];
 
-    const cacheKey = `github:repo:${owner}:${repo}`;
+    const cacheKey = `github:pr:${owner}:${repo}:${prNumber}`;
     if (getGithubRepoCache(cacheKey)) {
-      const repoData = getGithubRepoCache(cacheKey);
-      return formatRepo(repoData);
+      const prData = getGithubRepoCache(cacheKey);
+      return formatPR(prData);
     }
 
     try {
@@ -45,22 +46,22 @@ class GitHubRepoCommand extends Command {
       }
 
       const response = await fetchWithFallback([
-        `https://api.github.com/repos/${owner}/${repo}`,
+        `https://api.github.com/repos/${owner}/${repo}/pulls/${prNumber}`,
       ], { headers });
 
       checkRateLimit(response);
 
       if (!response.ok) {
         if (response.status === 404) {
-          return "❌ Gabe says: Repository not found. Check the owner/repo format.";
+          return "❌ Gabe says: Pull request not found.";
         }
-        return "❌ Gabe says: Couldn't fetch repository. Try again later.";
+        return "❌ Gabe says: Couldn't fetch PR. Try again later.";
       }
 
-      const repoData = await response.json();
-      setGithubRepoCache(cacheKey, repoData, 600000);
+      const prData = await response.json();
+      setGithubRepoCache(cacheKey, prData, 300000);
       this.success = true;
-      return formatRepo(repoData);
+      return formatPR(prData);
     } catch (error) {
       return `❌ Gabe says: Something went wrong. ${error.message}`;
     }
@@ -68,16 +69,16 @@ class GitHubRepoCommand extends Command {
 
   static flags = [
     {
-      name: "repo",
+      name: "pr",
       type: Constants.ApplicationCommandOptionTypes.STRING,
-      description: "Repository (owner/repo format)",
+      description: "Pull request (owner/repo#123 format)",
       required: true,
     },
   ];
 
-  static description = "Fetch GitHub repository information";
-  static aliases = ["gh", "github", "repo"];
+  static description = "Fetch GitHub pull request details";
+  static aliases = ["pr", "pullrequest"];
   static category = "internet";
 }
 
-export default GitHubRepoCommand;
+export default GitHubPRCommand;
