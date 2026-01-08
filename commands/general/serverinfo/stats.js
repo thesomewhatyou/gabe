@@ -5,7 +5,7 @@ import Command from "#cmd-classes/command.js";
 import detectRuntime from "#utils/detectRuntime.js";
 import { getServers } from "#utils/misc.js";
 import { getOwners } from "#utils/owners.js";
-import packageJson from "../../package.json" with { type: "json" };
+import packageJson from "../../../package.json" with { type: "json" };
 
 const pm2 = process.env.PM2_USAGE ? (await import("pm2")).default : null;
 

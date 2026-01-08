@@ -152,7 +152,7 @@ export default async ({ client, database }: EventParams, interaction: AnyInterac
         tags: {
           process: process.env.pm_id ? Number.parseInt(process.env.pm_id, 10) || 0 : 0,
           command,
-          args: JSON.stringify(interaction.data.options.raw, (key, value) =>
+          args: JSON.stringify(interaction.data.options.raw, (_key, value) =>
             typeof value === "bigint" ? value.toString() : value,
           ),
         },
@@ -169,7 +169,7 @@ export default async ({ client, database }: EventParams, interaction: AnyInterac
       });
     } else {
       logger.error(
-        `Error occurred with application command ${command} with arguments ${JSON.stringify(interaction.data.options.raw, (key, value) => (typeof value === "bigint" ? value.toString() : value))}: ${(error as Error).stack || error}`,
+        `Error occurred with application command ${command} with arguments ${JSON.stringify(interaction.data.options.raw, (_key, value) => (typeof value === "bigint" ? value.toString() : value))}: ${(error as Error).stack || error}`,
       );
       try {
         await interaction.createFollowup({

@@ -313,7 +313,9 @@ function getInteractionOption(interaction: CommandInteraction, key: string) {
   let options = interaction.data.options.raw;
   for (const s of sub) {
     const found = options.find((o) => o.name === s && (o.type === 1 || o.type === 2));
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (found && (found as any).options) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       options = (found as any).options;
     } else {
       break;
@@ -337,6 +339,7 @@ export default async (
   // we start by determining whether or not we're dealing with an interaction or a message
   if (interaction) {
     // we can get a raw attachment or a URL in the interaction itself
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const attachmentOpt = getInteractionOption(interaction, "image") as any;
     if (attachmentOpt?.value) {
       const attachment = interaction.data.resolved.attachments.get(attachmentOpt.value as string);
@@ -350,6 +353,7 @@ export default async (
         );
       }
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const linkOpt = getInteractionOption(interaction, "link") as any;
     if (linkOpt?.value) {
       const link = linkOpt.value as string;

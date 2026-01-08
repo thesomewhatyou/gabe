@@ -1,68 +1,9 @@
-import { Constants } from "oceanic.js";
-import { fetchWithFallback } from "#utils/apifetch.js";
 import Command from "#cmd-classes/command.js";
-import {
-  getInstances,
-  getTwitterCache,
-  setTwitterCache,
-  parseProfileHtml,
-  formatProfile,
-} from "#utils/twitter.js";
 
-class TwitterUserCommand extends Command {
-  async run() {
-    this.success = false;
-    const username = this.getOptionString("username", true);
-
-    if (!username) {
-      return "❌ Gabe says: You forgot to tell me which Twitter user to fetch!";
-    }
-
-    await this.acknowledge();
-
-    const cacheKey = `twitter:user:${username}`;
-    if (getTwitterCache(cacheKey)) {
-      const profile = getTwitterCache(cacheKey);
-      return formatProfile(profile, username);
-    }
-
-    try {
-      const urls = getInstances().map((i) => `${i}/${username}`);
-      const response = await fetchWithFallback(urls);
-
-      if (!response.ok) {
-        return "❌ Gabe says: Couldn't fetch that Twitter profile. Try again later.";
-      }
-
-      const html = await response.text();
-      const profile = parseProfileHtml(html);
-
-      if (!profile.name && !profile.handle) {
-        return "❌ Gabe says: Couldn't parse that Twitter profile. The user might not exist.";
-      }
-
-      setTwitterCache(cacheKey, profile, 180000);
-      this.success = true;
-      return formatProfile(profile, username);
-    } catch (error) {
-      if (error instanceof Error && error.message.includes("All instances failed")) {
-        return "❌ Gabe says: All Nitter instances failed. Twitter might be having issues or instances are down. Try again later.";
-      }
-      return `❌ Gabe says: Something went wrong. ${error.message}`;
-    }
-  }
-
-  static flags = [
-    {
-      name: "username",
-      type: Constants.ApplicationCommandOptionTypes.STRING,
-      description: "Twitter username (without @)",
-      required: true,
-    },
-  ];
-  static description = "Fetch Twitter/X profile information";
-  static aliases = ["tw", "twitter"];
-  static category = "internet";
+class TwitterCommand extends Command {
+  static description = "Twitter/X commands";
+  static aliases = ["tw", "twitter", "x"];
+  static slashAllowed = true;
 }
 
-export default TwitterUserCommand;
+export default TwitterCommand;

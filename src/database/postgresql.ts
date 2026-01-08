@@ -10,7 +10,16 @@ import {
   userCommands,
 } from "#utils/collections.js";
 import logger from "#utils/logger.js";
-import type { Count, DBGuild, StarboardEntry, StarboardSettings, Tag } from "#utils/types.js";
+import type {
+  Battle,
+  BattleStats,
+  BattleSubmission,
+  Count,
+  DBGuild,
+  StarboardEntry,
+  StarboardSettings,
+  Tag,
+} from "#utils/types.js";
 import type { DatabasePlugin } from "../database.ts";
 
 interface Settings {
@@ -143,7 +152,7 @@ const updates = [
     PRIMARY KEY (guild_id, message_id)
   );
   CREATE INDEX IF NOT EXISTS starboard_messages_guild_idx ON starboard_messages (guild_id);`,
-  // Economy system tables
+// Economy system tables
   `CREATE TABLE IF NOT EXISTS economy_users (
     guild_id VARCHAR(30) NOT NULL,
     user_id VARCHAR(30) NOT NULL,
@@ -275,6 +284,47 @@ const updates = [
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   );
   CREATE INDEX IF NOT EXISTS idx_antinuke_actions_lookup ON antinuke_actions(guild_id, executor_id, created_at);`,
+  // Image battles tables
+  `CREATE TABLE IF NOT EXISTS battles (
+    id SERIAL PRIMARY KEY,
+    guild_id VARCHAR(30) NOT NULL,
+    channel_id VARCHAR(30) NOT NULL,
+    host_id VARCHAR(30) NOT NULL,
+    theme TEXT NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'submissions',
+    submission_end TIMESTAMP NOT NULL,
+    voting_end TIMESTAMP,
+    winner_id VARCHAR(30),
+    message_id VARCHAR(30),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+  CREATE TABLE IF NOT EXISTS battle_submissions (
+    id SERIAL PRIMARY KEY,
+    battle_id INTEGER NOT NULL REFERENCES battles(id) ON DELETE CASCADE,
+    user_id VARCHAR(30) NOT NULL,
+    image_url TEXT NOT NULL,
+    votes INTEGER DEFAULT 0,
+    submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(battle_id, user_id)
+  );
+  CREATE TABLE IF NOT EXISTS battle_votes (
+    id SERIAL PRIMARY KEY,
+    battle_id INTEGER NOT NULL REFERENCES battles(id) ON DELETE CASCADE,
+    voter_id VARCHAR(30) NOT NULL,
+    submission_id INTEGER NOT NULL REFERENCES battle_submissions(id) ON DELETE CASCADE,
+    voted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(battle_id, voter_id)
+  );
+  CREATE TABLE IF NOT EXISTS battle_stats (
+    guild_id VARCHAR(30) NOT NULL,
+    user_id VARCHAR(30) NOT NULL,
+    wins INTEGER DEFAULT 0,
+    participations INTEGER DEFAULT 0,
+    total_votes_received INTEGER DEFAULT 0,
+    PRIMARY KEY (guild_id, user_id)
+  );
+  CREATE INDEX IF NOT EXISTS idx_battles_guild ON battles(guild_id);
+  CREATE INDEX IF NOT EXISTS idx_battle_submissions_battle ON battle_submissions(battle_id);`,
 ];
 
 export default class PostgreSQLPlugin implements DatabasePlugin {
@@ -1368,5 +1418,130 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
     } else {
       await this.sql`DELETE FROM antinuke_actions WHERE guild_id = ${guildId}`;
     }
+  }
+
+  // ==================== IMAGE BATTLES SYSTEM ====================
+
+  async createBattle(
+    guildId: string,
+    channelId: string,
+    hostId: string,
+    theme: string,
+    submissionMinutes: number,
+  ): Promise<Battle> {
+    const submissionEnd = new Date(Date.now() + submissionMinutes * 60 * 1000);
+    const [result] = await this.sql<{ id: number }[]>`
+      INSERT INTO battles (guild_id, channel_id, host_id, theme, status, submission_end)
+      VALUES (${guildId}, ${channelId}, ${hostId}, ${theme}, 'submissions', ${submissionEnd})
+      RETURNING id
+    `;
+    return (await this.getBattle(result.id)) as Battle;
+  }
+
+  async getBattle(battleId: number): Promise<Battle | undefined> {
+    const [result] = await this.sql<Battle[]>`SELECT * FROM battles WHERE id = ${battleId}`;
+    return result;
+  }
+
+  async getActiveBattle(guildId: string): Promise<Battle | undefined> {
+    const [result] = await this.sql<Battle[]>`
+      SELECT * FROM battles WHERE guild_id = ${guildId} AND status IN ('submissions', 'voting')
+      ORDER BY id DESC LIMIT 1
+    `;
+    return result;
+  }
+
+  async updateBattleStatus(battleId: number, status: string, votingEnd?: string): Promise<void> {
+    if (votingEnd) {
+      await this.sql`UPDATE battles SET status = ${status}, voting_end = ${votingEnd} WHERE id = ${battleId}`;
+    } else {
+      await this.sql`UPDATE battles SET status = ${status} WHERE id = ${battleId}`;
+    }
+  }
+
+  async updateBattleMessage(battleId: number, messageId: string): Promise<void> {
+    await this.sql`UPDATE battles SET message_id = ${messageId} WHERE id = ${battleId}`;
+  }
+
+  async setBattleWinner(battleId: number, winnerId: string): Promise<void> {
+    await this.sql`UPDATE battles SET winner_id = ${winnerId}, status = 'completed' WHERE id = ${battleId}`;
+  }
+
+  async addSubmission(battleId: number, userId: string, imageUrl: string): Promise<BattleSubmission> {
+    const [result] = await this.sql<{ id: number }[]>`
+      INSERT INTO battle_submissions (battle_id, user_id, image_url)
+      VALUES (${battleId}, ${userId}, ${imageUrl})
+      RETURNING id
+    `;
+    return (
+      await this.sql<BattleSubmission[]>`
+      SELECT * FROM battle_submissions WHERE id = ${result.id}
+    `
+    )[0];
+  }
+
+  async getSubmissions(battleId: number): Promise<BattleSubmission[]> {
+    return await this.sql<BattleSubmission[]>`
+      SELECT * FROM battle_submissions WHERE battle_id = ${battleId} ORDER BY submitted_at ASC
+    `;
+  }
+
+  async getSubmission(battleId: number, userId: string): Promise<BattleSubmission | undefined> {
+    const [result] = await this.sql<BattleSubmission[]>`
+      SELECT * FROM battle_submissions WHERE battle_id = ${battleId} AND user_id = ${userId}
+    `;
+    return result;
+  }
+
+  async hasVoted(battleId: number, voterId: string): Promise<boolean> {
+    const [result] = await this.sql<{ count: number }[]>`
+      SELECT COUNT(*) as count FROM battle_votes WHERE battle_id = ${battleId} AND voter_id = ${voterId}
+    `;
+    return (result?.count ?? 0) > 0;
+  }
+
+  async addVote(battleId: number, voterId: string, submissionId: number): Promise<void> {
+    await this.sql.begin(async (sql) => {
+      await sql`INSERT INTO battle_votes (battle_id, voter_id, submission_id) VALUES (${battleId}, ${voterId}, ${submissionId})`;
+      await sql`UPDATE battle_submissions SET votes = votes + 1 WHERE id = ${submissionId}`;
+    });
+  }
+
+  async getVoteCounts(battleId: number): Promise<{ submission_id: number; votes: number }[]> {
+    return await this.sql<{ submission_id: number; votes: number }[]>`
+      SELECT id as submission_id, votes FROM battle_submissions WHERE battle_id = ${battleId} ORDER BY votes DESC
+    `;
+  }
+
+  async getBattleStats(guildId: string, userId: string): Promise<BattleStats> {
+    const [result] = await this.sql<BattleStats[]>`
+      SELECT * FROM battle_stats WHERE guild_id = ${guildId} AND user_id = ${userId}
+    `;
+    return (
+      result ?? {
+        guild_id: guildId,
+        user_id: userId,
+        wins: 0,
+        participations: 0,
+        total_votes_received: 0,
+      }
+    );
+  }
+
+  async updateBattleStats(guildId: string, userId: string, won: boolean, votesReceived: number): Promise<void> {
+    await this.sql`
+      INSERT INTO battle_stats (guild_id, user_id, wins, participations, total_votes_received)
+      VALUES (${guildId}, ${userId}, ${won ? 1 : 0}, 1, ${votesReceived})
+      ON CONFLICT (guild_id, user_id) DO UPDATE SET
+        wins = battle_stats.wins + ${won ? 1 : 0},
+        participations = battle_stats.participations + 1,
+        total_votes_received = battle_stats.total_votes_received + ${votesReceived}
+    `;
+  }
+
+  async getBattleLeaderboard(guildId: string, limit = 10): Promise<BattleStats[]> {
+    return await this.sql<BattleStats[]>`
+      SELECT * FROM battle_stats WHERE guild_id = ${guildId} ORDER BY wins DESC, total_votes_received DESC LIMIT ${limit}
+    `;
   }
 }

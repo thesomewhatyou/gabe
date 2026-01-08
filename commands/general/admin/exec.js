@@ -1,6 +1,6 @@
 import { Buffer } from "node:buffer";
 import { exec as baseExec } from "node:child_process";
-import process from "node:process";
+
 import { promisify } from "node:util";
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";

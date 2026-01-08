@@ -16,7 +16,16 @@ import {
   userCommands,
 } from "#utils/collections.js";
 import logger from "#utils/logger.js";
-import type { Count, DBGuild, StarboardEntry, StarboardSettings, Tag } from "#utils/types.js";
+import type {
+  Battle,
+  BattleStats,
+  BattleSubmission,
+  Count,
+  DBGuild,
+  StarboardEntry,
+  StarboardSettings,
+  Tag,
+} from "#utils/types.js";
 import type { DatabasePlugin } from "../database.ts";
 
 type BunDenoDatabase = typeof BunDatabase | typeof DenoDatabase;
@@ -621,6 +630,50 @@ const updates = [
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   );
   CREATE INDEX IF NOT EXISTS idx_antinuke_actions_lookup ON antinuke_actions(guild_id, executor_id, created_at);`,
+  // Image Battles feature - competitive image editing tournaments
+  `CREATE TABLE IF NOT EXISTS battles (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    guild_id VARCHAR(30) NOT NULL,
+    channel_id VARCHAR(30) NOT NULL,
+    host_id VARCHAR(30) NOT NULL,
+    theme VARCHAR(200) NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'submissions',
+    submission_end TIMESTAMP NOT NULL,
+    voting_end TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    message_id VARCHAR(30),
+    winner_id VARCHAR(30)
+  );
+  CREATE TABLE IF NOT EXISTS battle_submissions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    battle_id INTEGER NOT NULL,
+    user_id VARCHAR(30) NOT NULL,
+    image_url TEXT NOT NULL,
+    submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    votes INTEGER DEFAULT 0,
+    FOREIGN KEY (battle_id) REFERENCES battles(id) ON DELETE CASCADE,
+    UNIQUE(battle_id, user_id)
+  );
+  CREATE TABLE IF NOT EXISTS battle_votes (
+    battle_id INTEGER NOT NULL,
+    voter_id VARCHAR(30) NOT NULL,
+    submission_id INTEGER NOT NULL,
+    voted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (battle_id, voter_id),
+    FOREIGN KEY (battle_id) REFERENCES battles(id) ON DELETE CASCADE,
+    FOREIGN KEY (submission_id) REFERENCES battle_submissions(id) ON DELETE CASCADE
+  );
+  CREATE TABLE IF NOT EXISTS battle_stats (
+    guild_id VARCHAR(30) NOT NULL,
+    user_id VARCHAR(30) NOT NULL,
+    wins INTEGER DEFAULT 0,
+    participations INTEGER DEFAULT 0,
+    total_votes_received INTEGER DEFAULT 0,
+    PRIMARY KEY (guild_id, user_id)
+  );
+  CREATE INDEX IF NOT EXISTS battles_guild_idx ON battles (guild_id);
+  CREATE INDEX IF NOT EXISTS battles_status_idx ON battles (status);
+  CREATE INDEX IF NOT EXISTS battle_submissions_battle_idx ON battle_submissions (battle_id);`,
 ];
 
 export default class SQLitePlugin implements DatabasePlugin {
@@ -1855,5 +1908,144 @@ export default class SQLitePlugin implements DatabasePlugin {
     } else {
       this.connection.prepare("DELETE FROM antinuke_actions WHERE guild_id = ?").run(guildId);
     }
+  }
+
+  // ==================== Image Battles ====================
+
+  async createBattle(
+    guildId: string,
+    channelId: string,
+    hostId: string,
+    theme: string,
+    submissionMinutes: number,
+  ): Promise<Battle> {
+    const submissionEnd = new Date(Date.now() + submissionMinutes * 60 * 1000).toISOString();
+
+    const result = this.connection
+      .prepare(
+        `INSERT INTO battles (guild_id, channel_id, host_id, theme, status, submission_end)
+         VALUES (?, ?, ?, ?, 'submissions', ?)`,
+      )
+      .run(guildId, channelId, hostId, theme, submissionEnd);
+
+    const battleId =
+      typeof result === "object" && result !== null && "lastInsertRowid" in result
+        ? (result.lastInsertRowid as number)
+        : (result as number);
+
+    return this.getBattle(battleId as number) as Promise<Battle>;
+  }
+
+  async getBattle(battleId: number): Promise<Battle | undefined> {
+    return this.connection.prepare("SELECT * FROM battles WHERE id = ?").get(battleId) as Battle | undefined;
+  }
+
+  async getActiveBattle(guildId: string): Promise<Battle | undefined> {
+    return this.connection
+      .prepare(
+        "SELECT * FROM battles WHERE guild_id = ? AND status IN ('submissions', 'voting') ORDER BY id DESC LIMIT 1",
+      )
+      .get(guildId) as Battle | undefined;
+  }
+
+  async updateBattleStatus(battleId: number, status: string, votingEnd?: string): Promise<void> {
+    if (votingEnd) {
+      this.connection
+        .prepare("UPDATE battles SET status = ?, voting_end = ? WHERE id = ?")
+        .run(status, votingEnd, battleId);
+    } else {
+      this.connection.prepare("UPDATE battles SET status = ? WHERE id = ?").run(status, battleId);
+    }
+  }
+
+  async updateBattleMessage(battleId: number, messageId: string): Promise<void> {
+    this.connection.prepare("UPDATE battles SET message_id = ? WHERE id = ?").run(messageId, battleId);
+  }
+
+  async setBattleWinner(battleId: number, winnerId: string): Promise<void> {
+    this.connection
+      .prepare("UPDATE battles SET winner_id = ?, status = 'completed' WHERE id = ?")
+      .run(winnerId, battleId);
+  }
+
+  async addSubmission(battleId: number, userId: string, imageUrl: string): Promise<BattleSubmission> {
+    this.connection
+      .prepare(
+        `INSERT INTO battle_submissions (battle_id, user_id, image_url)
+         VALUES (?, ?, ?)
+         ON CONFLICT(battle_id, user_id) DO UPDATE SET image_url = excluded.image_url`,
+      )
+      .run(battleId, userId, imageUrl);
+
+    return this.getSubmission(battleId, userId) as Promise<BattleSubmission>;
+  }
+
+  async getSubmissions(battleId: number): Promise<BattleSubmission[]> {
+    return this.connection
+      .prepare("SELECT * FROM battle_submissions WHERE battle_id = ? ORDER BY submitted_at ASC")
+      .all(battleId) as BattleSubmission[];
+  }
+
+  async getSubmission(battleId: number, userId: string): Promise<BattleSubmission | undefined> {
+    return this.connection
+      .prepare("SELECT * FROM battle_submissions WHERE battle_id = ? AND user_id = ?")
+      .get(battleId, userId) as BattleSubmission | undefined;
+  }
+
+  async hasVoted(battleId: number, voterId: string): Promise<boolean> {
+    const result = this.connection
+      .prepare("SELECT 1 FROM battle_votes WHERE battle_id = ? AND voter_id = ?")
+      .get(battleId, voterId);
+    return !!result;
+  }
+
+  async addVote(battleId: number, voterId: string, submissionId: number): Promise<void> {
+    this.connection.transaction(() => {
+      this.connection
+        .prepare("INSERT INTO battle_votes (battle_id, voter_id, submission_id) VALUES (?, ?, ?)")
+        .run(battleId, voterId, submissionId);
+      this.connection.prepare("UPDATE battle_submissions SET votes = votes + 1 WHERE id = ?").run(submissionId);
+    })();
+  }
+
+  async getVoteCounts(battleId: number): Promise<{ submission_id: number; votes: number }[]> {
+    return this.connection
+      .prepare("SELECT id as submission_id, votes FROM battle_submissions WHERE battle_id = ? ORDER BY votes DESC")
+      .all(battleId) as { submission_id: number; votes: number }[];
+  }
+
+  async getBattleStats(guildId: string, userId: string): Promise<BattleStats> {
+    const result = this.connection
+      .prepare("SELECT * FROM battle_stats WHERE guild_id = ? AND user_id = ?")
+      .get(guildId, userId) as BattleStats | undefined;
+
+    if (result) return result;
+
+    return {
+      guild_id: guildId,
+      user_id: userId,
+      wins: 0,
+      participations: 0,
+      total_votes_received: 0,
+    };
+  }
+
+  async updateBattleStats(guildId: string, userId: string, won: boolean, votesReceived: number): Promise<void> {
+    this.connection
+      .prepare(
+        `INSERT INTO battle_stats (guild_id, user_id, wins, participations, total_votes_received)
+         VALUES (?, ?, ?, 1, ?)
+         ON CONFLICT(guild_id, user_id) DO UPDATE SET
+           wins = wins + ?,
+           participations = participations + 1,
+           total_votes_received = total_votes_received + ?`,
+      )
+      .run(guildId, userId, won ? 1 : 0, votesReceived, won ? 1 : 0, votesReceived);
+  }
+
+  async getBattleLeaderboard(guildId: string, limit = 10): Promise<BattleStats[]> {
+    return this.connection
+      .prepare("SELECT * FROM battle_stats WHERE guild_id = ? ORDER BY wins DESC, total_votes_received DESC LIMIT ?")
+      .all(guildId, limit) as BattleStats[];
   }
 }

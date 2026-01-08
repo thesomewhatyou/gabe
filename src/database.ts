@@ -4,7 +4,16 @@ import process from "node:process";
 import type { Guild, GuildChannel } from "oceanic.js";
 import detectRuntime from "#utils/detectRuntime.js";
 import logger from "#utils/logger.js";
-import { type DBGuild, type StarboardEntry, type StarboardSettings, isError, type Tag } from "#utils/types.js";
+import {
+  type Battle,
+  type BattleStats,
+  type BattleSubmission,
+  type DBGuild,
+  isError,
+  type StarboardEntry,
+  type StarboardSettings,
+  type Tag,
+} from "#utils/types.js";
 
 export interface DatabasePlugin {
   setup: () => Promise<void>;
@@ -308,6 +317,28 @@ export interface DatabasePlugin {
   addToAntinukeWhitelist: (guildId: string, type: "users" | "roles", id: string) => Promise<void>;
   removeFromAntinukeWhitelist: (guildId: string, type: "users" | "roles", id: string) => Promise<void>;
   clearAntinukeActions: (guildId: string, olderThanSeconds?: number) => Promise<void>;
+  // Image Battles system
+  createBattle: (
+    guildId: string,
+    channelId: string,
+    hostId: string,
+    theme: string,
+    submissionMinutes: number,
+  ) => Promise<Battle>;
+  getBattle: (battleId: number) => Promise<Battle | undefined>;
+  getActiveBattle: (guildId: string) => Promise<Battle | undefined>;
+  updateBattleStatus: (battleId: number, status: string, votingEnd?: string) => Promise<void>;
+  updateBattleMessage: (battleId: number, messageId: string) => Promise<void>;
+  setBattleWinner: (battleId: number, winnerId: string) => Promise<void>;
+  addSubmission: (battleId: number, userId: string, imageUrl: string) => Promise<BattleSubmission>;
+  getSubmissions: (battleId: number) => Promise<BattleSubmission[]>;
+  getSubmission: (battleId: number, userId: string) => Promise<BattleSubmission | undefined>;
+  hasVoted: (battleId: number, voterId: string) => Promise<boolean>;
+  addVote: (battleId: number, voterId: string, submissionId: number) => Promise<void>;
+  getVoteCounts: (battleId: number) => Promise<{ submission_id: number; votes: number }[]>;
+  getBattleStats: (guildId: string, userId: string) => Promise<BattleStats>;
+  updateBattleStats: (guildId: string, userId: string, won: boolean, votesReceived: number) => Promise<void>;
+  getBattleLeaderboard: (guildId: string, limit?: number) => Promise<BattleStats[]>;
 }
 
 export async function init(): Promise<DatabasePlugin | undefined> {

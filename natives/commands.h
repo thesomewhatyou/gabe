@@ -56,6 +56,18 @@ declare_input_func(Wall);
 declare_input_func(Watermark);
 declare_input_func(Whisper);
 
+// Video processing functions (requires FFmpeg)
+#if FFMPEG_ENABLED
+declare_input_func(VideoSpeed);
+declare_input_func(VideoReverse);
+declare_input_func(VideoCaption);
+declare_input_func(VideoToGif);
+declare_input_func(VideoTrim);
+declare_input_func(VideoMeme);
+declare_input_func(VideoStitch);
+declare_input_func(VideoAudio);
+#endif
+
 // Declare our No-Input Functions
 
 declare_noinput_func(Homebrew);

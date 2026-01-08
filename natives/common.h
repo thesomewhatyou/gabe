@@ -104,7 +104,17 @@ const std::map<std::string, ArgumentMap (*)(const string &type, string &outType,
     {"wall",       &Wall      },
 #endif
     {"watermark",  &Watermark },
-    {"whisper",    &Whisper   }
+    {"whisper",    &Whisper   },
+#ifdef FFMPEG_ENABLED
+    {"videospeed",   &VideoSpeed  },
+    {"videoreverse", &VideoReverse},
+    {"videocaption", &VideoCaption},
+    {"videotogif",   &VideoToGif  },
+    {"videotrim",    &VideoTrim   },
+    {"videomeme",    &VideoMeme   },
+    {"videostitch",  &VideoStitch },
+    {"videoaudio",   &VideoAudio  },
+#endif
 };
 
 const std::map<std::string,

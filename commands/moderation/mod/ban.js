@@ -53,11 +53,11 @@ class BanCommand extends Command {
 
       // Try to DM the user before banning (if they have DM notifications enabled)
       let dmSent = false;
-      let dmDisabledByUser = false;
+      let _dmDisabledByUser = false;
       try {
         const userPrefs = this.database ? await this.database.getUserPreferences(userToBan.id) : null;
         if (userPrefs?.dm_notifications === false) {
-          dmDisabledByUser = true;
+          _dmDisabledByUser = true;
         } else {
           const dmChannel = await userToBan.createDM();
           await dmChannel.createMessage({

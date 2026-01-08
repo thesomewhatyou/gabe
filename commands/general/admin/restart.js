@@ -1,4 +1,3 @@
-import process from "node:process";
 import Command from "#cmd-classes/command.js";
 import { exit } from "#utils/misc.js";
 import { isOwner } from "#utils/owners.js";

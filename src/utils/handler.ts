@@ -320,6 +320,7 @@ export async function send(bot: Client) {
   log("info", `[DEBUG] Sending ${cmdArray.length} commands: ${cmdArray.map((c) => c.name).join(", ")}`);
   const effectsCmd = cmdArray.find((c) => c.name === "effects");
   if (effectsCmd) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     log("info", `[DEBUG] Effects command options: ${JSON.stringify((effectsCmd as any).options)}`);
   }
   await bot.application.bulkEditGlobalCommands(cmdArray);

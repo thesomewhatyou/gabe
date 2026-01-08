@@ -62,7 +62,7 @@ class WarningsCommand extends Command {
 
     const warningList = warnings
       .slice(0, 10)
-      .map((w, i) => {
+      .map((w, _i) => {
         const date = new Date(w.created_at);
         const timestamp = Math.floor(date.getTime() / 1000);
         return `**#${w.id}** - <t:${timestamp}:R>\n┗ ${w.reason.length > 50 ? w.reason.slice(0, 50) + "..." : w.reason}`;
