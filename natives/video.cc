@@ -134,7 +134,7 @@ ArgumentMap VideoSpeed(const string &type, string &outType, const char *bufferDa
         inFile.read(outputBuffer, fileSize);
         
         output["buf"] = outputBuffer;
-        output["len"] = fileSize;
+        output["size"] = fileSize;
     } else {
         output["error"] = string("Video speed adjustment failed");
     }
@@ -185,7 +185,7 @@ ArgumentMap VideoReverse(const string &type, string &outType, const char *buffer
         inFile.read(outputBuffer, fileSize);
         
         output["buf"] = outputBuffer;
-        output["len"] = fileSize;
+        output["size"] = fileSize;
     } else {
         output["error"] = string("Video reverse failed");
     }
@@ -253,7 +253,7 @@ ArgumentMap VideoCaption(const string &type, string &outType, const char *buffer
         inFile.read(outputBuffer, fileSize);
         
         output["buf"] = outputBuffer;
-        output["len"] = fileSize;
+        output["size"] = fileSize;
     } else {
         output["error"] = string("Video caption failed");
     }
@@ -325,7 +325,7 @@ ArgumentMap VideoToGif(const string &type, string &outType, const char *bufferDa
         inFile.read(outputBuffer, fileSize);
         
         output["buf"] = outputBuffer;
-        output["len"] = fileSize;
+        output["size"] = fileSize;
     } else {
         output["error"] = string("GIF conversion failed");
     }
@@ -383,7 +383,7 @@ ArgumentMap VideoTrim(const string &type, string &outType, const char *bufferDat
         inFile.read(outputBuffer, fileSize);
         
         output["buf"] = outputBuffer;
-        output["len"] = fileSize;
+        output["size"] = fileSize;
     } else {
         output["error"] = string("Video trim failed");
     }
@@ -472,7 +472,7 @@ ArgumentMap VideoMeme(const string &type, string &outType, const char *bufferDat
         inFile.read(outputBuffer, fileSize);
         
         output["buf"] = outputBuffer;
-        output["len"] = fileSize;
+        output["size"] = fileSize;
     } else {
         output["error"] = string("Video meme creation failed");
     }
@@ -542,7 +542,7 @@ ArgumentMap VideoStitch(const string &type, string &outType, const char *bufferD
         inFile.read(outputBuffer, fileSize);
         
         output["buf"] = outputBuffer;
-        output["len"] = fileSize;
+        output["size"] = fileSize;
     } else {
         output["error"] = string("Video stitch failed");
     }
@@ -590,7 +590,7 @@ ArgumentMap VideoAudio(const string &type, string &outType, const char *bufferDa
         inFile.read(outputBuffer, fileSize);
         
         output["buf"] = outputBuffer;
-        output["len"] = fileSize;
+        output["size"] = fileSize;
     } else {
         output["error"] = string("Audio extraction failed");
     }
