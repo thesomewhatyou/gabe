@@ -47,7 +47,7 @@ class YouTubeCommand extends Command {
   ];
 
   static description = "Searches YouTube";
-  static aliases = ["yt", "video", "ytsearch"];
+  static aliases = ["yt", "ytsearch"];
 }
 
 export default YouTubeCommand;
