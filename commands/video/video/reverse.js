@@ -1,8 +1,8 @@
 import ImageCommand from "#cmd-classes/imageCommand.js";
 
-class VideoReverseCommand extends ImageCommand {
-  static description = "Reverse a video (plays backwards)";
-  static aliases = ["vreverse", "videoreverse", "backwards"];
+class ReverseCommand extends ImageCommand {
+  static description = "Play a video backwards";
+  static aliases = ["backwards", "rewind"];
 
   static requiresImage = true;
   static requiresVideo = true;
@@ -10,4 +10,4 @@ class VideoReverseCommand extends ImageCommand {
   static command = "videoreverse";
 }
 
-export default VideoReverseCommand;
+export default ReverseCommand;
