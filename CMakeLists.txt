@@ -48,6 +48,12 @@ set(SOURCE_FILES natives/blur.cc
   natives/watermark.cc
   natives/whisper.cc)
 
+# Video processing (requires FFmpeg)
+option(WITH_FFMPEG "Build with FFmpeg support for video processing commands" ON)
+if (WITH_FFMPEG)
+  list(APPEND SOURCE_FILES natives/video.cc)
+endif()
+
 if (APPLE)
   set(WITH_ZXING_DEFAULT OFF)
 else()
@@ -106,6 +112,17 @@ if (WITH_ZXING)
   if (ZXing_FOUND)
     add_definitions(-DZXING_ENABLED)
     target_link_libraries(${PROJECT_NAME} ZXing::ZXing)
+  endif()
+endif()
+
+if (WITH_FFMPEG)
+  find_package(PkgConfig REQUIRED)
+  pkg_check_modules(FFMPEG REQUIRED libavcodec libavformat libavutil libavfilter libswscale)
+  if (FFMPEG_FOUND)
+    add_definitions(-DFFMPEG_ENABLED)
+    include_directories(${FFMPEG_INCLUDE_DIRS})
+    link_directories(${FFMPEG_LIBRARY_DIRS})
+    target_link_libraries(${PROJECT_NAME} ${FFMPEG_LDFLAGS})
   endif()
 endif()
 

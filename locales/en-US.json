@@ -104,7 +104,23 @@
       "purge": "Deletes multiple messages at once (cleanup time)",
       "music": "Handles music playback",
       "tags": "The main tags command. Check the help page for more info: https://gabe.net/help.html",
-      "ship": "Find out how compatible two people are (Gabe's love calculator)"
+      "ship": "Find out how compatible two people are (Gabe's love calculator)",
+      "battle": "Competitive image editing battles - show off your skills!",
+      "battle start": "Start a new image editing battle with a theme",
+      "battle submit": "Submit your edited image to the current battle",
+      "battle vote": "Vote for your favorite submission",
+      "battle status": "Check the status of the current battle",
+      "battle end": "End submissions/voting and proceed to the next phase",
+      "battle leaderboard": "View the battle leaderboard for this server",
+      "battle stats": "View battle statistics for a user",
+      "video": "Process and edit videos with FFmpeg",
+      "video speed": "Speed up or slow down a video",
+      "video reverse": "Reverse a video (play it backwards)",
+      "video caption": "Add a caption to a video",
+      "video togif": "Convert a video to a GIF",
+      "video trim": "Trim/cut a video to a specific duration",
+      "video meme": "Add classic top/bottom meme text to a video",
+      "video audio": "Extract audio from a video as MP3"
     },
     "flagNames": {
       "8ball": {
@@ -1115,6 +1131,25 @@
         "toggleRequired": "You need to specify whether to enable or disable the starboard!",
         "allowNoChange": "You need to specify at least one option to change!",
         "allowUpdated": "Starboard settings updated!\n• Self-starring: {{self}}\n• Bot messages: {{bots}}"
+      },
+      "battle": {
+        "noDatabase": "Image battles require a database to be configured.",
+        "alreadyActive": "There's already an active battle in this server! Use `/battle status` to check it or `/battle end` to finish it.",
+        "noTheme": "You need to provide a theme for the battle!",
+        "noBattle": "There's no active battle in this server. Start one with `/battle start`!",
+        "submissionsClosed": "Submissions are closed! Voting is now in progress.",
+        "notImage": "That doesn't look like an image. Please upload an image file!",
+        "noSubmission": "You need to provide an image to submit! Either attach a file or provide a URL.",
+        "votingNotStarted": "Voting hasn't started yet! Submissions are still open.",
+        "votingEnded": "Voting has already ended for this battle.",
+        "alreadyVoted": "You've already voted in this battle!",
+        "invalidSubmission": "That's not a valid submission number. Check `/battle status` for the list of submissions.",
+        "noSelfVote": "You can't vote for your own submission! Nice try though.",
+        "notHost": "Only the battle host or a server admin can end the battle!",
+        "notEnoughSubmissions": "Not enough submissions to start voting (need at least 2). Use `force:true` to end anyway.",
+        "noStats": "No battle statistics yet! Start a battle to see the leaderboard.",
+        "noPersonalStats": "You haven't participated in any battles yet!",
+        "noUserStats": "This user hasn't participated in any battles yet!"
       }
     }
   },

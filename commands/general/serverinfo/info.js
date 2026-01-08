@@ -4,7 +4,7 @@ import { commands as slashCommands, locales, messageCommands, userCommands } fro
 import logger from "#utils/logger.js";
 import { getServers } from "#utils/misc.js";
 import { getOwners } from "#utils/owners.js";
-import packageJson from "../../package.json" with { type: "json" };
+import packageJson from "../../../package.json" with { type: "json" };
 
 class InfoCommand extends Command {
   async run() {

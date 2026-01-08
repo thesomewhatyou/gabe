@@ -144,3 +144,44 @@ export interface AntinukeOffense {
   offense_count: number;
   last_offense: string | null;
 }
+
+// Image Battles types
+export type BattleStatus = "submissions" | "voting" | "completed" | "cancelled";
+
+export interface Battle {
+  id: number;
+  guild_id: string;
+  channel_id: string;
+  host_id: string;
+  theme: string;
+  status: BattleStatus;
+  submission_end: string;
+  voting_end: string | null;
+  created_at: string;
+  message_id: string | null;
+  winner_id: string | null;
+}
+
+export interface BattleSubmission {
+  id: number;
+  battle_id: number;
+  user_id: string;
+  image_url: string;
+  submitted_at: string;
+  votes: number;
+}
+
+export interface BattleVote {
+  battle_id: number;
+  voter_id: string;
+  submission_id: number;
+  voted_at: string;
+}
+
+export interface BattleStats {
+  guild_id: string;
+  user_id: string;
+  wins: number;
+  participations: number;
+  total_votes_received: number;
+}

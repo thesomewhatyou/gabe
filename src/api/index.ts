@@ -383,7 +383,7 @@ async function finishJob(
 
   jobs.set(job.id, jobObject);
   let r: RawMessage | undefined;
-  let webhookFailed = false;
+  let _webhookFailed = false;
   let isExpiredToken = false;
   if (clientID && object.token && allowedExtensions.includes(jobObject.ext) && jobObject.data.length < fileSize) {
     const form = new FormData();
@@ -404,7 +404,7 @@ async function finishJob(
       });
       clearTimeout(timeout);
       if (!res.ok) {
-        webhookFailed = true;
+        _webhookFailed = true;
         // 404 typically indicates an expired or invalid interaction token
         if (res.status === 404) {
           isExpiredToken = true;
@@ -427,7 +427,7 @@ async function finishJob(
       }
       r = (await res.json()) as RawMessage;
     } catch (e) {
-      webhookFailed = true;
+      _webhookFailed = true;
       if (!isExpiredToken) {
         error(`Error while sending job ${job.id}, will attempt to send back to the bot: ${e}`, job.num);
       }

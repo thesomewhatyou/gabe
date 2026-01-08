@@ -156,6 +156,7 @@ export default async ({ client, database }: EventParams, message: Message) => {
   const potentialSub = cmdBase[lowerSub];
   if (
     potentialSub?.prototype instanceof Command ||
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (potentialSub?.prototype && typeof (potentialSub as any).prototype.run === "function")
   ) {
     cmd = potentialSub as typeof Command;
