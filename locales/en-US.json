@@ -1173,15 +1173,19 @@
       "link": "link",
       "spoiler": "spoiler",
       "text": "text",
-      "togif": "togif"
+      "togif": "togif",
+      "video": "video",
+      "videoLink": "link"
     },
     "flags": {
       "ephemeral": "Attempt to send output as an ephemeral/temporary response",
-      "image": "An image/GIF attachment",
-      "link": "An image/GIF URL",
+      "image": "An image/GIF/video attachment",
+      "link": "An image/GIF/video URL",
       "spoiler": "Attempt to send output as a spoiler",
       "text": "The text to put on the image",
-      "togif": "Force GIF output"
+      "togif": "Force GIF output",
+      "video": "A video attachment",
+      "videoLink": "A video URL"
     },
     "frames": "That GIF has way too many frames. IT'S OVER 1000!!!",
     "jobEnded": "Something happened to the image servers before I could receive the image. Try again. Or not.",

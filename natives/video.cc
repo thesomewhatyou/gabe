@@ -87,8 +87,7 @@ static string escapeDrawtext(const string &text) {
 
 // Helper: Run ffmpeg command and return success status
 static bool runFfmpeg(const string &cmd) {
-  string fullCmd = cmd + " 2>/dev/null";
-  return system(fullCmd.c_str()) == 0;
+  return system(cmd.c_str()) == 0;
 }
 
 // Helper: Build output map with buffer

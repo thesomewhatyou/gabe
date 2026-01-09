@@ -1,6 +1,6 @@
 import { Buffer } from "node:buffer";
 import process from "node:process";
-import type { AnyInteractionGateway } from "oceanic.js";
+import { type AnyInteractionGateway, ChannelTypes, type TextChannel } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
 import ImageCommand from "#cmd-classes/imageCommand.js";
 import {
@@ -16,6 +16,7 @@ import { getString } from "#utils/i18n.js";
 import logger from "#utils/logger.js";
 import { clean } from "#utils/misc.js";
 import { upload } from "#utils/tempimages.js";
+import { closeTicket, createTicket } from "#utils/ticketUtils.js";
 import type { EventParams } from "#utils/types.js";
 
 let Sentry: typeof import("@sentry/node");
@@ -32,6 +33,103 @@ export default async ({ client, database }: EventParams, interaction: AnyInterac
 
   // handle incoming non-command interactions
   if (interaction.isComponentInteraction()) {
+    if (interaction.data.customID === "ticket_create") {
+      if (!database) {
+        await interaction.createMessage({
+          content: "❌ Database is not available.",
+          flags: 64,
+        });
+        return;
+      }
+      if (!interaction.guild) {
+        await interaction.createMessage({
+          content: "❌ This button can only be used in a server.",
+          flags: 64,
+        });
+        return;
+      }
+
+      await interaction.defer(64);
+
+      try {
+        const result = await createTicket(client, database, interaction.guild, interaction.user);
+
+        await interaction.createFollowup({
+          content: result.message,
+          flags: 64,
+        });
+      } catch (e) {
+        logger.error(`Error creating ticket: ${e}`);
+        if (process.env.SENTRY_DSN && process.env.SENTRY_DSN !== "") {
+          Sentry.captureException(e);
+        }
+        await interaction.createFollowup({
+          content: "❌ An error occurred while creating the ticket.",
+          flags: 64,
+        });
+      }
+      return;
+    }
+
+    if (interaction.data.customID === "ticket_close") {
+      if (!database) {
+        await interaction.createMessage({
+          content: "❌ Database is not available.",
+          flags: 64,
+        });
+        return;
+      }
+      if (!interaction.guild || !interaction.channel) {
+        await interaction.createMessage({
+          content: "❌ This button can only be used in a server channel.",
+          flags: 64,
+        });
+        return;
+      }
+
+      await interaction.defer(64);
+
+      if (interaction.channel.type !== ChannelTypes.GUILD_TEXT) {
+        await interaction.createFollowup({
+          content: "❌ Invalid channel type.",
+          flags: 64,
+        });
+        return;
+      }
+
+      try {
+        const result = await closeTicket(
+          database,
+          interaction.channel as TextChannel,
+          interaction.guild,
+          interaction.user,
+          "Closed via button",
+        );
+
+        if (!result.success) {
+          await interaction.createFollowup({
+            content: result.message,
+            flags: 64,
+          });
+        } else {
+          await interaction.createFollowup({
+            content: "✅ Closing ticket...",
+            flags: 64,
+          });
+        }
+      } catch (e) {
+        logger.error(`Error closing ticket: ${e}`);
+        if (process.env.SENTRY_DSN && process.env.SENTRY_DSN !== "") {
+          Sentry.captureException(e);
+        }
+        await interaction.createFollowup({
+          content: "❌ An error occurred while closing the ticket.",
+          flags: 64,
+        });
+      }
+      return;
+    }
+
     //await interaction.deferUpdate();
     const collector = collectors.get(interaction.message.id);
     if (collector) collector.emit("interaction", interaction);

@@ -37,6 +37,7 @@ export default async function run(object: ImageParams): Promise<{ buffer: Buffer
       });
       clearTimeout(timeout);
       if (res.status === 429) throw "ratelimit";
+      if (!res.ok) throw `http${res.status}`;
 
       // Check content length to prevent downloading excessively large files
       const contentLength = res.headers.get("content-length");

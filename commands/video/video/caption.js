@@ -15,14 +15,14 @@ class CaptionCommand extends ImageCommand {
 
   static init() {
     super.init();
+    this.flags.unshift({
+      name: "text",
+      type: Constants.ApplicationCommandOptionTypes.STRING,
+      description: "The caption text to add",
+      required: true,
+      classic: true,
+    });
     this.flags.push(
-      {
-        name: "text",
-        type: Constants.ApplicationCommandOptionTypes.STRING,
-        description: "The caption text to add",
-        required: true,
-        classic: true,
-      },
       {
         name: "position",
         type: Constants.ApplicationCommandOptionTypes.STRING,
