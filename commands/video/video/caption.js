@@ -7,7 +7,7 @@ class CaptionCommand extends ImageCommand {
     const position = this.getOptionString("position") ?? "top";
     const fontSize = this.getOptionInteger("fontsize") ?? 32;
     return {
-      caption: this.clean(text),
+      caption: text,
       position,
       font_size: Math.min(Math.max(fontSize, 12), 72),
     };
