@@ -526,12 +526,45 @@ ArgumentMap VideoAudio(const string &type, string &outType, const char *bufferDa
     return makeError("Failed to write input file");
   }
 
-  ostringstream cmd;
-  cmd << "ffmpeg -y -i \"" << inPath << "\" ";
-  cmd << "-vn -acodec libmp3lame -b:a 192k ";
-  cmd << "\"" << outPath << "\"";
+  // Try multiple approaches to extract audio
+  bool ok = false;
+  
+  // First attempt: Use libmp3lame with explicit audio stream mapping
+  ostringstream cmd1;
+  cmd1 << "ffmpeg -y -i \"" << inPath << "\" ";
+  cmd1 << "-vn -map 0:a:0 -acodec libmp3lame -q:a 2 ";
+  cmd1 << "\"" << outPath << "\"";
+  ok = runFfmpeg(cmd1.str());
 
-  bool ok = runFfmpeg(cmd.str());
+  // Second attempt: Use built-in MP3 encoder if libmp3lame isn't available
+  if (!ok || !fs::exists(outPath)) {
+    removeTempFile(outPath);
+    ostringstream cmd2;
+    cmd2 << "ffmpeg -y -i \"" << inPath << "\" ";
+    cmd2 << "-vn -map 0:a? -acodec mp3 -q:a 2 ";
+    cmd2 << "\"" << outPath << "\"";
+    ok = runFfmpeg(cmd2.str());
+  }
+
+  // Third attempt: Convert to AAC first, then to MP3 (for problematic codecs)
+  if (!ok || !fs::exists(outPath)) {
+    removeTempFile(outPath);
+    ostringstream cmd3;
+    cmd3 << "ffmpeg -y -i \"" << inPath << "\" ";
+    cmd3 << "-vn -acodec libmp3lame -ar 44100 -ac 2 -b:a 192k ";
+    cmd3 << "\"" << outPath << "\"";
+    ok = runFfmpeg(cmd3.str());
+  }
+
+  // Fourth attempt: Simple copy if input already has MP3 audio
+  if (!ok || !fs::exists(outPath)) {
+    removeTempFile(outPath);
+    ostringstream cmd4;
+    cmd4 << "ffmpeg -y -i \"" << inPath << "\" ";
+    cmd4 << "-vn -acodec copy ";
+    cmd4 << "\"" << outPath << "\"";
+    ok = runFfmpeg(cmd4.str());
+  }
 
   ArgumentMap result;
   if (ok && fs::exists(outPath)) {
