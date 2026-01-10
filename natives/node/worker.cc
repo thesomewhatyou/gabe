@@ -38,6 +38,14 @@ void ImageAsyncWorker::OnError(const Error &e) {
 void ImageAsyncWorker::OnOK() {
   vips_error_clear();
   vips_thread_shutdown();
+  
+  // Check if an error occurred during processing
+  if (MapContainsKey(outArgs, "error")) {
+    string errorMsg = GetArgument<string>(outArgs, "error");
+    deferred.Reject(Napi::Error::New(Env(), errorMsg).Value());
+    return;
+  }
+  
   Buffer nodeBuf = Buffer<char>::New(Env(), 0);
   size_t outSize = GetArgumentWithFallback<size_t>(outArgs, "size", 0);
   if (outSize > 0) {
