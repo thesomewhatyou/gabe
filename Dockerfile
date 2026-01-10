@@ -25,7 +25,7 @@ RUN apk add --no-cache \
       libwebp \
       freetype \
       libxml2  \
-      ffmpeg  \
+      ffmpeg-dev  \
     && fc-cache -fv
 
 # Enable corepack & activate pnpm from package.json (fallback to latest)
