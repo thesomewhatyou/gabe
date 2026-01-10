@@ -129,7 +129,7 @@ ArgumentMap VideoSpeed(const string &type, string &outType, const char *bufferDa
     return makeError("Failed to write input file");
   }
 
-  // Build ffmpeg command with video and audio speed adjustment
+  // First attempt: Try with both video and audio speed adjustment
   ostringstream cmd;
   cmd << "ffmpeg -y -i \"" << inPath << "\" -filter_complex \"";
 
@@ -154,6 +154,19 @@ ArgumentMap VideoSpeed(const string &type, string &outType, const char *bufferDa
   cmd << "-movflags +faststart \"" << outPath << "\"";
 
   bool ok = runFfmpeg(cmd.str());
+
+  // If that failed, try without audio (video might not have audio stream)
+  if (!ok || !fs::exists(outPath)) {
+    removeTempFile(outPath);
+    ostringstream cmdNoAudio;
+    cmdNoAudio << "ffmpeg -y -i \"" << inPath << "\" ";
+    cmdNoAudio << "-vf \"setpts=" << (1.0f / factor) << "*PTS\" ";
+    cmdNoAudio << "-an ";  // Disable audio
+    cmdNoAudio << "-c:v libx264 -preset fast -crf 23 ";
+    cmdNoAudio << "-movflags +faststart \"" << outPath << "\"";
+    
+    ok = runFfmpeg(cmdNoAudio.str());
+  }
 
   ArgumentMap result;
   if (ok && fs::exists(outPath)) {
