@@ -87,7 +87,11 @@ static string escapeDrawtext(const string &text) {
 
 // Helper: Run ffmpeg command and return success status
 static bool runFfmpeg(const string &cmd) {
-  return system(cmd.c_str()) == 0;
+  string finalCmd = cmd;
+  if (finalCmd.find("ffmpeg ") == 0) {
+    finalCmd.replace(0, 7, "ffmpeg -nostdin ");
+  }
+  return system(finalCmd.c_str()) == 0;
 }
 
 // Helper: Build output map with buffer
