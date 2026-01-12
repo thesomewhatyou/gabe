@@ -27,7 +27,7 @@ RUN apk add --no-cache \
       libxml2  \
       ffmpeg  \
       ffmpeg-dev  \
-      pkgconfig
+      pkgconfig  \
     && fc-cache -fv
 
 # Enable corepack & activate pnpm from package.json (fallback to latest)
@@ -41,6 +41,7 @@ RUN corepack enable \
 COPY . .
 
 # Optional: MS fonts for meme commands (flaky mirrors, so retry)
+# It looks funnier on paper when you see Gaster make wingdings as memes
 RUN if [ "$MS_FONTS" = "1" ]; then \
       apk add --no-cache msttcorefonts-installer cabextract || true; \
       for i in 1 2 3; do \
