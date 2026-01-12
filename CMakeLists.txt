@@ -117,6 +117,15 @@ endif()
 
 if (WITH_FFMPEG)
   add_definitions(-DFFMPEG_ENABLED)
+  pkg_check_modules(FFMPEG REQUIRED 
+    libavcodec 
+    libavformat 
+    libavutil 
+    libswscale
+  )
+  include_directories(${FFMPEG_INCLUDE_DIRS})
+  link_directories(${FFMPEG_LIBRARY_DIRS})
+  target_link_libraries(${PROJECT_NAME} ${FFMPEG_LDFLAGS})
 endif()
 
 if (WITH_BACKWARD)
