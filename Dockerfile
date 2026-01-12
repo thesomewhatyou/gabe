@@ -26,6 +26,8 @@ RUN apk add --no-cache \
       freetype \
       libxml2  \
       ffmpeg  \
+      ffmpeg-dev  \
+      pkgconfig
     && fc-cache -fv
 
 # Enable corepack & activate pnpm from package.json (fallback to latest)
@@ -55,7 +57,8 @@ RUN mkdir -p /built
 FROM base AS native-build-0
 RUN apk add --no-cache \
       git cmake python3 alpine-sdk \
-      fontconfig-dev vips-dev zxing-cpp-dev
+      fontconfig-dev vips-dev zxing-cpp-dev \
+      pkgconfig ffmpeg-dev
 
 # ---------- with-ImageMagick native deps ----------
 FROM base AS native-build-1
@@ -64,7 +67,8 @@ RUN apk add --no-cache \
       zlib-dev libpng-dev libjpeg-turbo-dev freetype-dev fontconfig-dev \
       libtool libwebp-dev libxml2-dev \
       vips-dev libc6-compat zxing-cpp-dev \
-      pango-dev glib-dev
+      pango-dev glib-dev \
+      pkgconfig ffmpeg-dev
 
 # Build liblqr (needed for ImageMagick w/ liquid rescale) — only in this stage
 # NOTE: liblqr v0.4.2 ships a mismatched prototype for lqr_carver_generate_rcache()
