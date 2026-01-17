@@ -87,8 +87,11 @@ static string escapeDrawtext(const string &text) {
 
 // Helper: Run ffmpeg command and return success status
 static bool runFfmpeg(const string &cmd) {
-  string fullCmd = cmd + " 2>/dev/null";
-  return system(fullCmd.c_str()) == 0;
+  string finalCmd = cmd;
+  if (finalCmd.find("ffmpeg ") == 0) {
+    finalCmd.replace(0, 7, "ffmpeg -nostdin ");
+  }
+  return system(finalCmd.c_str()) == 0;
 }
 
 // Helper: Build output map with buffer
@@ -106,13 +109,23 @@ static ArgumentMap makeError(const string &msg) {
   return out;
 }
 
+// Helper: Get float from arguments (handling int/float mismatch)
+static float GetFloat(const ArgumentMap& arguments, const string& key, float fallback) {
+  if (arguments.find(key) == arguments.end()) return fallback;
+  const auto& val = arguments.at(key);
+  if (std::holds_alternative<int>(val)) return static_cast<float>(std::get<int>(val));
+  if (std::holds_alternative<float>(val)) return std::get<float>(val);
+  return fallback;
+}
+
+
 /**
  * VideoSpeed - Adjust playback speed of video
  * Parameters: speed (float), slow (bool)
  */
 ArgumentMap VideoSpeed(const string &type, string &outType, const char *bufferData, size_t bufferLength,
                        ArgumentMap arguments, [[maybe_unused]] bool *shouldKill) {
-  float speed = GetArgumentWithFallback<float>(arguments, "speed", 2.0f);
+  float speed = GetFloat(arguments, "speed", 2.0f);
   bool slow = GetArgumentWithFallback<bool>(arguments, "slow", false);
 
   // Clamp speed
@@ -349,8 +362,8 @@ ArgumentMap VideoToGif(const string &type, string &outType, const char *bufferDa
  */
 ArgumentMap VideoTrim(const string &type, string &outType, const char *bufferData, size_t bufferLength,
                       ArgumentMap arguments, [[maybe_unused]] bool *shouldKill) {
-  float start = GetArgumentWithFallback<float>(arguments, "start", 0.0f);
-  float duration = GetArgumentWithFallback<float>(arguments, "duration", 10.0f);
+  float start = GetFloat(arguments, "start", 0.0f);
+  float duration = GetFloat(arguments, "duration", 10.0f);
 
   if (start < 0.0f) start = 0.0f;
   if (duration < 0.5f) duration = 0.5f;

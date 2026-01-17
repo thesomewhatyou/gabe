@@ -37,7 +37,7 @@
     "start-api:debug": "DEBUG=true node dist/api/index.js",
     "start-api:bun:debug": "DEBUG=true bun src/api/index.ts",
     "start-api:deno:debug": "DEBUG=true deno -P src/api/index.ts",
-    "test": "pnpm build:ts && node --test tests"
+    "test": "pnpm build:ts && node --test tests/*.test.js"
   },
   "author": "thesomewhatyou",
   "license": "MIT",
@@ -47,13 +47,13 @@
   },
   "dependencies": {
     "@db/sqlite": "jsr:^0.12.0",
-    "better-sqlite3": "^12.4.6",
+    "better-sqlite3": "^12.5.0",
     "bufferutil": "^4.0.9",
     "codex": "^0.2.3",
     "dotenv": "^17.2.3",
     "file-type": "^21.1.1",
     "format-duration": "^3.0.2",
-    "ipaddr.js": "^2.2.0",
+    "ipaddr.js": "^2.3.0",
     "node-addon-api": "^8.5.0",
     "oceanic.js": "1.13.0",
     "postgres": "^3.4.7",
@@ -76,12 +76,12 @@
     "eslint-plugin-import-x": "^4.16.1",
     "eslint-plugin-prettier": "^5.5.4",
     "globals": "^16.5.0",
-    "prettier": "^3.7.1",
+    "prettier": "^3.7.4",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.48.0"
+    "typescript-eslint": "^8.51.0"
   },
   "optionalDependencies": {
-    "@sentry/bun": "^10.27.0",
+    "@sentry/bun": "^10.32.1",
     "@sentry/deno": "^10.27.0",
     "@sentry/node": "^10.27.0",
     "pm2": "^6.0.14"

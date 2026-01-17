@@ -242,6 +242,7 @@ export function isEmpty(string: string) {
 }
 
 export function safeBigInt(input: string | number | bigint | boolean): bigint | null {
+  if (typeof input === "string" && input.trim().length === 0) return null;
   try {
     return BigInt(input);
   } catch {

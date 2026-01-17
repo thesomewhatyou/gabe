@@ -59,7 +59,9 @@ CREATE TABLE guilds (
   prefix VARCHAR(15) NOT NULL,
   disabled text NOT NULL,
   disabled_commands text NOT NULL,
-  tag_roles VARCHAR DEFAULT '[]'
+  tag_roles VARCHAR DEFAULT '[]',
+  levels_enabled INTEGER DEFAULT 0,
+  level_up_notifications INTEGER DEFAULT 1
 );
 CREATE TABLE counts (
   command VARCHAR NOT NULL PRIMARY KEY,
@@ -97,6 +99,165 @@ CREATE TABLE starboard_messages (
 );
 CREATE INDEX starboard_messages_guild_idx ON starboard_messages (guild_id);
 INSERT INTO settings (id) VALUES (1);
+CREATE TABLE IF NOT EXISTS user_preferences (
+  user_id VARCHAR(30) PRIMARY KEY,
+  locale VARCHAR(10),
+  dm_notifications INTEGER DEFAULT 1
+);
+CREATE TABLE IF NOT EXISTS mod_logs (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  guild_id VARCHAR(30) NOT NULL,
+  user_id VARCHAR(30) NOT NULL,
+  moderator_id VARCHAR(30) NOT NULL,
+  action VARCHAR(20) NOT NULL,
+  reason TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS warnings (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  guild_id VARCHAR(30) NOT NULL,
+  user_id VARCHAR(30) NOT NULL,
+  moderator_id VARCHAR(30) NOT NULL,
+  reason TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS idx_mod_logs_guild_user ON mod_logs(guild_id, user_id);
+CREATE INDEX IF NOT EXISTS idx_warnings_guild_user ON warnings(guild_id, user_id);
+CREATE TABLE IF NOT EXISTS user_levels (
+  guild_id VARCHAR(30) NOT NULL,
+  user_id VARCHAR(30) NOT NULL,
+  xp INTEGER DEFAULT 0,
+  level INTEGER DEFAULT 0,
+  last_xp_gain TIMESTAMP,
+  PRIMARY KEY (guild_id, user_id)
+);
+CREATE TABLE IF NOT EXISTS economy_users (
+  guild_id VARCHAR(30) NOT NULL,
+  user_id VARCHAR(30) NOT NULL,
+  balance INTEGER DEFAULT 0,
+  last_daily TIMESTAMP,
+  last_work TIMESTAMP,
+  PRIMARY KEY (guild_id, user_id)
+);
+CREATE TABLE IF NOT EXISTS economy_holdings (
+  guild_id VARCHAR(30) NOT NULL,
+  user_id VARCHAR(30) NOT NULL,
+  crypto VARCHAR(20) NOT NULL,
+  amount REAL DEFAULT 0,
+  PRIMARY KEY (guild_id, user_id, crypto)
+);
+CREATE TABLE IF NOT EXISTS economy_prices (
+  guild_id VARCHAR(30) NOT NULL,
+  crypto VARCHAR(20) NOT NULL,
+  price REAL DEFAULT 100,
+  last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (guild_id, crypto)
+);
+CREATE TABLE IF NOT EXISTS economy_price_history (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  guild_id VARCHAR(30) NOT NULL,
+  crypto VARCHAR(20) NOT NULL,
+  price REAL NOT NULL,
+  recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS idx_price_history_guild_crypto ON economy_price_history(guild_id, crypto);
+CREATE TABLE IF NOT EXISTS economy_transactions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  guild_id VARCHAR(30) NOT NULL,
+  user_id VARCHAR(30) NOT NULL,
+  type VARCHAR(30) NOT NULL,
+  amount REAL NOT NULL,
+  crypto VARCHAR(20),
+  details TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS idx_transactions_guild_user ON economy_transactions(guild_id, user_id);
+CREATE TABLE IF NOT EXISTS economy_settings (
+  guild_id VARCHAR(30) NOT NULL PRIMARY KEY,
+  enabled INTEGER DEFAULT 0,
+  daily_amount INTEGER DEFAULT 100,
+  work_min INTEGER DEFAULT 10,
+  work_max INTEGER DEFAULT 50,
+  work_cooldown INTEGER DEFAULT 3600,
+  daily_cooldown INTEGER DEFAULT 86400
+);
+CREATE TABLE IF NOT EXISTS tickets (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  guild_id VARCHAR(30) NOT NULL,
+  channel_id VARCHAR(30) UNIQUE NOT NULL,
+  user_id VARCHAR(30) NOT NULL,
+  category VARCHAR(50) DEFAULT 'general',
+  status VARCHAR(20) DEFAULT 'open',
+  claimed_by VARCHAR(30),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  closed_at TIMESTAMP,
+  close_reason TEXT
+);
+CREATE TABLE IF NOT EXISTS ticket_settings (
+  guild_id VARCHAR(30) PRIMARY KEY,
+  enabled INTEGER DEFAULT 0,
+  category_id VARCHAR(30),
+  support_role_id VARCHAR(30),
+  log_channel_id VARCHAR(30),
+  ticket_message TEXT,
+  auto_close_hours INTEGER,
+  max_open_per_user INTEGER DEFAULT 1
+);
+CREATE INDEX IF NOT EXISTS idx_tickets_guild ON tickets(guild_id);
+CREATE INDEX IF NOT EXISTS idx_tickets_user ON tickets(guild_id, user_id);
+CREATE TABLE IF NOT EXISTS reputation (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  guild_id VARCHAR(30) NOT NULL,
+  user_id VARCHAR(30) NOT NULL,
+  from_user_id VARCHAR(30) NOT NULL,
+  amount INTEGER NOT NULL,
+  reason TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS idx_rep_guild_user ON reputation(guild_id, user_id);
+CREATE INDEX IF NOT EXISTS idx_rep_from ON reputation(guild_id, from_user_id, user_id);
+CREATE TABLE IF NOT EXISTS birthdays (
+  guild_id VARCHAR(30) NOT NULL,
+  user_id VARCHAR(30) NOT NULL,
+  birth_month INTEGER NOT NULL,
+  birth_day INTEGER NOT NULL,
+  birth_year INTEGER,
+  PRIMARY KEY (guild_id, user_id)
+);
+CREATE TABLE IF NOT EXISTS birthday_settings (
+  guild_id VARCHAR(30) PRIMARY KEY,
+  enabled INTEGER DEFAULT 0,
+  channel_id VARCHAR(30),
+  role_id VARCHAR(30),
+  message TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_birthdays_date ON birthdays(birth_month, birth_day);
+CREATE TABLE IF NOT EXISTS antinuke_settings (
+  guild_id VARCHAR(30) PRIMARY KEY,
+  enabled INTEGER DEFAULT 0,
+  threshold INTEGER DEFAULT 15,
+  time_window INTEGER DEFAULT 5,
+  log_channel_id VARCHAR(30),
+  trusted_user VARCHAR(50),
+  whitelisted_users TEXT DEFAULT '[]',
+  whitelisted_roles TEXT DEFAULT '[]'
+);
+CREATE TABLE IF NOT EXISTS antinuke_offenses (
+  guild_id VARCHAR(30) NOT NULL,
+  user_id VARCHAR(30) NOT NULL,
+  offense_count INTEGER DEFAULT 0,
+  last_offense TIMESTAMP,
+  PRIMARY KEY (guild_id, user_id)
+);
+CREATE TABLE IF NOT EXISTS antinuke_actions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  guild_id VARCHAR(30) NOT NULL,
+  executor_id VARCHAR(30) NOT NULL,
+  action_type VARCHAR(30) NOT NULL,
+  target_id VARCHAR(30),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS idx_antinuke_actions_lookup ON antinuke_actions(guild_id, executor_id, created_at);
 `;
 
 const updates = [
@@ -284,6 +445,166 @@ const updates = [
   CREATE INDEX IF NOT EXISTS idx_birthdays_date ON birthdays(birth_month, birth_day);`,
   // Anti-nuke system
   `CREATE TABLE IF NOT EXISTS antinuke_settings (
+    guild_id VARCHAR(30) PRIMARY KEY,
+    enabled INTEGER DEFAULT 0,
+    threshold INTEGER DEFAULT 15,
+    time_window INTEGER DEFAULT 5,
+    log_channel_id VARCHAR(30),
+    trusted_user VARCHAR(50),
+    whitelisted_users TEXT DEFAULT '[]',
+    whitelisted_roles TEXT DEFAULT '[]'
+  );
+  CREATE TABLE IF NOT EXISTS antinuke_offenses (
+    guild_id VARCHAR(30) NOT NULL,
+    user_id VARCHAR(30) NOT NULL,
+    offense_count INTEGER DEFAULT 0,
+    last_offense TIMESTAMP,
+    PRIMARY KEY (guild_id, user_id)
+  );
+  CREATE TABLE IF NOT EXISTS antinuke_actions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    guild_id VARCHAR(30) NOT NULL,
+    executor_id VARCHAR(30) NOT NULL,
+    action_type VARCHAR(30) NOT NULL,
+    target_id VARCHAR(30),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+  CREATE INDEX IF NOT EXISTS idx_antinuke_actions_lookup ON antinuke_actions(guild_id, executor_id, created_at);`,
+  // Catch-all for missing tables in broken V0->Latest migrations
+  `CREATE TABLE IF NOT EXISTS user_preferences (
+    user_id VARCHAR(30) PRIMARY KEY,
+    locale VARCHAR(10),
+    dm_notifications INTEGER DEFAULT 1
+  );
+  CREATE TABLE IF NOT EXISTS mod_logs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    guild_id VARCHAR(30) NOT NULL,
+    user_id VARCHAR(30) NOT NULL,
+    moderator_id VARCHAR(30) NOT NULL,
+    action VARCHAR(20) NOT NULL,
+    reason TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+  CREATE TABLE IF NOT EXISTS warnings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    guild_id VARCHAR(30) NOT NULL,
+    user_id VARCHAR(30) NOT NULL,
+    moderator_id VARCHAR(30) NOT NULL,
+    reason TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+  CREATE INDEX IF NOT EXISTS idx_mod_logs_guild_user ON mod_logs(guild_id, user_id);
+  CREATE INDEX IF NOT EXISTS idx_warnings_guild_user ON warnings(guild_id, user_id);
+  CREATE TABLE IF NOT EXISTS user_levels (
+    guild_id VARCHAR(30) NOT NULL,
+    user_id VARCHAR(30) NOT NULL,
+    xp INTEGER DEFAULT 0,
+    level INTEGER DEFAULT 0,
+    last_xp_gain TIMESTAMP,
+    PRIMARY KEY (guild_id, user_id)
+  );
+  CREATE TABLE IF NOT EXISTS economy_users (
+    guild_id VARCHAR(30) NOT NULL,
+    user_id VARCHAR(30) NOT NULL,
+    balance INTEGER DEFAULT 0,
+    last_daily TIMESTAMP,
+    last_work TIMESTAMP,
+    PRIMARY KEY (guild_id, user_id)
+  );
+  CREATE TABLE IF NOT EXISTS economy_holdings (
+    guild_id VARCHAR(30) NOT NULL,
+    user_id VARCHAR(30) NOT NULL,
+    crypto VARCHAR(20) NOT NULL,
+    amount REAL DEFAULT 0,
+    PRIMARY KEY (guild_id, user_id, crypto)
+  );
+  CREATE TABLE IF NOT EXISTS economy_prices (
+    guild_id VARCHAR(30) NOT NULL,
+    crypto VARCHAR(20) NOT NULL,
+    price REAL DEFAULT 100,
+    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (guild_id, crypto)
+  );
+  CREATE TABLE IF NOT EXISTS economy_price_history (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    guild_id VARCHAR(30) NOT NULL,
+    crypto VARCHAR(20) NOT NULL,
+    price REAL NOT NULL,
+    recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+  CREATE INDEX IF NOT EXISTS idx_price_history_guild_crypto ON economy_price_history(guild_id, crypto);
+  CREATE TABLE IF NOT EXISTS economy_transactions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    guild_id VARCHAR(30) NOT NULL,
+    user_id VARCHAR(30) NOT NULL,
+    type VARCHAR(30) NOT NULL,
+    amount REAL NOT NULL,
+    crypto VARCHAR(20),
+    details TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+  CREATE INDEX IF NOT EXISTS idx_transactions_guild_user ON economy_transactions(guild_id, user_id);
+  CREATE TABLE IF NOT EXISTS economy_settings (
+    guild_id VARCHAR(30) NOT NULL PRIMARY KEY,
+    enabled INTEGER DEFAULT 0,
+    daily_amount INTEGER DEFAULT 100,
+    work_min INTEGER DEFAULT 10,
+    work_max INTEGER DEFAULT 50,
+    work_cooldown INTEGER DEFAULT 3600,
+    daily_cooldown INTEGER DEFAULT 86400
+  );
+  CREATE TABLE IF NOT EXISTS tickets (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    guild_id VARCHAR(30) NOT NULL,
+    channel_id VARCHAR(30) UNIQUE NOT NULL,
+    user_id VARCHAR(30) NOT NULL,
+    category VARCHAR(50) DEFAULT 'general',
+    status VARCHAR(20) DEFAULT 'open',
+    claimed_by VARCHAR(30),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    closed_at TIMESTAMP,
+    close_reason TEXT
+  );
+  CREATE TABLE IF NOT EXISTS ticket_settings (
+    guild_id VARCHAR(30) PRIMARY KEY,
+    enabled INTEGER DEFAULT 0,
+    category_id VARCHAR(30),
+    support_role_id VARCHAR(30),
+    log_channel_id VARCHAR(30),
+    ticket_message TEXT,
+    auto_close_hours INTEGER,
+    max_open_per_user INTEGER DEFAULT 1
+  );
+  CREATE INDEX IF NOT EXISTS idx_tickets_guild ON tickets(guild_id);
+  CREATE INDEX IF NOT EXISTS idx_tickets_user ON tickets(guild_id, user_id);
+  CREATE TABLE IF NOT EXISTS reputation (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    guild_id VARCHAR(30) NOT NULL,
+    user_id VARCHAR(30) NOT NULL,
+    from_user_id VARCHAR(30) NOT NULL,
+    amount INTEGER NOT NULL,
+    reason TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+  CREATE INDEX IF NOT EXISTS idx_rep_guild_user ON reputation(guild_id, user_id);
+  CREATE INDEX IF NOT EXISTS idx_rep_from ON reputation(guild_id, from_user_id, user_id);
+  CREATE TABLE IF NOT EXISTS birthdays (
+    guild_id VARCHAR(30) NOT NULL,
+    user_id VARCHAR(30) NOT NULL,
+    birth_month INTEGER NOT NULL,
+    birth_day INTEGER NOT NULL,
+    birth_year INTEGER,
+    PRIMARY KEY (guild_id, user_id)
+  );
+  CREATE TABLE IF NOT EXISTS birthday_settings (
+    guild_id VARCHAR(30) PRIMARY KEY,
+    enabled INTEGER DEFAULT 0,
+    channel_id VARCHAR(30),
+    role_id VARCHAR(30),
+    message TEXT
+  );
+  CREATE INDEX IF NOT EXISTS idx_birthdays_date ON birthdays(birth_month, birth_day);
+  CREATE TABLE IF NOT EXISTS antinuke_settings (
     guild_id VARCHAR(30) PRIMARY KEY,
     enabled INTEGER DEFAULT 0,
     threshold INTEGER DEFAULT 15,
