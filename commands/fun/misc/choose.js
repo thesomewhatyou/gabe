@@ -38,7 +38,7 @@ class ChooseCommand extends Command {
     const inputStr = this.getOptionString("options") ?? this.args.join(" ");
 
     if (!inputStr || inputStr.trim().length === 0) {
-      return "❌ Gabe can't choose from nothing. Give me some options!\n💡 Example: `/choose pizza, tacos, sushi` or `/choose pizza or tacos or sushi`";
+      return "❌ Gabe can't choose from nothing. Give me some options!\n💡 Example: `/misc choose pizza, tacos, sushi` or `/misc choose pizza or tacos or sushi`";
     }
 
     // Parse options - support both comma and "or" as delimiters
