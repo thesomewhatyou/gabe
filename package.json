@@ -51,7 +51,7 @@
     "bufferutil": "^4.1.0",
     "codex": "^0.2.3",
     "dotenv": "^17.2.3",
-    "file-type": "^21.1.1",
+    "file-type": "^21.3.0",
     "format-duration": "^3.0.2",
     "ipaddr.js": "^2.3.0",
     "node-addon-api": "^8.5.0",
