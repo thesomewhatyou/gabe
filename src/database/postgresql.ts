@@ -28,6 +28,9 @@ interface Settings {
   broadcast?: string;
 }
 
+// postgres TransactionSql omits call signatures, so cast to Sql for tagged template use in transactions.
+const toSql = (sql: Postgres.TransactionSql): Postgres.Sql => sql as unknown as Postgres.Sql;
+
 const settingsSchema = `
 CREATE TABLE IF NOT EXISTS settings (
   id smallint PRIMARY KEY,
@@ -349,9 +352,10 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
   async upgrade() {
     try {
       await this.sql.begin(async (sql) => {
-        await sql.unsafe(settingsSchema);
+        const trx = toSql(sql);
+        await trx.unsafe(settingsSchema);
         let version: number;
-        const [settingsrow]: [Settings?] = await sql`SELECT version FROM settings WHERE id = 1`;
+        const [settingsrow]: [Settings?] = await trx`SELECT version FROM settings WHERE id = 1`;
         if (!settingsrow) {
           version = 0;
         } else {
@@ -360,18 +364,18 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
         const latestVersion = updates.length - 1;
         if (version === 0) {
           logger.info("Initializing PostgreSQL database...");
-          await sql.unsafe(schema);
+          await trx.unsafe(schema);
         } else if (version < latestVersion) {
           logger.info(`Migrating PostgreSQL database, which is currently at version ${version}...`);
           while (version < latestVersion) {
             version++;
             logger.info(`Running version ${version} update script...`);
-            await sql.unsafe(updates[version]);
+            await trx.unsafe(updates[version]);
           }
         } else {
           return;
         }
-        await sql`INSERT INTO settings ${sql({ id: 1, version: latestVersion })} ON CONFLICT (id) DO UPDATE SET version = ${latestVersion}`;
+        await trx`INSERT INTO settings ${trx({ id: 1, version: latestVersion })} ON CONFLICT (id) DO UPDATE SET version = ${latestVersion}`;
       });
     } catch (err) {
       logger.error(`PostgreSQL migration failed: ${(err as Error).stack || err}`);
@@ -383,7 +387,8 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
   getGuild(query: string): Promise<DBGuild> {
     return new Promise((resolve) => {
       this.sql.begin(async (sql) => {
-        let [guild]: [DBGuild?] = await sql`SELECT * FROM guilds WHERE guild_id = ${query}`;
+        const trx = toSql(sql);
+        let [guild]: [DBGuild?] = await trx`SELECT * FROM guilds WHERE guild_id = ${query}`;
         if (!guild) {
           guild = {
             guild_id: query,
@@ -392,7 +397,7 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
             disabled_commands: [],
             tag_roles: [],
           };
-          await sql`INSERT INTO guilds ${sql(guild)}`;
+          await trx`INSERT INTO guilds ${trx(guild)}`;
         }
         resolve(guild);
       });
@@ -774,16 +779,17 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
   async transferBalance(guildId: string, fromUserId: string, toUserId: string, amount: number) {
     try {
       await this.sql.begin(async (sql) => {
+        const trx = toSql(sql);
         // Deduct from sender
-        const [sender] = await sql<{ balance: string }[]>`
+        const [sender] = await trx<{ balance: string }[]>`
           SELECT balance FROM economy_users WHERE guild_id = ${guildId} AND user_id = ${fromUserId}
         `;
         if (!sender || parseInt(sender.balance) < amount) {
           throw new Error("Insufficient balance");
         }
-        await sql`UPDATE economy_users SET balance = balance - ${amount} WHERE guild_id = ${guildId} AND user_id = ${fromUserId}`;
+        await trx`UPDATE economy_users SET balance = balance - ${amount} WHERE guild_id = ${guildId} AND user_id = ${fromUserId}`;
         // Add to recipient
-        await sql`
+        await trx`
           INSERT INTO economy_users (guild_id, user_id, balance)
           VALUES (${guildId}, ${toUserId}, ${amount})
           ON CONFLICT (guild_id, user_id) DO UPDATE SET balance = economy_users.balance + ${amount}
@@ -1502,8 +1508,9 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
 
   async addVote(battleId: number, voterId: string, submissionId: number): Promise<void> {
     await this.sql.begin(async (sql) => {
-      await sql`INSERT INTO battle_votes (battle_id, voter_id, submission_id) VALUES (${battleId}, ${voterId}, ${submissionId})`;
-      await sql`UPDATE battle_submissions SET votes = votes + 1 WHERE id = ${submissionId}`;
+      const trx = toSql(sql);
+      await trx`INSERT INTO battle_votes (battle_id, voter_id, submission_id) VALUES (${battleId}, ${voterId}, ${submissionId})`;
+      await trx`UPDATE battle_submissions SET votes = votes + 1 WHERE id = ${submissionId}`;
     });
   }
 
