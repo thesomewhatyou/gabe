@@ -1,13 +1,13 @@
 import Command from "#cmd-classes/command.js";
 
 class TicketCommand extends Command {
-    async run() {
-        if (!this.guild) {
-            this.success = false;
-            return "❌ This command can only be used in a server!";
-        }
+  async run() {
+    if (!this.guild) {
+      this.success = false;
+      return "❌ This command can only be used in a server!";
+    }
 
-        return `🎫 **Ticket System**
+    return `🎫 **Ticket System**
 
 Use one of the following subcommands:
 • \`ticket new [category]\` - Create a new support ticket
@@ -20,11 +20,11 @@ Use one of the following subcommands:
 **Admin Commands:**
 • \`ticket setup\` - Configure the ticket system
 • \`ticket panel\` - Create a ticket panel`;
-    }
+  }
 
-    static description = "Support ticket system";
-    static aliases = ["tickets", "support"];
-    static dbRequired = true;
+  static description = "Support ticket system";
+  static aliases = ["tickets", "support"];
+  static dbRequired = true;
 }
 
 export default TicketCommand;

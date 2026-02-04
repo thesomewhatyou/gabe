@@ -100,10 +100,12 @@ export function formatUser(user, repos) {
   fields.push({ name: "📅 Joined", value: createdDate.toLocaleDateString(), inline: true });
 
   if (repos && repos.length > 0) {
-    const repoList = repos.map((repo) => {
-      const stars = repo.stargazers_count || 0;
-      return `⭐ ${stars} | [${repo.name}](${repo.html_url})`;
-    }).join("\n");
+    const repoList = repos
+      .map((repo) => {
+        const stars = repo.stargazers_count || 0;
+        return `⭐ ${stars} | [${repo.name}](${repo.html_url})`;
+      })
+      .join("\n");
 
     fields.push({ name: "📦 Top Repos", value: repoList, inline: false });
   }

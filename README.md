@@ -1,14 +1,12 @@
-# Gabe - Your Discord Bro (or Enemy)                                                                                                 		 
-[![Publish to GitHub Container Registry (multi-arch, explicit builder)](https://github.com/thesomewhatyou/gabe/actions/workflows/deploy-to-ghcr.yml/badge.svg)](https://github.com/thesomewhatyou/gabe/actions/workflows/deploy-to-ghcr.yml) 
+# Gabe - Your Discord Bro (or Enemy)
+
+[![Publish to GitHub Container Registry (multi-arch, explicit builder)](https://github.com/thesomewhatyou/gabe/actions/workflows/deploy-to-ghcr.yml/badge.svg)](https://github.com/thesomewhatyou/gabe/actions/workflows/deploy-to-ghcr.yml)
 
 [![Repo sync (GitHub -> Codeberg)](https://github.com/thesomewhatyou/gabe/actions/workflows/mirror.yml/badge.svg)](https://github.com/thesomewhatyou/gabe/actions/workflows/mirror.yml)
 
-
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white) ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black) ![C++](https://img.shields.io/badge/C++-00599C?style=for-the-badge&logo=cplusplus&logoColor=white) ![pnpm](https://img.shields.io/badge/pnpm-F69220?style=for-the-badge&logo=pnpm&logoColor=white) ![CMake](https://img.shields.io/badge/CMake-064F8C?style=for-the-badge&logo=cmake&logoColor=white) ![Dependabot](https://img.shields.io/badge/Dependabot-025E8C?style=for-the-badge&logo=dependabot&logoColor=white)
 
-
-
-Gabe is a fast, loud, and mildly cursed Discord bot built on top of ![oceanic.js](https://img.shields.io/badge/oceanic.js-000?style=for-the-badge). 
+Gabe is a fast, loud, and mildly cursed Discord bot built on top of ![oceanic.js](https://img.shields.io/badge/oceanic.js-000?style=for-the-badge).
 
 It ships native image processing, reliable moderation, fun commands, music via Lavalink, and a flexible storage layer — all tuned for low resource usage
 
@@ -18,12 +16,12 @@ It ships native image processing, reliable moderation, fun commands, music via L
 - Moderation tools: ban, kick, timeout, purge
 - Music playback via [Lavalink](https://github.com/lavalink-devs/Lavalink) using [Shoukaku](https://github.com/Deivu/Shoukaku)
 - Tags system for saving and retrieving snippets
-- Low resource usage (CPU/RAM) — naps are normal  <img src="https://github.com/user-attachments/assets/a58b183a-cf97-478d-a7e1-8895cbd44c8e" align="right" width="128" height="128" alt="gabe logo"/>
+- Low resource usage (CPU/RAM) — naps are normal <img src="https://github.com/user-attachments/assets/a58b183a-cf97-478d-a7e1-8895cbd44c8e" align="right" width="128" height="128" alt="gabe logo"/>
 
 - Dual command system: slash commands and prefix commands (`&` by default)
 - Databases: SQLite (default) or PostgreSQL
 - Extensible: add commands by dropping files in `commands/`
-                                      
+
 ## Requirements
 
 - Node.js 22+ (required)
@@ -32,7 +30,7 @@ It ships native image processing, reliable moderation, fun commands, music via L
 
 ## Quick start
 
-1) Clone and install
+1. Clone and install
 
 ```
 git clone https://github.com/gabrielpiss/gabe.git
@@ -40,7 +38,7 @@ cd gabe
 pnpm install
 ```
 
-2) Configure environment (at minimum, your Discord bot token)
+2. Configure environment (at minimum, your Discord bot token)
 
 Create a `.env` file in the project root:
 
@@ -57,7 +55,7 @@ PREFIX=&
 # SENTRY_DSN=                          # Sentry error tracking (optional)
 ```
 
-3) Build and run
+3. Build and run
 
 ```
 pnpm build
@@ -79,13 +77,13 @@ pnpm test
 
 Gabe, unfortunately, sometimes does NOT have classic commands (for example, level) and it is sometimes broken.
 
-Fixing is hard, but you CAN add the fix yourself in a pull request (PLEASEPLEASEPLEASEPLEASE). 
+Fixing is hard, but you CAN add the fix yourself in a pull request (PLEASEPLEASEPLEASEPLEASE).
 
 ## Commands
 
-Use `/help` or `&help` in your server to view available commands and categories. Using prefixes is a better practice; as slash commands can sometimes be too much and prefixes are generally better. 
+Use `/help` or `&help` in your server to view available commands and categories. Using prefixes is a better practice; as slash commands can sometimes be too much and prefixes are generally better.
 
-Don't know a command? It's not better to guess. Just use `&help`. 
+Don't know a command? It's not better to guess. Just use `&help`.
 
 ## Docker and Lavalink
 
@@ -114,22 +112,23 @@ MIT licensed. Issues and PRs are welcome — features, fixes, docs, or just chao
 
 Gabe is based on the legendary [esmBot](https://github.com/esmBot/esmBot) by [Essem](https://github.com/TheEssem). The rest is pure Gabe.
 
-
-
 ## First-time setup (Discord)
 
-1) Create an application and bot user
+1. Create an application and bot user
+
 - Go to https://discord.com/developers/applications and create a new application.
 - In the Bot tab: add a bot, then copy the token (paste into your `.env` as `TOKEN`). Keep it secret.
 - If you plan to use classic prefix commands, enable the "Message Content Intent" on the Bot page.
 
-2) Invite the bot
+2. Invite the bot
+
 - OAuth2 > URL Generator
   - Scopes: `bot`, `applications.commands`
   - Permissions: Send Messages, Embed Links, Attach Files, Use External Emojis, Connect, Speak, Use Slash Commands
 - Open the generated URL to add Gabe to your server.
 
-3) Lavalink (for music)
+3. Lavalink (for music)
+
 - You need a Lavalink v4 server running. Use `pnpm run docker:run-lava` for a quick local instance.
 - Make sure the Lavalink host/port/secret in `config/soundplayer.json` (or env) match your Lavalink.
 

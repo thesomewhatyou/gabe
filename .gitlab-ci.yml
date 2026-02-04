@@ -17,7 +17,7 @@ build_and_publish:
   # Run only on the master branch (like your GHA config)
   only:
     - master
-  
+
   before_script:
     # 1. Log in to your local GitLab Registry
     # GitLab automatically provides these variables (CI_REGISTRY_USER, etc.)
@@ -42,7 +42,7 @@ build_and_publish:
         --tag "$IMAGE_LATEST" \
         --tag "$IMAGE_TAG" \
         .
-  
+
   after_script:
     # Optional: Clean up the builder to save space, or leave it for cache speed
     - docker buildx rm discord-builder || true

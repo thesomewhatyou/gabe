@@ -98,7 +98,13 @@ export interface DatabasePlugin {
   getEconomyUser: (
     guildId: string,
     userId: string,
-  ) => Promise<{ guild_id: string; user_id: string; balance: number; last_daily: Date | string | null; last_work: Date | string | null }>;
+  ) => Promise<{
+    guild_id: string;
+    user_id: string;
+    balance: number;
+    last_daily: Date | string | null;
+    last_work: Date | string | null;
+  }>;
   setBalance: (guildId: string, userId: string, amount: number) => Promise<void>;
   addBalance: (guildId: string, userId: string, amount: number) => Promise<number>;
   transferBalance: (guildId: string, fromUserId: string, toUserId: string, amount: number) => Promise<boolean>;
@@ -122,7 +128,9 @@ export interface DatabasePlugin {
   addCryptoHolding: (guildId: string, userId: string, crypto: string, amount: number) => Promise<number>;
   getCryptoPrice: (guildId: string, crypto: string) => Promise<number>;
   setCryptoPrice: (guildId: string, crypto: string, price: number) => Promise<void>;
-  getAllCryptoPrices: (guildId: string) => Promise<{ guild_id: string; crypto: string; price: number; last_updated: Date | string }[]>;
+  getAllCryptoPrices: (
+    guildId: string,
+  ) => Promise<{ guild_id: string; crypto: string; price: number; last_updated: Date | string }[]>;
   getCryptoPriceHistory: (
     guildId: string,
     crypto: string,
@@ -142,7 +150,18 @@ export interface DatabasePlugin {
     guildId: string,
     userId: string,
     limit?: number,
-  ) => Promise<{ id: number; guild_id: string; user_id: string; type: string; amount: number; crypto: string | null; details: string | null; created_at: Date | string }[]>;
+  ) => Promise<
+    {
+      id: number;
+      guild_id: string;
+      user_id: string;
+      type: string;
+      amount: number;
+      crypto: string | null;
+      details: string | null;
+      created_at: Date | string;
+    }[]
+  >;
   // Economy settings
   getEconomySettings: (guildId: string) => Promise<{
     guild_id: string;
@@ -170,32 +189,32 @@ export interface DatabasePlugin {
   // Ticket system
   getTicket: (channelId: string) => Promise<
     | {
-      id: number;
-      guild_id: string;
-      channel_id: string;
-      user_id: string;
-      category: string;
-      status: string;
-      claimed_by: string | null;
-      created_at: Date | string;
-      closed_at: Date | string | null;
-      close_reason: string | null;
-    }
+        id: number;
+        guild_id: string;
+        channel_id: string;
+        user_id: string;
+        category: string;
+        status: string;
+        claimed_by: string | null;
+        created_at: Date | string;
+        closed_at: Date | string | null;
+        close_reason: string | null;
+      }
     | undefined
   >;
   getTicketById: (ticketId: number) => Promise<
     | {
-      id: number;
-      guild_id: string;
-      channel_id: string;
-      user_id: string;
-      category: string;
-      status: string;
-      claimed_by: string | null;
-      created_at: Date | string;
-      closed_at: Date | string | null;
-      close_reason: string | null;
-    }
+        id: number;
+        guild_id: string;
+        channel_id: string;
+        user_id: string;
+        category: string;
+        status: string;
+        claimed_by: string | null;
+        created_at: Date | string;
+        closed_at: Date | string | null;
+        close_reason: string | null;
+      }
     | undefined
   >;
   createTicket: (guildId: string, channelId: string, userId: string, category?: string) => Promise<number>;
@@ -213,7 +232,10 @@ export interface DatabasePlugin {
       created_at: Date | string;
     }[]
   >;
-  getUserTickets: (guildId: string, userId: string) => Promise<
+  getUserTickets: (
+    guildId: string,
+    userId: string,
+  ) => Promise<
     {
       id: number;
       guild_id: string;
@@ -249,7 +271,11 @@ export interface DatabasePlugin {
   // Reputation system
   giveRep: (guildId: string, userId: string, fromUserId: string, amount: number, reason?: string) => Promise<number>;
   getRepScore: (guildId: string, userId: string) => Promise<number>;
-  getRepHistory: (guildId: string, userId: string, limit?: number) => Promise<
+  getRepHistory: (
+    guildId: string,
+    userId: string,
+    limit?: number,
+  ) => Promise<
     { id: number; from_user_id: string; amount: number; reason: string | null; created_at: Date | string }[]
   >;
   getRepLeaderboard: (guildId: string, limit?: number) => Promise<{ user_id: string; total: number | string }[]>;
@@ -257,13 +283,17 @@ export interface DatabasePlugin {
   // Birthday system
   setBirthday: (guildId: string, userId: string, month: number, day: number, year?: number) => Promise<void>;
   removeBirthday: (guildId: string, userId: string) => Promise<void>;
-  getBirthday: (guildId: string, userId: string) => Promise<
+  getBirthday: (
+    guildId: string,
+    userId: string,
+  ) => Promise<
     { guild_id: string; user_id: string; birth_month: number; birth_day: number; birth_year: number | null } | undefined
   >;
   getTodaysBirthdays: (guildId: string) => Promise<{ user_id: string; birth_year: number | null }[]>;
-  getUpcomingBirthdays: (guildId: string, days?: number) => Promise<
-    { user_id: string; birth_month: number; birth_day: number; birth_year: number | null }[]
-  >;
+  getUpcomingBirthdays: (
+    guildId: string,
+    days?: number,
+  ) => Promise<{ user_id: string; birth_month: number; birth_day: number; birth_year: number | null }[]>;
   getBirthdaySettings: (guildId: string) => Promise<{
     guild_id: string;
     enabled: boolean;
@@ -304,14 +334,16 @@ export interface DatabasePlugin {
     guildId: string,
     executorId: string,
     windowSeconds: number,
-  ) => Promise<{
-    id: number;
-    guild_id: string;
-    executor_id: string;
-    action_type: string;
-    target_id: string | null;
-    created_at: string;
-  }[]>;
+  ) => Promise<
+    {
+      id: number;
+      guild_id: string;
+      executor_id: string;
+      action_type: string;
+      target_id: string | null;
+      created_at: string;
+    }[]
+  >;
   getOffenseCount: (guildId: string, userId: string) => Promise<number>;
   incrementOffense: (guildId: string, userId: string) => Promise<number>;
   addToAntinukeWhitelist: (guildId: string, type: "users" | "roles", id: string) => Promise<void>;

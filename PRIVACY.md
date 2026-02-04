@@ -1,10 +1,10 @@
 # Gabe and Privacy
 
-First things first: **Gabe does not and is incapable of collecting IP addresses, emails, or any other sensitive personal/private info.** This info is not accessible via Discord's API [except for emails](https://discord.com/developers/docs/resources/user#user-object), which require the email OAuth2 scope to access. Gabe does NOT have this scope enabled, on the public instance. 
+First things first: **Gabe does not and is incapable of collecting IP addresses, emails, or any other sensitive personal/private info.** This info is not accessible via Discord's API [except for emails](https://discord.com/developers/docs/resources/user#user-object), which require the email OAuth2 scope to access. Gabe does NOT have this scope enabled, on the public instance.
 
 <!--- Forks, if you're reading this and you have the email OAuth2 scope enabled, PLEASE NOTIFY USERS. It's called common sense. --->
 
-Whenever a command is run using Gabe, a command count number is increased. **This counter is completely anonymous and is used only for statistical purposes.** Users can check this info at any time using the count and help commands. Even then, I may just delete it. It seems fun to have a command count, but I also want to consider privacy and security. 
+Whenever a command is run using Gabe, a command count number is increased. **This counter is completely anonymous and is used only for statistical purposes.** Users can check this info at any time using the count and help commands. Even then, I may just delete it. It seems fun to have a command count, but I also want to consider privacy and security.
 
 ## Data We Access (But Do Not Store)
 
@@ -31,17 +31,20 @@ Gabe accesses the following guild-related info at runtime:
 The following data is persistently stored in the database:
 
 ### Guild Configuration
+
 - **Guild IDs** – For storing server-specific settings
 - **Channel IDs** – For disabled channels configuration
 - **Prefix settings** – Custom command prefixes per server
 - **Disabled commands** – Commands disabled in specific servers
 
 ### Tags System
+
 - **Tag name and content** – The tag itself
 - **User ID of tag owner** – To track who created the tag
 - **Guild ID** – Tags are server-specific
 
 ### Moderation System
+
 - **Moderation logs** – Records of moderation actions including:
   - User ID of the moderated user
   - Moderator's user ID
@@ -55,17 +58,20 @@ The following data is persistently stored in the database:
   - Timestamp
 
 ### Leveling System (If Enabled)
+
 - **User ID** – To track XP per user
 - **Guild ID** – Leveling is server-specific
 - **XP and level** – Current progress
 - **Last XP gain timestamp** – For cooldown purposes
 
 ### Starboard (If Enabled)
+
 - **Message ID** – Original and starboard message references
 - **Guild and channel IDs** – Location info
 - **Star count** – Number of reactions
 
 ### User Preferences
+
 - **User ID** – To associate preferences with a user
 - **Locale preference** – Preferred language
 - **DM notification settings** – Whether to receive DM notifications

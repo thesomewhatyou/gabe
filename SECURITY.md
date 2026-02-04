@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-**We release patches for security vulnerabilities in the following versions:
+\*\*We release patches for security vulnerabilities in the following versions:
 
 **Latest release is always supported.**
 
@@ -149,3 +149,4 @@ To check for vulnerabilities:
 ```bash
 pnpm audit
 pnpm audit --fix  # Auto-fix where possible
+```
