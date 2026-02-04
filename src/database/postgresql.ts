@@ -155,7 +155,7 @@ const updates = [
     PRIMARY KEY (guild_id, message_id)
   );
   CREATE INDEX IF NOT EXISTS starboard_messages_guild_idx ON starboard_messages (guild_id);`,
-// Economy system tables
+  // Economy system tables
   `CREATE TABLE IF NOT EXISTS economy_users (
     guild_id VARCHAR(30) NOT NULL,
     user_id VARCHAR(30) NOT NULL,
@@ -335,7 +335,7 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
 
   constructor(connectString: string) {
     this.sql = Postgres(connectString, {
-      onnotice: () => { },
+      onnotice: () => {},
     });
   }
 
@@ -841,7 +841,8 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
 
   async setCryptoHolding(guildId: string, userId: string, crypto: string, amount: number) {
     if (amount <= 0) {
-      await this.sql`DELETE FROM economy_holdings WHERE guild_id = ${guildId} AND user_id = ${userId} AND crypto = ${crypto}`;
+      await this
+        .sql`DELETE FROM economy_holdings WHERE guild_id = ${guildId} AND user_id = ${userId} AND crypto = ${crypto}`;
     } else {
       await this.sql`
         INSERT INTO economy_holdings (guild_id, user_id, crypto, amount)
@@ -899,7 +900,14 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
 
   // ==================== TRANSACTION LOG ====================
 
-  async logTransaction(guildId: string, userId: string, type: string, amount: number, crypto?: string, details?: string) {
+  async logTransaction(
+    guildId: string,
+    userId: string,
+    type: string,
+    amount: number,
+    crypto?: string,
+    details?: string,
+  ) {
     await this.sql`
       INSERT INTO economy_transactions (guild_id, user_id, type, amount, crypto, details)
       VALUES (${guildId}, ${userId}, ${type}, ${amount}, ${crypto ?? null}, ${details ?? null})
@@ -908,7 +916,16 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
 
   async getTransactions(guildId: string, userId: string, limit = 20) {
     return await this.sql<
-      { id: number; guild_id: string; user_id: string; type: string; amount: number; crypto: string | null; details: string | null; created_at: Date }[]
+      {
+        id: number;
+        guild_id: string;
+        user_id: string;
+        type: string;
+        amount: number;
+        crypto: string | null;
+        details: string | null;
+        created_at: Date;
+      }[]
     >`
       SELECT * FROM economy_transactions WHERE guild_id = ${guildId} AND user_id = ${userId}
       ORDER BY created_at DESC LIMIT ${limit}
@@ -919,19 +936,29 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
 
   async getEconomySettings(guildId: string) {
     const [result] = await this.sql<
-      { guild_id: string; enabled: boolean; daily_amount: number; work_min: number; work_max: number; work_cooldown: number; daily_cooldown: number }[]
+      {
+        guild_id: string;
+        enabled: boolean;
+        daily_amount: number;
+        work_min: number;
+        work_max: number;
+        work_cooldown: number;
+        daily_cooldown: number;
+      }[]
     >`
       SELECT * FROM economy_settings WHERE guild_id = ${guildId}
     `;
-    return result ?? {
-      guild_id: guildId,
-      enabled: false,
-      daily_amount: 100,
-      work_min: 10,
-      work_max: 50,
-      work_cooldown: 3600,
-      daily_cooldown: 86400,
-    };
+    return (
+      result ?? {
+        guild_id: guildId,
+        enabled: false,
+        daily_amount: 100,
+        work_min: 10,
+        work_max: 50,
+        work_cooldown: 3600,
+        daily_cooldown: 86400,
+      }
+    );
   }
 
   async setEconomySettings(settings: {
@@ -966,7 +993,7 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
   // ==================== ADMIN MARKET MANIPULATION ====================
 
   async inflateAllBalances(guildId: string, percentage: number) {
-    const multiplier = 1 + (percentage / 100);
+    const multiplier = 1 + percentage / 100;
     const result = await this.sql`
       UPDATE economy_users SET balance = FLOOR(balance * ${multiplier}) WHERE guild_id = ${guildId}
     `;
@@ -1092,16 +1119,18 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
         max_open_per_user: number;
       }[]
     >`SELECT * FROM ticket_settings WHERE guild_id = ${guildId}`;
-    return result ?? {
-      guild_id: guildId,
-      enabled: false,
-      category_id: null,
-      support_role_id: null,
-      log_channel_id: null,
-      ticket_message: null,
-      auto_close_hours: null,
-      max_open_per_user: 1,
-    };
+    return (
+      result ?? {
+        guild_id: guildId,
+        enabled: false,
+        category_id: null,
+        support_role_id: null,
+        log_channel_id: null,
+        ticket_message: null,
+        auto_close_hours: null,
+        max_open_per_user: 1,
+      }
+    );
   }
 
   async setTicketSettings(settings: {
@@ -1208,9 +1237,7 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
     const now = new Date();
     const month = now.getMonth() + 1;
     const day = now.getDate();
-    return await this.sql<
-      { user_id: string; birth_year: number | null }[]
-    >`
+    return await this.sql<{ user_id: string; birth_year: number | null }[]>`
       SELECT user_id, birth_year FROM birthdays
       WHERE guild_id = ${guildId} AND birth_month = ${month} AND birth_day = ${day}
     `;
@@ -1223,35 +1250,45 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
     >`SELECT user_id, birth_month, birth_day, birth_year FROM birthdays WHERE guild_id = ${guildId}`;
 
     // Filter and sort by upcoming date
-    const upcoming = results.filter(b => {
-      const thisYear = now.getFullYear();
-      let bday = new Date(thisYear, b.birth_month - 1, b.birth_day);
-      if (bday < now) bday = new Date(thisYear + 1, b.birth_month - 1, b.birth_day);
-      const diffDays = Math.ceil((bday.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-      return diffDays >= 0 && diffDays <= days;
-    }).sort((a, b) => {
-      const thisYear = now.getFullYear();
-      let dateA = new Date(thisYear, a.birth_month - 1, a.birth_day);
-      let dateB = new Date(thisYear, b.birth_month - 1, b.birth_day);
-      if (dateA < now) dateA = new Date(thisYear + 1, a.birth_month - 1, a.birth_day);
-      if (dateB < now) dateB = new Date(thisYear + 1, b.birth_month - 1, b.birth_day);
-      return dateA.getTime() - dateB.getTime();
-    });
+    const upcoming = results
+      .filter((b) => {
+        const thisYear = now.getFullYear();
+        let bday = new Date(thisYear, b.birth_month - 1, b.birth_day);
+        if (bday < now) bday = new Date(thisYear + 1, b.birth_month - 1, b.birth_day);
+        const diffDays = Math.ceil((bday.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+        return diffDays >= 0 && diffDays <= days;
+      })
+      .sort((a, b) => {
+        const thisYear = now.getFullYear();
+        let dateA = new Date(thisYear, a.birth_month - 1, a.birth_day);
+        let dateB = new Date(thisYear, b.birth_month - 1, b.birth_day);
+        if (dateA < now) dateA = new Date(thisYear + 1, a.birth_month - 1, a.birth_day);
+        if (dateB < now) dateB = new Date(thisYear + 1, b.birth_month - 1, b.birth_day);
+        return dateA.getTime() - dateB.getTime();
+      });
 
     return upcoming.slice(0, 10);
   }
 
   async getBirthdaySettings(guildId: string) {
     const [result] = await this.sql<
-      { guild_id: string; enabled: boolean; channel_id: string | null; role_id: string | null; message: string | null }[]
+      {
+        guild_id: string;
+        enabled: boolean;
+        channel_id: string | null;
+        role_id: string | null;
+        message: string | null;
+      }[]
     >`SELECT * FROM birthday_settings WHERE guild_id = ${guildId}`;
-    return result ?? {
-      guild_id: guildId,
-      enabled: false,
-      channel_id: null,
-      role_id: null,
-      message: null,
-    };
+    return (
+      result ?? {
+        guild_id: guildId,
+        enabled: false,
+        channel_id: null,
+        role_id: null,
+        message: null,
+      }
+    );
   }
 
   async setBirthdaySettings(settings: {
@@ -1275,16 +1312,18 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
   // ==================== ANTI-NUKE SYSTEM ====================
 
   async getAntinukeSettings(guildId: string) {
-    const [result] = await this.sql<{
-      guild_id: string;
-      enabled: boolean;
-      threshold: number;
-      time_window: number;
-      log_channel_id: string | null;
-      trusted_user: string | null;
-      whitelisted_users: string[];
-      whitelisted_roles: string[];
-    }[]>`SELECT * FROM antinuke_settings WHERE guild_id = ${guildId}`;
+    const [result] = await this.sql<
+      {
+        guild_id: string;
+        enabled: boolean;
+        threshold: number;
+        time_window: number;
+        log_channel_id: string | null;
+        trusted_user: string | null;
+        whitelisted_users: string[];
+        whitelisted_roles: string[];
+      }[]
+    >`SELECT * FROM antinuke_settings WHERE guild_id = ${guildId}`;
 
     if (!result) {
       return {
@@ -1337,27 +1376,31 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
     const cutoff = new Date(Date.now() - windowSeconds * 1000);
     // If executorId is empty, return all actions for the guild
     if (!executorId) {
-      return await this.sql<{
+      return await this.sql<
+        {
+          id: number;
+          guild_id: string;
+          executor_id: string;
+          action_type: string;
+          target_id: string | null;
+          created_at: string;
+        }[]
+      >`
+        SELECT * FROM antinuke_actions
+        WHERE guild_id = ${guildId} AND created_at > ${cutoff}
+        ORDER BY created_at DESC
+      `;
+    }
+    return await this.sql<
+      {
         id: number;
         guild_id: string;
         executor_id: string;
         action_type: string;
         target_id: string | null;
         created_at: string;
-      }[]>`
-        SELECT * FROM antinuke_actions
-        WHERE guild_id = ${guildId} AND created_at > ${cutoff}
-        ORDER BY created_at DESC
-      `;
-    }
-    return await this.sql<{
-      id: number;
-      guild_id: string;
-      executor_id: string;
-      action_type: string;
-      target_id: string | null;
-      created_at: string;
-    }[]>`
+      }[]
+    >`
       SELECT * FROM antinuke_actions
       WHERE guild_id = ${guildId} AND executor_id = ${executorId} AND created_at > ${cutoff}
       ORDER BY created_at DESC

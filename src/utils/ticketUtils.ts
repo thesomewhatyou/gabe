@@ -1,5 +1,15 @@
-import { ButtonStyles, ChannelTypes, ComponentTypes, Constants, OverwriteTypes, type Client, type Guild, type TextChannel, type User } from "oceanic.js";
 import { randomBytes } from "node:crypto";
+import {
+  ButtonStyles,
+  ChannelTypes,
+  ComponentTypes,
+  Constants,
+  OverwriteTypes,
+  type Client,
+  type Guild,
+  type TextChannel,
+  type User,
+} from "oceanic.js";
 import type { DatabasePlugin } from "../database.js";
 
 export async function createTicket(
@@ -7,7 +17,7 @@ export async function createTicket(
   database: DatabasePlugin,
   guild: Guild,
   user: User,
-  category: string = "general"
+  category: string = "general",
 ): Promise<{ success: boolean; message: string; channelId?: string }> {
   // Check if tickets are enabled
   const settings = await database.getTicketSettings(guild.id);
@@ -122,7 +132,11 @@ Please describe your issue in detail while you wait.`;
       ],
     });
 
-    return { success: true, message: `✅ Your ticket has been created! <#${ticketChannel.id}>`, channelId: ticketChannel.id };
+    return {
+      success: true,
+      message: `✅ Your ticket has been created! <#${ticketChannel.id}>`,
+      channelId: ticketChannel.id,
+    };
   } catch (error) {
     if (ticketChannel) {
       try {
@@ -141,7 +155,7 @@ export async function closeTicket(
   channel: TextChannel,
   guild: Guild,
   user: User,
-  reason: string = "No reason provided"
+  reason: string = "No reason provided",
 ): Promise<{ success: boolean; message: string }> {
   // Check if this is a ticket channel
   const ticket = await database.getTicket(channel.id);
@@ -217,4 +231,3 @@ export async function closeTicket(
     return { success: false, message: `❌ Failed to close ticket: ${err.message}` };
   }
 }
-

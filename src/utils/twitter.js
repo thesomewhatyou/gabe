@@ -26,10 +26,8 @@ export function parseProfileHtml(html) {
   const nameMatch = html.match(/<h1[^>]*>([^<]+)<\/h1>/);
   const handleMatch = html.match(/@(\w+)/);
   const bioMatch = html.match(/<div class="profile-bio">([^<]+)<\/div>/);
-  const avatarMatch = html.match(/<img class="profile-avatar" src="([^"]+)"/
-);
-  const bannerMatch = html.match(/<img class="profile-banner" src="([^"]+)"/
-);
+  const avatarMatch = html.match(/<img class="profile-avatar" src="([^"]+)"/);
+  const bannerMatch = html.match(/<img class="profile-banner" src="([^"]+)"/);
   const followersMatch = html.match(/Followers<\/span>\s*<span[^>]*>([^<]+)<\/span>/);
   const followingMatch = html.match(/Following<\/span>\s*<span[^>]*>([^<]+)<\/span>/);
 

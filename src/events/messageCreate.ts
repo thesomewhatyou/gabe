@@ -3,6 +3,7 @@ import process from "node:process";
 import { type AnyTextableChannel, GroupChannel, type Message, PrivateChannel, ThreadChannel } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
 import ImageCommand from "#cmd-classes/imageCommand.js";
+import { checkMessageSpam, handleThreat, handleOwnerThreat, isWhitelisted } from "#utils/antinuke.js";
 import {
   aliases,
   commands,
@@ -18,7 +19,6 @@ import { clean } from "#utils/misc.js";
 import parseCommand from "#utils/parseCommand.js";
 import { upload } from "#utils/tempimages.js";
 import type { DBGuild, EventParams } from "#utils/types.js";
-import { checkMessageSpam, handleThreat, handleOwnerThreat, isWhitelisted } from "#utils/antinuke.js";
 
 let Sentry: typeof import("@sentry/node");
 if (process.env.SENTRY_DSN && process.env.SENTRY_DSN !== "") {
@@ -56,10 +56,12 @@ export default async ({ client, database }: EventParams, message: Message) => {
           const memberRoles = member?.roles ?? [];
 
           // Check whitelist (trusted user is always exempt), but owner is NOT exempt
-          if (!isOwner && await isWhitelisted(database, message.guildID, message.author.id, memberRoles)) {
+          if (!isOwner && (await isWhitelisted(database, message.guildID, message.author.id, memberRoles))) {
             // Whitelisted user, skip
           } else {
-            warn(`Anti-nuke: Message spam detected in ${message.guildID} by ${message.author.id} (${spamResult.count} msgs in 10s)`);
+            warn(
+              `Anti-nuke: Message spam detected in ${message.guildID} by ${message.author.id} (${spamResult.count} msgs in 10s)`,
+            );
 
             if (isOwner) {
               // Owner is spamming - delete the channel and trigger fallback

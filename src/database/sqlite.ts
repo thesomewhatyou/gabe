@@ -867,10 +867,10 @@ export default class SQLitePlugin implements DatabasePlugin {
     // SQLite does not support arrays, so instead we convert them from strings
     let guild:
       | ({
-        disabled: string;
-        disabled_commands: string;
-        tag_roles: string;
-      } & Omit<DBGuild, "disabled" | "disabled_commands" | "tag_roles">)
+          disabled: string;
+          disabled_commands: string;
+          tag_roles: string;
+        } & Omit<DBGuild, "disabled" | "disabled_commands" | "tag_roles">)
       | undefined;
     this.connection.transaction(() => {
       guild = this.connection.prepare("SELECT * FROM guilds WHERE guild_id = ?").get(query) as {
@@ -964,18 +964,6 @@ export default class SQLitePlugin implements DatabasePlugin {
       return this.connection
         .prepare("SELECT * FROM mod_logs WHERE guild_id = ? AND user_id = ? ORDER BY created_at DESC LIMIT ?")
         .all(guildId, userId, limit) as {
-          id: number;
-          guild_id: string;
-          user_id: string;
-          moderator_id: string;
-          action: string;
-          reason: string | null;
-          created_at: string;
-        }[];
-    }
-    return this.connection
-      .prepare("SELECT * FROM mod_logs WHERE guild_id = ? ORDER BY created_at DESC LIMIT ?")
-      .all(guildId, limit) as {
         id: number;
         guild_id: string;
         user_id: string;
@@ -984,6 +972,18 @@ export default class SQLitePlugin implements DatabasePlugin {
         reason: string | null;
         created_at: string;
       }[];
+    }
+    return this.connection
+      .prepare("SELECT * FROM mod_logs WHERE guild_id = ? ORDER BY created_at DESC LIMIT ?")
+      .all(guildId, limit) as {
+      id: number;
+      guild_id: string;
+      user_id: string;
+      moderator_id: string;
+      action: string;
+      reason: string | null;
+      created_at: string;
+    }[];
   }
 
   async addWarning(guildId: string, userId: string, moderatorId: string, reason: string) {
@@ -997,13 +997,13 @@ export default class SQLitePlugin implements DatabasePlugin {
     return this.connection
       .prepare("SELECT * FROM warnings WHERE guild_id = ? AND user_id = ? ORDER BY created_at DESC")
       .all(guildId, userId) as {
-        id: number;
-        guild_id: string;
-        user_id: string;
-        moderator_id: string;
-        reason: string;
-        created_at: string;
-      }[];
+      id: number;
+      guild_id: string;
+      user_id: string;
+      moderator_id: string;
+      reason: string;
+      created_at: string;
+    }[];
   }
 
   async removeWarning(guildId: string, warningId: number) {
@@ -1063,12 +1063,12 @@ export default class SQLitePlugin implements DatabasePlugin {
     return this.connection
       .prepare("SELECT * FROM user_levels WHERE guild_id = ? ORDER BY xp DESC LIMIT ?")
       .all(guildId, limit) as {
-        guild_id: string;
-        user_id: string;
-        xp: number;
-        level: number;
-        last_xp_gain: string | null;
-      }[];
+      guild_id: string;
+      user_id: string;
+      xp: number;
+      level: number;
+      last_xp_gain: string | null;
+    }[];
   }
 
   async setLevelsEnabled(guildId: string, enabled: boolean) {
@@ -1097,7 +1097,15 @@ export default class SQLitePlugin implements DatabasePlugin {
 
   async getStarboardSettings(guildId: string) {
     const result = this.connection.prepare("SELECT * FROM starboard_settings WHERE guild_id = ?").get(guildId) as
-      | { guild_id: string; channel_id: string | null; emoji: string; threshold: number; allow_self: number; allow_bots: number; enabled: number }
+      | {
+          guild_id: string;
+          channel_id: string | null;
+          emoji: string;
+          threshold: number;
+          allow_self: number;
+          allow_bots: number;
+          enabled: number;
+        }
       | undefined;
     if (result) {
       return {
@@ -1287,7 +1295,9 @@ export default class SQLitePlugin implements DatabasePlugin {
   async getCryptoHolding(guildId: string, userId: string, crypto: string) {
     return this.connection
       .prepare("SELECT * FROM economy_holdings WHERE guild_id = ? AND user_id = ? AND crypto = ?")
-      .get(guildId, userId, crypto) as { guild_id: string; user_id: string; crypto: string; amount: number } | undefined;
+      .get(guildId, userId, crypto) as
+      | { guild_id: string; user_id: string; crypto: string; amount: number }
+      | undefined;
   }
 
   async setCryptoHolding(guildId: string, userId: string, crypto: string, amount: number) {
@@ -1363,9 +1373,18 @@ export default class SQLitePlugin implements DatabasePlugin {
 
   // ==================== TRANSACTION LOG ====================
 
-  async logTransaction(guildId: string, userId: string, type: string, amount: number, crypto?: string, details?: string) {
+  async logTransaction(
+    guildId: string,
+    userId: string,
+    type: string,
+    amount: number,
+    crypto?: string,
+    details?: string,
+  ) {
     this.connection
-      .prepare("INSERT INTO economy_transactions (guild_id, user_id, type, amount, crypto, details) VALUES (?, ?, ?, ?, ?, ?)")
+      .prepare(
+        "INSERT INTO economy_transactions (guild_id, user_id, type, amount, crypto, details) VALUES (?, ?, ?, ?, ?, ?)",
+      )
       .run(guildId, userId, type, amount, crypto ?? null, details ?? null);
   }
 
@@ -1373,22 +1392,30 @@ export default class SQLitePlugin implements DatabasePlugin {
     return this.connection
       .prepare("SELECT * FROM economy_transactions WHERE guild_id = ? AND user_id = ? ORDER BY created_at DESC LIMIT ?")
       .all(guildId, userId, limit) as {
-        id: number;
-        guild_id: string;
-        user_id: string;
-        type: string;
-        amount: number;
-        crypto: string | null;
-        details: string | null;
-        created_at: string;
-      }[];
+      id: number;
+      guild_id: string;
+      user_id: string;
+      type: string;
+      amount: number;
+      crypto: string | null;
+      details: string | null;
+      created_at: string;
+    }[];
   }
 
   // ==================== ECONOMY SETTINGS ====================
 
   async getEconomySettings(guildId: string) {
     const result = this.connection.prepare("SELECT * FROM economy_settings WHERE guild_id = ?").get(guildId) as
-      | { guild_id: string; enabled: number; daily_amount: number; work_min: number; work_max: number; work_cooldown: number; daily_cooldown: number }
+      | {
+          guild_id: string;
+          enabled: number;
+          daily_amount: number;
+          work_min: number;
+          work_max: number;
+          work_cooldown: number;
+          daily_cooldown: number;
+        }
       | undefined;
     if (!result) {
       return {
@@ -1465,34 +1492,34 @@ export default class SQLitePlugin implements DatabasePlugin {
   async getTicket(channelId: string) {
     return this.connection.prepare("SELECT * FROM tickets WHERE channel_id = ?").get(channelId) as
       | {
-        id: number;
-        guild_id: string;
-        channel_id: string;
-        user_id: string;
-        category: string;
-        status: string;
-        claimed_by: string | null;
-        created_at: string;
-        closed_at: string | null;
-        close_reason: string | null;
-      }
+          id: number;
+          guild_id: string;
+          channel_id: string;
+          user_id: string;
+          category: string;
+          status: string;
+          claimed_by: string | null;
+          created_at: string;
+          closed_at: string | null;
+          close_reason: string | null;
+        }
       | undefined;
   }
 
   async getTicketById(ticketId: number) {
     return this.connection.prepare("SELECT * FROM tickets WHERE id = ?").get(ticketId) as
       | {
-        id: number;
-        guild_id: string;
-        channel_id: string;
-        user_id: string;
-        category: string;
-        status: string;
-        claimed_by: string | null;
-        created_at: string;
-        closed_at: string | null;
-        close_reason: string | null;
-      }
+          id: number;
+          guild_id: string;
+          channel_id: string;
+          user_id: string;
+          category: string;
+          status: string;
+          claimed_by: string | null;
+          created_at: string;
+          closed_at: string | null;
+          close_reason: string | null;
+        }
       | undefined;
   }
 
@@ -1520,44 +1547,44 @@ export default class SQLitePlugin implements DatabasePlugin {
     return this.connection
       .prepare("SELECT * FROM tickets WHERE guild_id = ? AND status != 'closed' ORDER BY created_at ASC")
       .all(guildId) as {
-        id: number;
-        guild_id: string;
-        channel_id: string;
-        user_id: string;
-        category: string;
-        status: string;
-        claimed_by: string | null;
-        created_at: string;
-      }[];
+      id: number;
+      guild_id: string;
+      channel_id: string;
+      user_id: string;
+      category: string;
+      status: string;
+      claimed_by: string | null;
+      created_at: string;
+    }[];
   }
 
   async getUserTickets(guildId: string, userId: string) {
     return this.connection
       .prepare("SELECT * FROM tickets WHERE guild_id = ? AND user_id = ? AND status != 'closed'")
       .all(guildId, userId) as {
-        id: number;
-        guild_id: string;
-        channel_id: string;
-        user_id: string;
-        category: string;
-        status: string;
-        claimed_by: string | null;
-        created_at: string;
-      }[];
+      id: number;
+      guild_id: string;
+      channel_id: string;
+      user_id: string;
+      category: string;
+      status: string;
+      claimed_by: string | null;
+      created_at: string;
+    }[];
   }
 
   async getTicketSettings(guildId: string) {
     const result = this.connection.prepare("SELECT * FROM ticket_settings WHERE guild_id = ?").get(guildId) as
       | {
-        guild_id: string;
-        enabled: number;
-        category_id: string | null;
-        support_role_id: string | null;
-        log_channel_id: string | null;
-        ticket_message: string | null;
-        auto_close_hours: number | null;
-        max_open_per_user: number;
-      }
+          guild_id: string;
+          enabled: number;
+          category_id: string | null;
+          support_role_id: string | null;
+          log_channel_id: string | null;
+          ticket_message: string | null;
+          auto_close_hours: number | null;
+          max_open_per_user: number;
+        }
       | undefined;
     if (!result) {
       return {
@@ -1625,20 +1652,32 @@ export default class SQLitePlugin implements DatabasePlugin {
 
   async getRepHistory(guildId: string, userId: string, limit = 10) {
     return this.connection
-      .prepare("SELECT id, from_user_id, amount, reason, created_at FROM reputation WHERE guild_id = ? AND user_id = ? ORDER BY created_at DESC LIMIT ?")
-      .all(guildId, userId, limit) as { id: number; from_user_id: string; amount: number; reason: string | null; created_at: string }[];
+      .prepare(
+        "SELECT id, from_user_id, amount, reason, created_at FROM reputation WHERE guild_id = ? AND user_id = ? ORDER BY created_at DESC LIMIT ?",
+      )
+      .all(guildId, userId, limit) as {
+      id: number;
+      from_user_id: string;
+      amount: number;
+      reason: string | null;
+      created_at: string;
+    }[];
   }
 
   async getRepLeaderboard(guildId: string, limit = 10) {
     return this.connection
-      .prepare("SELECT user_id, SUM(amount) as total FROM reputation WHERE guild_id = ? GROUP BY user_id ORDER BY total DESC LIMIT ?")
+      .prepare(
+        "SELECT user_id, SUM(amount) as total FROM reputation WHERE guild_id = ? GROUP BY user_id ORDER BY total DESC LIMIT ?",
+      )
       .all(guildId, limit) as { user_id: string; total: number }[];
   }
 
   async canGiveRep(guildId: string, fromUserId: string, toUserId: string) {
     const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
     const result = this.connection
-      .prepare("SELECT COUNT(*) as count FROM reputation WHERE guild_id = ? AND from_user_id = ? AND user_id = ? AND created_at > ?")
+      .prepare(
+        "SELECT COUNT(*) as count FROM reputation WHERE guild_id = ? AND from_user_id = ? AND user_id = ? AND created_at > ?",
+      )
       .get(guildId, fromUserId, toUserId, oneDayAgo) as { count: number };
     return result.count === 0;
   }
@@ -1651,7 +1690,7 @@ export default class SQLitePlugin implements DatabasePlugin {
         `INSERT INTO birthdays (guild_id, user_id, birth_month, birth_day, birth_year)
          VALUES (?, ?, ?, ?, ?)
          ON CONFLICT (guild_id, user_id) DO UPDATE SET
-           birth_month = ?, birth_day = ?, birth_year = ?`
+           birth_month = ?, birth_day = ?, birth_year = ?`,
       )
       .run(guildId, userId, month, day, year ?? null, month, day, year ?? null);
   }
@@ -1663,7 +1702,9 @@ export default class SQLitePlugin implements DatabasePlugin {
   async getBirthday(guildId: string, userId: string) {
     return this.connection
       .prepare("SELECT * FROM birthdays WHERE guild_id = ? AND user_id = ?")
-      .get(guildId, userId) as { guild_id: string; user_id: string; birth_month: number; birth_day: number; birth_year: number | null } | undefined;
+      .get(guildId, userId) as
+      | { guild_id: string; user_id: string; birth_month: number; birth_day: number; birth_year: number | null }
+      | undefined;
   }
 
   async getTodaysBirthdays(guildId: string) {
@@ -1681,28 +1722,30 @@ export default class SQLitePlugin implements DatabasePlugin {
       .prepare("SELECT user_id, birth_month, birth_day, birth_year FROM birthdays WHERE guild_id = ?")
       .all(guildId) as { user_id: string; birth_month: number; birth_day: number; birth_year: number | null }[];
 
-    const upcoming = results.filter(b => {
-      const thisYear = now.getFullYear();
-      let bday = new Date(thisYear, b.birth_month - 1, b.birth_day);
-      if (bday < now) bday = new Date(thisYear + 1, b.birth_month - 1, b.birth_day);
-      const diffDays = Math.ceil((bday.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-      return diffDays >= 0 && diffDays <= days;
-    }).sort((a, b) => {
-      const thisYear = now.getFullYear();
-      let dateA = new Date(thisYear, a.birth_month - 1, a.birth_day);
-      let dateB = new Date(thisYear, b.birth_month - 1, b.birth_day);
-      if (dateA < now) dateA = new Date(thisYear + 1, a.birth_month - 1, a.birth_day);
-      if (dateB < now) dateB = new Date(thisYear + 1, b.birth_month - 1, b.birth_day);
-      return dateA.getTime() - dateB.getTime();
-    });
+    const upcoming = results
+      .filter((b) => {
+        const thisYear = now.getFullYear();
+        let bday = new Date(thisYear, b.birth_month - 1, b.birth_day);
+        if (bday < now) bday = new Date(thisYear + 1, b.birth_month - 1, b.birth_day);
+        const diffDays = Math.ceil((bday.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+        return diffDays >= 0 && diffDays <= days;
+      })
+      .sort((a, b) => {
+        const thisYear = now.getFullYear();
+        let dateA = new Date(thisYear, a.birth_month - 1, a.birth_day);
+        let dateB = new Date(thisYear, b.birth_month - 1, b.birth_day);
+        if (dateA < now) dateA = new Date(thisYear + 1, a.birth_month - 1, a.birth_day);
+        if (dateB < now) dateB = new Date(thisYear + 1, b.birth_month - 1, b.birth_day);
+        return dateA.getTime() - dateB.getTime();
+      });
 
     return upcoming.slice(0, 10);
   }
 
   async getBirthdaySettings(guildId: string) {
-    const result = this.connection
-      .prepare("SELECT * FROM birthday_settings WHERE guild_id = ?")
-      .get(guildId) as { guild_id: string; enabled: number; channel_id: string | null; role_id: string | null; message: string | null } | undefined;
+    const result = this.connection.prepare("SELECT * FROM birthday_settings WHERE guild_id = ?").get(guildId) as
+      | { guild_id: string; enabled: number; channel_id: string | null; role_id: string | null; message: string | null }
+      | undefined;
     if (!result) {
       return {
         guild_id: guildId,
@@ -1730,7 +1773,7 @@ export default class SQLitePlugin implements DatabasePlugin {
            enabled = :enabled,
            channel_id = :channel_id,
            role_id = :role_id,
-           message = :message`
+           message = :message`,
       )
       .run({ ...settings, enabled: settings.enabled ? 1 : 0 });
   }
@@ -1738,18 +1781,18 @@ export default class SQLitePlugin implements DatabasePlugin {
   // ==================== ANTI-NUKE SYSTEM ====================
 
   async getAntinukeSettings(guildId: string) {
-    const result = this.connection
-      .prepare("SELECT * FROM antinuke_settings WHERE guild_id = ?")
-      .get(guildId) as {
-        guild_id: string;
-        enabled: number;
-        threshold: number;
-        time_window: number;
-        log_channel_id: string | null;
-        trusted_user: string | null;
-        whitelisted_users: string;
-        whitelisted_roles: string;
-      } | undefined;
+    const result = this.connection.prepare("SELECT * FROM antinuke_settings WHERE guild_id = ?").get(guildId) as
+      | {
+          guild_id: string;
+          enabled: number;
+          threshold: number;
+          time_window: number;
+          log_channel_id: string | null;
+          trusted_user: string | null;
+          whitelisted_users: string;
+          whitelisted_roles: string;
+        }
+      | undefined;
 
     if (!result) {
       return {
@@ -1797,7 +1840,7 @@ export default class SQLitePlugin implements DatabasePlugin {
            log_channel_id = :log_channel_id,
            trusted_user = :trusted_user,
            whitelisted_users = :whitelisted_users,
-           whitelisted_roles = :whitelisted_roles`
+           whitelisted_roles = :whitelisted_roles`,
       )
       .run({
         guild_id: settings.guild_id,
@@ -1822,23 +1865,8 @@ export default class SQLitePlugin implements DatabasePlugin {
     // If executorId is empty, return all actions for the guild
     if (!executorId) {
       return this.connection
-        .prepare(
-          "SELECT * FROM antinuke_actions WHERE guild_id = ? AND created_at > ? ORDER BY created_at DESC"
-        )
+        .prepare("SELECT * FROM antinuke_actions WHERE guild_id = ? AND created_at > ? ORDER BY created_at DESC")
         .all(guildId, cutoff) as {
-          id: number;
-          guild_id: string;
-          executor_id: string;
-          action_type: string;
-          target_id: string | null;
-          created_at: string;
-        }[];
-    }
-    return this.connection
-      .prepare(
-        "SELECT * FROM antinuke_actions WHERE guild_id = ? AND executor_id = ? AND created_at > ? ORDER BY created_at DESC"
-      )
-      .all(guildId, executorId, cutoff) as {
         id: number;
         guild_id: string;
         executor_id: string;
@@ -1846,6 +1874,19 @@ export default class SQLitePlugin implements DatabasePlugin {
         target_id: string | null;
         created_at: string;
       }[];
+    }
+    return this.connection
+      .prepare(
+        "SELECT * FROM antinuke_actions WHERE guild_id = ? AND executor_id = ? AND created_at > ? ORDER BY created_at DESC",
+      )
+      .all(guildId, executorId, cutoff) as {
+      id: number;
+      guild_id: string;
+      executor_id: string;
+      action_type: string;
+      target_id: string | null;
+      created_at: string;
+    }[];
   }
 
   async getOffenseCount(guildId: string, userId: string) {
@@ -1892,9 +1933,9 @@ export default class SQLitePlugin implements DatabasePlugin {
   async removeFromAntinukeWhitelist(guildId: string, type: "users" | "roles", id: string) {
     const settings = await this.getAntinukeSettings(guildId);
     if (type === "users") {
-      settings.whitelisted_users = settings.whitelisted_users.filter(u => u !== id);
+      settings.whitelisted_users = settings.whitelisted_users.filter((u) => u !== id);
     } else {
-      settings.whitelisted_roles = settings.whitelisted_roles.filter(r => r !== id);
+      settings.whitelisted_roles = settings.whitelisted_roles.filter((r) => r !== id);
     }
     await this.setAntinukeSettings(settings);
   }

@@ -61,10 +61,10 @@ export type ExtendedCommandOptions = {
 
 export type Param =
   | {
-    name: string;
-    desc: string;
-    params: Param[];
-  }
+      name: string;
+      desc: string;
+      params: Param[];
+    }
   | string;
 
 export interface CommandInfo {

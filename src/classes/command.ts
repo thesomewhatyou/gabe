@@ -277,15 +277,14 @@ class Command {
   }
 
   getOptionChannel(key: string, defaultArg?: boolean): AnyGuildChannel | undefined {
-
-
     if (this.type === "classic") {
       const id = defaultArg ? this.args.join(" ").trim() : this.options?.[key];
       return this.guild?.channels.get(id as string);
     }
     if (this.type === "application") {
       const opt = this.getRawOption(key) as any;
-      if (opt?.value) return this.interaction?.data.resolved.channels.get(opt.value as string) as AnyGuildChannel | undefined;
+      if (opt?.value)
+        return this.interaction?.data.resolved.channels.get(opt.value as string) as AnyGuildChannel | undefined;
       return undefined;
     }
     throw Error("Unknown command type");
