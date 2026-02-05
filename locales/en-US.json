@@ -8,6 +8,7 @@
       "dice": "Rolls the dice",
       "dog": "Gets a random dog picture",
       "gabe": "Talk to Gabe and learn about this chaotic bot",
+      "joke": "Gets a random joke",
       "vibecheck": "Checks the vibes of a user (Gabe's scientific analysis)",
       "yomama": "Get a random yo mama joke (Gabe's favorite)",
       "homebrew": "Creates a Homebrew Channel edit",
@@ -598,6 +599,7 @@
       "annoy": "annoy",
       "bird": "bird",
       "cat": "cat",
+      "joke": "joke",
       "dice": "dice",
       "dog": "dog",
       "homebrew": "homebrew",
@@ -809,6 +811,9 @@
       },
       "cat": {
         "error": "I couldn't get a cat image in time. Maybe try again?"
+      },
+      "joke": {
+        "error": "I couldn't get a joke in time. Maybe Gabe's not feeling funny today?"
       },
       "channel": {
         "adminOnly": "You need to be an administrator to enable/disable me in this channel!",
