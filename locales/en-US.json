@@ -7,6 +7,7 @@
       "cat": "Gets a random cat picture",
       "dice": "Rolls the dice",
       "dog": "Gets a random dog picture",
+      "excuse": "Generate a chaotic excuse for any situation",
       "gabe": "Talk to Gabe and learn about this chaotic bot",
       "vibecheck": "Checks the vibes of a user (Gabe's scientific analysis)",
       "yomama": "Get a random yo mama joke (Gabe's favorite)",
@@ -131,6 +132,9 @@
       },
       "dice": {
         "max": "max"
+      },
+      "excuse": {
+        "who": "who"
       },
       "gabe": {
         "mood": "mood"
@@ -381,6 +385,9 @@
       "dice": {
         "max": "The maximum dice value"
       },
+      "excuse": {
+        "who": "User who needs an excuse (defaults to you)"
+      },
       "avatar": {
         "member": "The member to get the avatar from"
       },
@@ -600,6 +607,7 @@
       "cat": "cat",
       "dice": "dice",
       "dog": "dog",
+      "excuse": "excuse",
       "homebrew": "homebrew",
       "sonic": "sonic",
       "avatar": "avatar",
