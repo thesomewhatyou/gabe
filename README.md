@@ -1,4 +1,4 @@
-# Gabe - Your Discord Bro (or Enemy)                                                                                                 		 
+# Gabe - An open-source, self-hostable Discord moderation stack with native image processing                                                                                             	
 [![Publish to GitHub Container Registry (multi-arch, explicit builder)](https://github.com/thesomewhatyou/gabe/actions/workflows/deploy-to-ghcr.yml/badge.svg)](https://github.com/thesomewhatyou/gabe/actions/workflows/deploy-to-ghcr.yml) 
 
 [![Repo sync (GitHub -> Codeberg)](https://github.com/thesomewhatyou/gabe/actions/workflows/mirror.yml/badge.svg)](https://github.com/thesomewhatyou/gabe/actions/workflows/mirror.yml)
@@ -77,7 +77,7 @@ pnpm test
 - Want extra logs? `pnpm run start:debug`
 - Prefer Bun or Deno? Try `pnpm run start:bun` or `pnpm run start:deno` (experimental).
 
-Gabe, unfortunately, sometimes does NOT have classic commands (for example, level) and it is sometimes broken.
+Gabe has lots of leverage, but is not always in a particularly stable state (releases are when they are stable). If you find these bugs, please make an issue here.
 
 Fixing is hard, but you CAN add the fix yourself in a pull request (PLEASEPLEASEPLEASEPLEASE). 
 
@@ -114,8 +114,6 @@ MIT licensed. Issues and PRs are welcome — features, fixes, docs, or just chao
 
 Gabe is based on the legendary [esmBot](https://github.com/esmBot/esmBot) by [Essem](https://github.com/TheEssem). The rest is pure Gabe.
 
-
-
 ## First-time setup (Discord)
 
 1) Create an application and bot user
@@ -127,6 +125,7 @@ Gabe is based on the legendary [esmBot](https://github.com/esmBot/esmBot) by [Es
 - OAuth2 > URL Generator
   - Scopes: `bot`, `applications.commands`
   - Permissions: Send Messages, Embed Links, Attach Files, Use External Emojis, Connect, Speak, Use Slash Commands
+  - You're going to need the Message Intent
 - Open the generated URL to add Gabe to your server.
 
 3) Lavalink (for music)
@@ -148,6 +147,7 @@ Gabe is based on the legendary [esmBot](https://github.com/esmBot/esmBot) by [Es
 ## First run checklist
 
 - Node.js 22+ installed (check with `node -v`).
+  * If not, install [nvm](https://github.com/nvm-sh/nvm) and do `nvm install 22`, or pick something higher than Node 22. It'll work fine. 
 - `.env` file contains a valid `TOKEN` and optional settings.
 - If you want classic commands: set `config/commands.json` to enable `types.classic` and enable the Message Content Intent for the bot.
 - Lavalink running and reachable if you intend to use music features.
@@ -185,3 +185,14 @@ Gabe is based on the legendary [esmBot](https://github.com/esmBot/esmBot) by [Es
 
 - Issues and PRs are welcome. Please include logs and steps to reproduce when reporting bugs.
 - See the Privacy Policy in `PRIVACY.md`.
+
+## Comparisons
+
+| Feature                 | Gabe | MEE6 | Dyno |
+| ----------------------- | ---- | ---- | ---- |
+| Self-hostable           | ✅    | ❌    | ❌    |
+| Free moderation         | ✅    | ⚠️  Most features paywalled | ⚠️ A lot of free features, but still included paid mod tools |
+| Native image processing | ✅    | ❌    | ❌    |
+| No premium tier         | ✅    | ❌    | ❌    |
+
+Like, seriously. MEE6 has AI, but seriously? It's a gimmick, not a feature that'll matter. Dyno is not as swag too. 
