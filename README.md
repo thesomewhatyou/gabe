@@ -7,6 +7,8 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white) ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black) ![C++](https://img.shields.io/badge/C++-00599C?style=for-the-badge&logo=cplusplus&logoColor=white) ![pnpm](https://img.shields.io/badge/pnpm-F69220?style=for-the-badge&logo=pnpm&logoColor=white) ![CMake](https://img.shields.io/badge/CMake-064F8C?style=for-the-badge&logo=cmake&logoColor=white) ![Dependabot](https://img.shields.io/badge/Dependabot-025E8C?style=for-the-badge&logo=dependabot&logoColor=white)
 
 
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/gabe?referralCode=dS1qO_&utm_medium=integration&utm_source=template&utm_campaign=generic)
+
 
 Gabe is a fast, loud, and mildly cursed Discord bot built on top of ![oceanic.js](https://img.shields.io/badge/oceanic.js-000?style=for-the-badge). 
 
