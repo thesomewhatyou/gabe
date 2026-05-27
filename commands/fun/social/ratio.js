@@ -1,5 +1,3 @@
-// Get rekt loser
-
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
 import { random } from "#utils/misc.js";
@@ -9,9 +7,9 @@ class RatioCommand extends Command {
     "RATIO SUCCESSFUL! +1 Internet Points",
     "CRITICAL HIT! The ratio was devastating!",
     "RATIO COMPLETE! They never saw it coming!",
-    "ABSOLUTELY RATIOED! Get dunked on!",
+    "ABSOLUTELY RATIOED! Friendly dunk achieved!",
     "RATIO VICTORY! The crowd goes wild!",
-    "MEGA RATIO! That was brutal!",
+    "MEGA RATIO! That one had sparkle trails!",
     "RATIO ACHIEVED! Another one bites the dust!",
   ];
 
@@ -29,7 +27,7 @@ class RatioCommand extends Command {
     "Weak ratio. Could've done better.",
     "Barely a ratio. Meh.",
     "Is that even a ratio? Questionable.",
-    "Soft ratio. Not impressed.",
+    "Soft ratio. Cute attempt.",
     "Mid ratio at best.",
   ];
 
@@ -38,7 +36,7 @@ class RatioCommand extends Command {
     const target = user ?? this.author;
 
     if (target.id === this.client.user.id) {
-      return "Nice try, but you can't ratio a bot. I actually touch grass, you incel.";
+      return "Nice try, but you can't ratio Gabe. Gabe is powered by joy and suspiciously good Wi-Fi.";
     }
 
     const isAuthor = target.id === this.author.id;
@@ -91,8 +89,7 @@ Target: ${subject}
 Result: ${message}
 📊 Ratio Power: ${ratioPower}/100
 
-*WOW. [You failed yourself.](https://c.tenor.com/5lGj7oewq4EAAAAd/tenor.gif)*`;
-      // Pathetic. How do you even manage that?
+*WOW. [Self-ratio recovery arc begins now.](https://c.tenor.com/5lGj7oewq4EAAAAd/tenor.gif)*`;
     }
 
     return `🎯 **Ratio Attempt**

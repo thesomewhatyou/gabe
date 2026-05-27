@@ -67,11 +67,11 @@ export async function load(
   queryValue++;
 
   const relPath = relative(cmdPath, command);
-  const commandArray = relPath.split("/");
-  let commandName = commandArray[commandArray.length - 1].split(".")[0];
+  const commandArray = relPath.split(/[\\/]/);
+  let commandName = commandArray[commandArray.length - 1].replace(/\.[^.]+$/, "");
   const category = commandArray[0];
   const subPath = commandArray.slice(1, -1);
-  const subdir = relPath.split(".")[0];
+  const subdir = commandArray.join("/").replace(/\.[^.]+$/, "");
   const resolvedSubcommandPath = resolve(cmdPath, subdir);
   let subcommandDirEntries: Dirent[] | null = null;
   let subcommandDirExists = false;

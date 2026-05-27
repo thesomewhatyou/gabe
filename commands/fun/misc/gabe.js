@@ -4,26 +4,32 @@ import { random } from "#utils/misc.js";
 
 class GabeCommand extends Command {
   static responses = [
-    "What do you want? I'm busy being awesome.",
-    "Gabe's here! Your server just got 10x cooler.",
-    "I'm your pal... unless you annoy me. Then I'm your worst enemy.",
-    "You called? Better be important.",
-    "I'm Gabe. I do images, music, moderation, and attitude. What can't I do?",
-    "Hey there! Ready to cause some chaos?",
-    "Gabe reporting for duty. What's the mission?",
-    "I'm multifunctional baby! Images? Check. Music? Check. Banning annoying people? Double check!",
-    "Some bots are nice. Some bots are mean. I'm both. Deal with it.",
-    "You rang? Gabe's listening... probably.",
-    "I'm like a Swiss Army knife, but for Discord. And with more personality.",
-    "Your friendly neighborhood chaos bot at your service!",
-    "I can be your best friend or your worst nightmare. Choose wisely.",
-    "Gabe's the name, Discord shenanigans is the game!",
-    "Multifunctional and full of attitude. That's me!",
-    "You'll burn in hell, you rotten fuck. You'll see.",
+    "gabe here. server instantly more powerful.",
+    "you called and gabe arrived with good vibes and questionable tools.",
+    "gabe can do images music moderation games and tiny miracles.",
+    "today gabe chooses joy and maybe a little chaos.",
+    "gabe reporting for duty. mission accepted if mission is fun.",
+    "your friendly neighborhood feature pile is awake.",
+    "gabe status: online happy and probably holding a wrench.",
+    "server vibe improved by at least 12 percent.",
+    "gabe believes in you. scary but true.",
+    "images check. music check. moderation check. silly little joy check.",
+    "gabe is listening and only slightly dramatic.",
+    "hello yes this is gabe customer support for delight.",
+    "gabe brings the buttons the bits and the bounce.",
+    "tiny bot big heart dangerous amount of image processing.",
+    "gabe says keep going. you are cooking.",
   ];
 
   async run() {
-    return `${random(GabeCommand.responses)}`;
+    const mood = this.getOptionString("mood");
+    if (mood === "friend") return "yes. gabe is your friend and also your backup chaos engine.";
+    if (mood === "abilities") {
+      return "gabe does image edits music moderation tags battles economy tools and fun commands. use help and go wild.";
+    }
+    if (mood === "mood") return "gabe mood is bright. little sleepy. extremely ready.";
+
+    return random(GabeCommand.responses);
   }
 
   static flags = [

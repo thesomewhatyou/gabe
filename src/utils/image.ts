@@ -11,8 +11,8 @@ import logger from "./logger.ts";
 import { random } from "./misc.ts";
 import type { ImageParams, ImageTypeData } from "./types.ts";
 
-const run = process.env.API_TYPE === "ws" ? null : (await import("../utils/image-runner.ts")).default;
 let img: import("./imageLib.ts").ImageLib | undefined;
+let runner: typeof import("../utils/image-runner.ts").default | null | undefined;
 
 interface ServerConfig {
   name: string;
@@ -193,10 +193,14 @@ export async function runImageJob(params: ImageParams): Promise<{ buffer: Buffer
       type: "noresult",
     };
   }
-  if (run) {
+  if (runner === undefined) {
+    runner = process.env.API_TYPE === "ws" ? null : (await import("../utils/image-runner.ts")).default;
+  }
+
+  if (runner) {
     // Called from command (not using image API)
     running++;
-    const data = await run(params).finally(() => {
+    const data = await runner(params).finally(() => {
       running--;
       if (running < 0) running = 0;
       if (img && running === 0) {

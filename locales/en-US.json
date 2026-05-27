@@ -2,12 +2,17 @@
   "commands": {
     "descriptions": {
       "8ball": "Asks Gabe's magic 8-ball a question (Gabe knows all... maybe)",
+      "affirm": "Get a warm Gabe affirmation",
       "annoy": "Piss someone off with an insult",
       "bird": "Gets a random bird picture",
       "cat": "Gets a random cat picture",
+      "celebrate": "Start a tiny Gabe celebration for anything worth cheering",
+      "compliment": "Let Gabe send someone a warm ridiculous compliment",
       "dice": "Rolls the dice",
       "dog": "Gets a random dog picture",
       "gabe": "Talk to Gabe and learn about this chaotic bot",
+      "gratitude": "Make a tiny gratitude note with Gabe",
+      "quest": "Get a tiny happy side quest from Gabe",
       "vibecheck": "Checks the vibes of a user (Gabe's scientific analysis)",
       "yomama": "Get a random yo mama joke (Gabe's favorite)",
       "homebrew": "Creates a Homebrew Channel edit",
@@ -126,14 +131,29 @@
       "8ball": {
         "question": "question"
       },
+      "affirm": {
+        "user": "user"
+      },
       "annoy": {
         "who": "who"
+      },
+      "celebrate": {
+        "reason": "reason"
+      },
+      "compliment": {
+        "user": "user"
       },
       "dice": {
         "max": "max"
       },
       "gabe": {
         "mood": "mood"
+      },
+      "gratitude": {
+        "thing": "thing"
+      },
+      "quest": {
+        "theme": "theme"
       },
       "vibecheck": {
         "user": "user"
@@ -375,11 +395,26 @@
       "8ball": {
         "question": "A question you want to ask the ball"
       },
+      "affirm": {
+        "user": "Who should Gabe affirm? (defaults to you)"
+      },
       "annoy": {
         "who": "User to annoy (defaults to you)"
       },
+      "celebrate": {
+        "reason": "What are we celebrating? (defaults to pure vibes)"
+      },
+      "compliment": {
+        "user": "Who should Gabe compliment? (defaults to you)"
+      },
       "dice": {
         "max": "The maximum dice value"
+      },
+      "gratitude": {
+        "thing": "Something good to be grateful for"
+      },
+      "quest": {
+        "theme": "Optional quest theme"
       },
       "avatar": {
         "member": "The member to get the avatar from"
@@ -595,13 +630,20 @@
     },
     "names": {
       "8ball": "8ball",
+      "affirm": "affirm",
       "annoy": "annoy",
       "bird": "bird",
       "cat": "cat",
+      "celebrate": "celebrate",
+      "compliment": "compliment",
       "dice": "dice",
       "dog": "dog",
+      "gabe": "gabe",
+      "gratitude": "gratitude",
       "homebrew": "homebrew",
+      "quest": "quest",
       "sonic": "sonic",
+      "vibecheck": "vibecheck",
       "avatar": "avatar",
       "banner": "banner",
       "base64": "base64",
