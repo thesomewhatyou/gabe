@@ -62,7 +62,7 @@ pnpm build:debug-no-magick # Without ImageMagick, Debug mode
 
 **TypeScript-only build** (useful for quick iterations):
 ```bash
-pnpm build:ts  # Only runs tsc, skips native modules
+pnpm typecheck  # Only runs tsc, skips native modules
 ```
 
 **IMPORTANT BUILD NOTES**:
@@ -80,6 +80,12 @@ pnpm build:ts  # Only runs tsc, skips native modules
 pnpm lint
 # Runs eslint with TypeScript, import-x, and prettier plugins
 # Config: eslint.config.js (flat config format)
+```
+
+**Lint the joy command surface**:
+```bash
+pnpm lint:joy
+# Fast focused lint for the morale/joy commands and their tests
 ```
 
 **Format code**:
@@ -120,29 +126,38 @@ pm2 start ecosystem.config.cjs
 
 ### Testing
 
-**No automated tests exist** in this repository. Validation is done by:
-1. Building successfully
+Automated unit tests exist under `tests/`.
+
+```bash
+pnpm test       # Typecheck, then run node --test
+pnpm test:unit  # Run node --test after TypeScript has already been built
+```
+
+Validation is done by:
+1. Typechecking successfully
 2. Linting without errors
-3. Running the bot and verifying commands work
-4. Checking GitHub Actions CI passes
+3. Running automated tests
+4. Running the bot and verifying changed commands work when behavior changes
+5. Checking GitHub Actions CI passes
 
 ## GitHub Actions CI/CD
 
-### Build Workflow (`.github/workflows/build.yml`)
+### Quality Workflow (`.github/workflows/quality.yml`)
 
 Runs on: Push to `master`, Pull Requests to `master`
 
 **Steps**:
 1. Checkout code
 2. Setup pnpm and Node.js 22
-3. Install system dependencies: `cmake libvips-dev libmagick++-dev libzxingcore-dev` (Ubuntu)
-4. Run `pnpm install --frozen-lockfile && pnpm run build`
-5. Upload native module artifact (`build/Release/image.node`)
+3. Run `pnpm install --frozen-lockfile --ignore-scripts`
+4. Run `pnpm typecheck`
+5. Run `pnpm lint:joy`
+6. Run `pnpm test:unit`
 
 **This workflow MUST pass for PRs to be merged**. If it fails:
-- Check native dependency installation
-- Verify cmake configuration in CMakeLists.txt
 - Ensure TypeScript compiles without errors
+- Check joy command lint/import ordering
+- Run unit tests locally and fix regressions
 
 ### Docker Workflows
 
@@ -278,21 +293,26 @@ When editing imports, use these aliases instead of relative paths where applicab
 
 1. **Always run `pnpm install --frozen-lockfile`** after pulling changes
 2. **Always run `pnpm build`** after dependency changes or native module modifications
-3. **Run `pnpm lint`** before committing to catch style/import issues
-4. **Test locally** with `pnpm start:debug` to see detailed logs
-5. **For TypeScript-only changes**, `pnpm build:ts && pnpm start` is faster than full rebuild
-6. **Check `.gitignore`** - don't commit `dist/`, `build/`, `node_modules/`, `.env`, `*.sqlite`
+3. **Run `pnpm typecheck` and `pnpm test:unit`** before committing TypeScript or command changes
+4. **Run `pnpm lint:joy`** for joy/fun command changes
+5. **Run `pnpm lint`** before larger commits to catch style/import issues
+6. **Test locally** with `pnpm start:debug` to see detailed logs
+7. **For TypeScript-only changes**, `pnpm typecheck && pnpm test:unit` is faster than full rebuild
+8. **Check `.gitignore`** - don't commit `dist/`, `build/`, `node_modules/`, `.env`, `*.sqlite`
 
 ## Validation Checklist
 
 Before submitting changes, ensure:
 - [ ] `pnpm install --frozen-lockfile` succeeds
-- [ ] `pnpm build` completes without errors
-- [ ] `pnpm lint` passes with no errors
+- [ ] `pnpm typecheck` passes
+- [ ] `pnpm test:unit` passes
+- [ ] `pnpm lint:joy` passes when joy/fun command code changed
+- [ ] `pnpm build` completes without errors when native code or deployment paths changed
+- [ ] `pnpm lint` passes with no errors for larger changes
 - [ ] Bot starts successfully (`pnpm start` or `pnpm start:debug`)
 - [ ] Changed commands work as expected (test manually)
 - [ ] No secrets or `.env` committed
-- [ ] GitHub Actions build workflow will pass (check for native dependency issues)
+- [ ] GitHub Actions quality workflow will pass
 
 ## Additional Notes
 

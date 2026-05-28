@@ -3,16 +3,22 @@
     "descriptions": {
       "8ball": "Asks Gabe's magic 8-ball a question (Gabe knows all... maybe)",
       "affirm": "Get a warm Gabe affirmation",
-      "annoy": "Piss someone off with an insult",
+      "annoy": "Lightly annoy someone with harmless Gabe nonsense",
       "bird": "Gets a random bird picture",
       "cat": "Gets a random cat picture",
       "celebrate": "Start a tiny Gabe celebration for anything worth cheering",
+      "cheer": "Start a warm Gabe cheer for someone or something",
       "compliment": "Let Gabe send someone a warm ridiculous compliment",
       "dice": "Rolls the dice",
       "dog": "Gets a random dog picture",
       "gabe": "Talk to Gabe and learn about this chaotic bot",
       "gratitude": "Make a tiny gratitude note with Gabe",
+      "highfive": "Give someone a cheerful Gabe high five",
+      "joy": "Get Gabe's guide to the happy fun commands",
+      "kindness": "Get a tiny Gabe kindness mission",
       "quest": "Get a tiny happy side quest from Gabe",
+      "spark": "Get a tiny spark of joy and momentum from Gabe",
+      "die": "Receive an extremely fake dramatic Gabe exit line",
       "vibecheck": "Checks the vibes of a user (Gabe's scientific analysis)",
       "yomama": "Get a random yo mama joke (Gabe's favorite)",
       "homebrew": "Creates a Homebrew Channel edit",
@@ -104,7 +110,7 @@
       "Steal Emoji": "Yoink that emoji for your server (Gabe approves of theft)",
       "ban": "Bans a user from the server (Gabe shows no mercy)",
       "kick": "Kicks a user from the server (out you go!)",
-      "timeout": "Times out a user (shut up for a bit)",
+      "timeout": "Times out a user for a bit",
       "untimeout": "Removes a timeout from a user (you can talk again)",
       "purge": "Deletes multiple messages at once (cleanup time)",
       "music": "Handles music playback",
@@ -140,6 +146,10 @@
       "celebrate": {
         "reason": "reason"
       },
+      "cheer": {
+        "reason": "reason",
+        "user": "user"
+      },
       "compliment": {
         "user": "user"
       },
@@ -152,7 +162,19 @@
       "gratitude": {
         "thing": "thing"
       },
+      "highfive": {
+        "user": "user"
+      },
+      "joy": {
+        "need": "need"
+      },
+      "kindness": {
+        "theme": "theme"
+      },
       "quest": {
+        "theme": "theme"
+      },
+      "spark": {
         "theme": "theme"
       },
       "vibecheck": {
@@ -404,6 +426,10 @@
       "celebrate": {
         "reason": "What are we celebrating? (defaults to pure vibes)"
       },
+      "cheer": {
+        "reason": "What are we cheering for?",
+        "user": "Who should Gabe cheer for? (optional)"
+      },
       "compliment": {
         "user": "Who should Gabe compliment? (defaults to you)"
       },
@@ -413,8 +439,20 @@
       "gratitude": {
         "thing": "Something good to be grateful for"
       },
+      "highfive": {
+        "user": "Who should get the high five? (defaults to you)"
+      },
+      "joy": {
+        "need": "What kind of joy do you need?"
+      },
+      "kindness": {
+        "theme": "Optional kindness theme"
+      },
       "quest": {
         "theme": "Optional quest theme"
+      },
+      "spark": {
+        "theme": "Optional spark theme"
       },
       "avatar": {
         "member": "The member to get the avatar from"
@@ -635,13 +673,18 @@
       "bird": "bird",
       "cat": "cat",
       "celebrate": "celebrate",
+      "cheer": "cheer",
       "compliment": "compliment",
       "dice": "dice",
       "dog": "dog",
       "gabe": "gabe",
       "gratitude": "gratitude",
+      "highfive": "highfive",
       "homebrew": "homebrew",
+      "joy": "joy",
+      "kindness": "kindness",
       "quest": "quest",
+      "spark": "spark",
       "sonic": "sonic",
       "vibecheck": "vibecheck",
       "avatar": "avatar",
@@ -1089,7 +1132,7 @@
         "downloadFailed": "Oof, I couldn't download that emoji. Maybe it got deleted? Try another one.",
         "success": "Boom! Successfully stole that emoji: {{emoji}}\nIt's now part of your server's collection. You're welcome. 😎",
         "tooBig": "Yikes! That emoji is {{size}}KB, but Discord only allows {{maxSize}}KB max.",
-        "noDM": "Can't upload emojis to DMs, genius.",
+        "noDM": "I can't upload emojis to DMs.",
         "noPermission": "I don't have permission to manage emojis here. Ask an admin to hook me up with that power!",
         "uploadFailed": "Couldn't upload to Discord for some reason.",
         "storedInRAM": "Alright, so here's the deal... {{reason}}\n\nI'm keeping `{{name}}` in my RAM for the next 10 minutes. You can access it here: {{url}}\n\nIt's temporary, so if you want to keep it forever, you'll need to fix the issue above. Don't say I didn't warn you! ⚠️",
@@ -1231,16 +1274,16 @@
     },
     "frames": "That GIF has way too many frames. IT'S OVER 1000!!!",
     "jobEnded": "Something happened to the image servers before I could receive the image. Try again. Or not.",
-    "large": "Your image is fat. 40 MB no.",
+    "large": "That image is too large. 40 MB max.",
     "nocmd": "That command isn't supported on this instance of Gabe.",
-    "noanim": "Did you just give me a still image? Try with a GIF, you wad.",
+    "noanim": "That looks like a still image. Try again with a GIF.",
     "noImage": "You didn't give me an image. >:C",
     "noResult": "Someone forgot to turn on the image server... contact the person who runs me.",
     "noServers": "I can't seem to contact the image servers, they might be down or still trying to start up. Please wait a little bit.",
     "noTempServer": "This bot instance doesn't have a temporary image server, so... don't try again. It's too big.",
     "noParam": "You need to provide some text!",
     "notWorking": "I couldn't find a way to process this image; this likely means that I haven't been set up correctly. Please contact the bot owner. If it was a webp, then that's the bot owner's problem.",
-    "processing": "Shaddup I'm thinking mofo",
+    "processing": "Hold on, Gabe is thinking.",
     "ratelimit": "I've been ratelimited by the server hosting that image. Try uploading your image somewhere else.",
     "selected": "The image has been selected for your next command.",
     "slowDown": "Slow. Down.",

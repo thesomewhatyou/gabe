@@ -149,4 +149,8 @@ dist/
 
 # GitHub workflows, templates, etc
 **/.github
+!.github/
+!.github/workflows/
+!.github/workflows/quality.yml
+!.github/pull_request_template.md
 _codeql_detected_source_root

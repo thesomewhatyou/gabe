@@ -16,7 +16,7 @@ class BanCommand extends Command {
     }
 
     const user = this.options?.user ?? this.getOptionUser("user") ?? this.args[0];
-    if (!user) return "❌ Gabe says: You gotta tell me who to ban, genius.";
+    if (!user) return "❌ Gabe says: Tell me who to ban and I can handle it.";
 
     const reason =
       this.options?.reason ?? this.getOptionString("reason") ?? this.args.slice(1).join(" ") ?? "Gabe's judgement";
@@ -47,7 +47,7 @@ class BanCommand extends Command {
         }
 
         if (userToBan.id === this.client.user.id) {
-          return "❌ Gabe says: I'm not banning myself. That's suicide!";
+          return "❌ Gabe says: I'm not banning myself. I still have work to do.";
         }
       }
 

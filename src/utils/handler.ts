@@ -2,7 +2,7 @@ import type { Dirent } from "node:fs";
 import { readdir } from "node:fs/promises";
 import { dirname, relative, resolve } from "node:path";
 import process from "node:process";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import {
   type Client,
   Constants,
@@ -63,7 +63,9 @@ export async function load(
   | undefined
 > {
   log("main", `Loading command from ${command}...`);
-  const { default: props } = (await import(`${command}?v=${queryValue}`)) as { default: typeof Command };
+  const commandUrl = pathToFileURL(command);
+  commandUrl.searchParams.set("v", `${queryValue}`);
+  const { default: props } = (await import(commandUrl.href)) as { default: typeof Command };
   queryValue++;
 
   const relPath = relative(cmdPath, command);

@@ -1,7 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
-import { mentionToObject } from "#utils/mentions.js";
-import { random } from "#utils/misc.js";
+import { currentDayKey, resolveJoyUser, seededPick } from "#utils/joy.js";
 
 class VibecheckCommand extends Command {
   static levels = [
@@ -53,31 +52,42 @@ class VibecheckCommand extends Command {
     return VibecheckCommand.levels.find((level) => score <= level.max) ?? VibecheckCommand.levels.at(-1);
   }
 
-  async resolveClassicUser() {
-    const raw = typeof this.options?.user === "string" ? this.options.user : this.args?.[0];
-    if (!raw) return undefined;
+  static pick(seed, list) {
+    return seededPick(seed, list, "vibecheck");
+  }
 
-    return mentionToObject(this.client, raw, "user", {
-      guild: this.guild ?? undefined,
-    })
-      .then((entity) => entity?.user ?? entity)
-      .catch(() => undefined);
+  static bar(score) {
+    return "#".repeat(Math.round(score / 10)).padEnd(10, "-");
+  }
+
+  static build(seed) {
+    const score = VibecheckCommand.score(seed);
+    const tier = VibecheckCommand.tier(score);
+
+    return {
+      score,
+      tier,
+      bar: VibecheckCommand.bar(score),
+      boost: VibecheckCommand.pick(`${seed}:boost`, VibecheckCommand.boosts),
+      advice: VibecheckCommand.pick(`${seed}:advice`, VibecheckCommand.advice),
+    };
+  }
+
+  async resolveClassicUser() {
+    return resolveJoyUser(this);
   }
 
   async run() {
     const target = this.getOptionUser("user") ?? (await this.resolveClassicUser()) ?? this.author;
-    const dayKey = Math.floor(Date.now() / 86400000);
-    const score = VibecheckCommand.score(`${target.id}:${dayKey}`);
-    const tier = VibecheckCommand.tier(score);
-    const bar = `${"#".repeat(Math.round(score / 10)).padEnd(10, "-")}`;
+    const vibe = VibecheckCommand.build(`${target.id}:${currentDayKey()}`);
 
     return [
       `**gabe vibecheck for <@${target.id}>**`,
-      `vibe meter: ${bar} ${score}%`,
-      `rank: ${tier.name}`,
-      tier.note,
-      random(VibecheckCommand.boosts),
-      random(VibecheckCommand.advice),
+      `vibe meter: ${vibe.bar} ${vibe.score}%`,
+      `rank: ${vibe.tier.name}`,
+      vibe.tier.note,
+      vibe.boost,
+      vibe.advice,
     ].join("\n");
   }
 }

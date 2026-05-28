@@ -1,7 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
-import { currentDayKey, seededPick } from "#utils/joy.js";
-import { mentionToObject } from "#utils/mentions.js";
+import { currentDayKey, resolveJoyUser, seededPick } from "#utils/joy.js";
 
 class AffirmCommand extends Command {
   static affirmations = [
@@ -40,14 +39,7 @@ class AffirmCommand extends Command {
   }
 
   async resolveClassicUser() {
-    const raw = typeof this.options?.user === "string" ? this.options.user : this.args?.[0];
-    if (!raw) return undefined;
-
-    return mentionToObject(this.client, raw, "user", {
-      guild: this.guild ?? undefined,
-    })
-      .then((entity) => entity?.user ?? entity)
-      .catch(() => undefined);
+    return resolveJoyUser(this);
   }
 
   async run() {

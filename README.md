@@ -27,7 +27,7 @@ It ships native image processing, reliable moderation, fun commands, music via L
 ## Requirements
 
 - Node.js 22+ (required)
-- Linux/macOS recommended. Windows is not officially supported; use WSL if you must.
+- Linux/macOS recommended. Windows users should use WSL for the smoothest native build path.
 - For image features, a native module is compiled via `cmake-js`. A basic C/C++ toolchain is required when building from source. ImageMagick can be toggled on/off at build time.
 
 ## Quick start
@@ -35,7 +35,7 @@ It ships native image processing, reliable moderation, fun commands, music via L
 1. Clone and install
 
 ```
-git clone https://github.com/gabrielpiss/gabe.git
+git clone https://github.com/thesomewhatyou/gabe.git
 cd gabe
 pnpm install
 ```
@@ -74,6 +74,12 @@ To build the TypeScript sources and run the tests:
 pnpm test
 ```
 
+- `pnpm typecheck` runs the TypeScript compiler only.
+- `pnpm test:unit` reruns the JavaScript test files after TypeScript has already been built.
+- `pnpm lint` checks code style rules.
+- `pnpm lint:joy` checks the joy command surface and related tests.
+- `pnpm format:check` checks Prettier formatting.
+- Pull requests run a lightweight CI gate with `pnpm typecheck`, `pnpm lint:joy`, and `pnpm test:unit`.
 - Want extra logs? `pnpm run start:debug`
 - Prefer Bun or Deno? Try `pnpm run start:bun` or `pnpm run start:deno` (experimental).
 
@@ -91,12 +97,19 @@ Don't know a command? It's not better to guess. Just use `&help`.
 
 Gabe now has a softer fun side for servers that want a little morale boost:
 
+- `joy` suggests which happy commands to use for the moment.
 - `affirm` gives someone a warm affirmation.
 - `gratitude` turns a good thing into a tiny gratitude note.
 - `vibecheck` rates the day's vibe with Gabe science.
 - `compliment` sends someone a ridiculous kind compliment.
+- `cheer` rallies chat around someone or something.
+- `highfive` gives someone a cheerful Gabe high five.
 - `celebrate` starts a tiny party for anything worth cheering.
+- `kindness` gives a tiny good deed mission.
 - `quest` gives a small happy side quest.
+- `spark` gives a tiny spark of joy and momentum.
+- `annoy` lightly pesters someone with harmless Gabe nonsense.
+- `die` is now pure dramatic fake exit energy.
 
 ## Docker and Lavalink
 
@@ -174,6 +187,7 @@ Gabe is based on the legendary [esmBot](https://github.com/esmBot/esmBot) by [Es
 - Native image build fails
   - Ensure build tools are available (C/C++ toolchain, `cmake-js`).
   - Try building without ImageMagick: `pnpm build:no-magick`.
+  - For TypeScript-only development or tests, `pnpm install --ignore-scripts` plus `pnpm test` can avoid native rebuilds until you need image processing.
 
 - Cannot connect to Discord
   - Verify `TOKEN` is correct and the bot is invited to at least one server.
@@ -188,7 +202,7 @@ Gabe is based on the legendary [esmBot](https://github.com/esmBot/esmBot) by [Es
   - Verify host/port/secret and that your bot can connect from its network.
 
 - Windows
-  - Windows is not officially supported, nor will it ever be. Use WSL for best results.
+  - Use WSL for best results, especially when building native image dependencies.
 
 ## Logs and stability
 

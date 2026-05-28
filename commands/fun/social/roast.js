@@ -115,7 +115,7 @@ class RoastCommand extends Command {
   async run() {
     const target = await this.resolveTarget();
     if (!target) {
-      return "❌ Gabe says: I can't find anyone to roast. Mention someone, coward.";
+      return "❌ Gabe says: I can't find anyone to roast. Mention someone, buddy.";
     }
 
     if (target.id === this.client.user.id) {
