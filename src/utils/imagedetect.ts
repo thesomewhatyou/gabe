@@ -34,21 +34,21 @@ const providerUrls = ["https://tenor.co", "https://giphy.com"];
 const imageFormats = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/avif", "large"];
 const videoFormats = ["video/mp4", "video/webm", "video/mov"];
 
-type TenorMediaObject = {
+type KlipyMediaObject = {
   url: string;
   dims: number[];
   duration: number;
   size: number;
 };
 
-type TenorResponse = {
+type KlipyResponse = {
   error?: {
     code: number;
     message: string;
     status: string;
   };
   results: {
-    media_formats: { [key: string]: TenorMediaObject };
+    media_formats: { [key: string]: KlipyMediaObject };
   }[];
 };
 
@@ -98,9 +98,8 @@ async function getImage(
   const host = new URL(image2).host;
   if (combined.includes(host)) {
     if (tenorURLs.includes(host)) {
-      // Tenor doesn't let us access a raw GIF without going through their API,
-      // so we use that if there's a key in the config
-      if (process.env.TENOR !== "") {
+      const klipyApiKey = process.env.KLIPY_API_KEY;
+      if (klipyApiKey && klipyApiKey !== "") {
         let id: string | undefined;
         if (image2.includes("tenor.com/view/")) {
           id = image2.split("-").pop();
@@ -112,15 +111,15 @@ async function getImage(
         }
         if (Number.isNaN(Number(id))) return;
         const data = await fetch(
-          `https://tenor.googleapis.com/v2/posts?media_filter=gif&limit=1&client_key=Gabe%20${process.env.ESMBOT_VER}&key=${process.env.TENOR}&ids=${id}`,
+          `https://api.klipy.com/v2/posts?media_filter=gif&limit=1&client_key=Gabe%20${process.env.ESMBOT_VER}&key=${klipyApiKey}&ids=${id}`,
         );
         if (data.status === 429) {
           if (extraReturnTypes) {
-            payload.type = "tenorlimit";
+            payload.type = "klipylimit";
             return payload;
           }
         }
-        const json = (await data.json()) as TenorResponse;
+        const json = (await data.json()) as KlipyResponse;
         if (json.error) throw Error(json.error.message);
         if (json.results.length === 0) return;
         payload.path = json.results[0].media_formats.gif.url;

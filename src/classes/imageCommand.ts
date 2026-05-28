@@ -87,9 +87,9 @@ class ImageCommand extends Command {
           runningCommands.delete(this.author.id);
           return this.getString("image.large");
         }
-        if (image.type === "tenorlimit") {
+        if (image.type === "klipylimit") {
           runningCommands.delete(this.author.id);
-          return this.getString("image.tenor");
+          return this.getString("image.klipy");
         }
         if (image.type === "badurl") {
           runningCommands.delete(this.author.id);

@@ -13,7 +13,7 @@ class RawCommand extends Command {
     return image.path;
   }
 
-  static description = "Gets a direct image URL (useful for saving GIFs from sites like Tenor)";
+  static description = "Gets a direct image URL (useful for saving GIFs from sites like KLIPY)";
   static aliases = ["giflink", "imglink", "getimg", "rawgif", "rawimg"];
   static flags = [
     {

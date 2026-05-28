@@ -21,8 +21,8 @@ class SelectImageCommand extends Command {
     if (image.type === "large") {
       return this.getString("image.large");
     }
-    if (image.type === "tenorlimit") {
-      return this.getString("image.tenor");
+    if (image.type === "klipylimit") {
+      return this.getString("image.klipy");
     }
     if (image.type === "badurl") {
       return this.getString("image.badurl");
