@@ -16,12 +16,16 @@ import {
 import {
   Connectors,
   type LavalinkResponse,
+  type Connection,
   type NodeOption,
+  Player as ShoukakuPlayer,
   type Player,
   type Playlist,
   Shoukaku,
+  type Structures,
   type Track,
   type TrackExceptionEvent,
+  type UpdatePlayerInfo,
 } from "shoukaku";
 import { getString } from "./i18n.ts";
 import logger from "./logger.ts";
@@ -60,9 +64,35 @@ export let manager: Shoukaku;
 export let nodes = (await import("#config/servers.json", { with: { type: "json" } })).default.lava as NodeOption[];
 export let connected = false;
 
+class LavalinkDavePlayer extends ShoukakuPlayer {
+  async sendServerUpdate(connection: Connection) {
+    if (!connection.serverUpdate || !connection.sessionId || !connection.channelId) {
+      return super.sendServerUpdate(connection);
+    }
+
+    const playerUpdate = {
+      guildId: this.guildId,
+      playerOptions: {
+        voice: {
+          token: connection.serverUpdate.token,
+          endpoint: connection.serverUpdate.endpoint,
+          sessionId: connection.sessionId,
+          channelId: connection.channelId,
+        },
+      },
+    } as unknown as UpdatePlayerInfo;
+
+    await this.node.rest.updatePlayer(playerUpdate);
+  }
+}
+
 export function connect(client: Client) {
   if (nodes.length === 0) return true;
-  manager = new Shoukaku(new Connectors.OceanicJS(client), nodes, { moveOnDisconnect: true, resume: true });
+  manager = new Shoukaku(new Connectors.OceanicJS(client), nodes, {
+    moveOnDisconnect: true,
+    resume: true,
+    structures: { player: LavalinkDavePlayer } as unknown as Structures,
+  });
   manager.on("error", (node, error) => {
     logger.error(`An error occurred on Lavalink node ${node}: ${error}`);
   });
