@@ -1,12 +1,13 @@
 import { Constants } from "oceanic.js";
 import ImageCommand from "#cmd-classes/imageCommand.js";
+import { parseIntegerArg } from "#utils/commandArgs.js";
 
 class FreezeCommand extends ImageCommand {
   paramsFunc() {
-    const frameCount = this.getOptionInteger("endframe", true) ?? Number.parseInt(this.args[0]);
+    const frameCount = this.getOptionInteger("endframe", true) ?? parseIntegerArg(this.args[0]);
     return {
       loop: false,
-      frame: Number.isNaN(frameCount) ? -1 : frameCount,
+      frame: frameCount === undefined ? -1 : frameCount,
     };
   }
 

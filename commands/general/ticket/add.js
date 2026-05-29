@@ -1,5 +1,6 @@
 import { Constants, OverwriteTypes } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { cleanDiscordId } from "#utils/commandArgs.js";
 
 class AddToTicketCommand extends Command {
     async run() {
@@ -36,7 +37,8 @@ class AddToTicketCommand extends Command {
             return "❌ Please specify a user to add.";
         }
 
-        const userToAdd = typeof user === "string" ? await this.client.rest.users.get(user).catch(() => null) : user;
+        const userToAdd =
+            typeof user === "string" ? await this.client.rest.users.get(cleanDiscordId(user)).catch(() => null) : user;
         if (!userToAdd) {
             return "❌ User not found.";
         }

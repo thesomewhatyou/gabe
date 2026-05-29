@@ -4,9 +4,13 @@ import Command from "#cmd-classes/command.js";
 class DiceCommand extends Command {
   async run() {
     const max = this.getOptionInteger("max", true);
+    if (max !== undefined && max < 1) {
+      this.success = false;
+      return this.getString("commands.responses.dice.invalidMax", { returnNull: true }) ?? "Dice max must be at least 1.";
+    }
     return `🎲 ${this.getString("commands.responses.dice.landed", {
       params: {
-        number: (Math.floor(Math.random() * (max || 6)) + 1).toString(),
+        number: (Math.floor(Math.random() * (max ?? 6)) + 1).toString(),
       },
     })}`;
   }

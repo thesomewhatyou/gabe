@@ -1,5 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { cleanDiscordId } from "#utils/commandArgs.js";
 import { isOwner } from "#utils/owners.js";
 
 class UntimeoutCommand extends Command {
@@ -23,7 +24,7 @@ class UntimeoutCommand extends Command {
 
     try {
       const userToUntimeout =
-        typeof user === "string" ? await this.client.rest.users.get(user).catch(() => null) : user;
+        typeof user === "string" ? await this.client.rest.users.get(cleanDiscordId(user)).catch(() => null) : user;
 
       if (!userToUntimeout) return "❌ Gabe says: Can't find that user. Check your spelling?";
 

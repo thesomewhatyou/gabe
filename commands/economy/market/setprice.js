@@ -1,5 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { parseNumberArg } from "#utils/commandArgs.js";
 import { isOwner } from "#utils/owners.js";
 import { CRYPTOS } from "../crypto/prices.js";
 
@@ -33,8 +34,8 @@ class SetpriceCommand extends Command {
         }
 
         // Get new price
-        let newPrice = this.options.price ?? parseFloat(this.args?.[1]);
-        if (!newPrice || isNaN(newPrice) || newPrice < 0.01) {
+        let newPrice = this.options.price ?? parseNumberArg(this.args?.[1]);
+        if (newPrice === undefined || newPrice < 0.01) {
             this.success = false;
             return "❌ Please provide a valid price (minimum 0.01).";
         }

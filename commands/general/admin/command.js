@@ -11,17 +11,17 @@ class CommandCommand extends Command {
     if (!this.memberPermissions.has("ADMINISTRATOR") && !isOwner(this.author?.id))
       return this.getString("commands.responses.command.adminOnly");
     if (this.args.length === 0) return this.getString("commands.responses.command.noCmd");
-    if (this.args[0] !== "disable" && this.args[0] !== "enable")
-      return this.getString("commands.responses.command.invalid");
+    const action = this.args[0].toLowerCase();
+    if (action !== "disable" && action !== "enable") return this.getString("commands.responses.command.invalid");
     const commandName = this.args.slice(1).join(" ").toLowerCase();
     if (commandName.length === 0) return this.getString("commands.responses.command.noInput");
-    if (!collections.commands.has(this.args[1]) && !collections.aliases.has(commandName))
+    if (!collections.commands.has(commandName) && !collections.aliases.has(commandName))
       return this.getString("commands.responses.command.invalidCmd");
 
     const guildDB = await this.database.getGuild(this.guild.id);
     const command = collections.aliases.get(commandName) ?? commandName;
 
-    if (this.args[0].toLowerCase() === "disable") {
+    if (action === "disable") {
       if (command === "command") return this.getString("commands.responses.command.cannotDisable");
       if (guildDB.disabled_commands.includes(command))
         return this.getString("commands.responses.command.alreadyDisabled");
@@ -35,7 +35,7 @@ class CommandCommand extends Command {
         },
       });
     }
-    if (this.args[0].toLowerCase() === "enable") {
+    if (action === "enable") {
       if (!guildDB.disabled_commands.includes(command)) return this.getString("commands.responses.command.notDisabled");
 
       await this.database.enableCommand(this.guild.id, command);

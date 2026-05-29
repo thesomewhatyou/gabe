@@ -21,6 +21,7 @@ import {
   type Uncached,
   type User,
 } from "oceanic.js";
+import { parseBooleanArg, parseIntegerArg, parseNumberArg } from "#utils/commandArgs.js";
 import { getString } from "#utils/i18n.js";
 import { cleanInteraction, cleanMessage } from "#utils/misc.js";
 import type { CommandType } from "#utils/types.js";
@@ -44,6 +45,10 @@ type CommandOptionsApplication = {
 };
 
 export type CommandOptions = CommandOptionsClassic | CommandOptionsApplication;
+
+function cleanDiscordId(value: unknown) {
+  return typeof value === "string" ? value.trim().replace(/[<@#!&>]/g, "") : value;
+}
 
 class Command {
   client: Client;
@@ -188,9 +193,14 @@ class Command {
     return options.find((o) => o.name === key);
   }
 
+  hasClassicOption(key: string) {
+    return this.type === "classic" && Object.prototype.hasOwnProperty.call(this.options ?? {}, key);
+  }
+
   getOptionString(key: string, defaultArg?: boolean): string | undefined {
     if (this.type === "classic") {
-      return defaultArg ? this.args.join(" ").trim() : (this.options?.[key] as string);
+      const value = defaultArg ? this.args.join(" ").trim() : this.options?.[key];
+      return value === "" ? undefined : (value as string | undefined);
     }
     if (this.type === "application") {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -202,8 +212,7 @@ class Command {
   getOptionBoolean(key: string, defaultArg?: boolean): boolean | undefined {
     if (this.type === "classic") {
       const option = defaultArg ? this.args.join(" ").trim() : this.options?.[key];
-      if (option) return !!option;
-      else return;
+      return parseBooleanArg(option);
     }
     if (this.type === "application") {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -214,7 +223,8 @@ class Command {
 
   getOptionNumber(key: string, defaultArg?: boolean): number | undefined {
     if (this.type === "classic") {
-      return Number.parseFloat((defaultArg ? this.args.join(" ").trim() : this.options?.[key]) as string);
+      const value = defaultArg ? this.args.join(" ").trim() : this.options?.[key];
+      return parseNumberArg(value);
     }
     if (this.type === "application") {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -225,7 +235,8 @@ class Command {
 
   getOptionInteger(key: string, defaultArg?: boolean): number | undefined {
     if (this.type === "classic") {
-      return Number.parseInt((defaultArg ? this.args.join(" ").trim() : this.options?.[key]) as string);
+      const value = defaultArg ? this.args.join(" ").trim() : this.options?.[key];
+      return parseIntegerArg(value);
     }
     if (this.type === "application") {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -236,7 +247,7 @@ class Command {
 
   getOptionUser(key: string, defaultArg?: boolean): User | undefined {
     if (this.type === "classic") {
-      const id = defaultArg ? this.args.join(" ").trim() : this.options?.[key];
+      const id = cleanDiscordId(defaultArg ? this.args.join(" ").trim() : this.options?.[key]);
       return this.client.users.get(id as string);
     }
     if (this.type === "application") {
@@ -250,7 +261,7 @@ class Command {
 
   getOptionMember(key: string, defaultArg?: boolean): Member | undefined {
     if (this.type === "classic") {
-      const id = defaultArg ? this.args.join(" ").trim() : this.options?.[key];
+      const id = cleanDiscordId(defaultArg ? this.args.join(" ").trim() : this.options?.[key]);
       return this.guild?.members.get(id as string);
     }
     if (this.type === "application") {
@@ -264,7 +275,7 @@ class Command {
 
   getOptionRole(key: string, defaultArg?: boolean): Role | undefined {
     if (this.type === "classic") {
-      const id = defaultArg ? this.args.join(" ").trim() : this.options?.[key];
+      const id = cleanDiscordId(defaultArg ? this.args.join(" ").trim() : this.options?.[key]);
       return this.guild?.roles.get(id as string);
     }
     if (this.type === "application") {
@@ -280,10 +291,11 @@ class Command {
 
 
     if (this.type === "classic") {
-      const id = defaultArg ? this.args.join(" ").trim() : this.options?.[key];
+      const id = cleanDiscordId(defaultArg ? this.args.join(" ").trim() : this.options?.[key]);
       return this.guild?.channels.get(id as string);
     }
     if (this.type === "application") {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const opt = this.getRawOption(key) as any;
       if (opt?.value) return this.interaction?.data.resolved.channels.get(opt.value as string) as AnyGuildChannel | undefined;
       return undefined;

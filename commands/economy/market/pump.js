@@ -1,5 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { parseNumberArg } from "#utils/commandArgs.js";
 import { isOwner } from "#utils/owners.js";
 import { CRYPTOS } from "../crypto/prices.js";
 
@@ -33,8 +34,13 @@ class PumpCommand extends Command {
         }
 
         // Get pump percentage (default: random between 50-200%)
-        let pumpPercent = this.options.percentage ?? parseFloat(this.args?.[1]);
-        if (!pumpPercent || isNaN(pumpPercent)) {
+        const rawPumpPercent = this.options.percentage ?? this.args?.[1];
+        let pumpPercent = rawPumpPercent === undefined ? undefined : parseNumberArg(rawPumpPercent);
+        if (pumpPercent === undefined && rawPumpPercent !== undefined) {
+            this.success = false;
+            return "âŒ Please provide a valid pump percentage.";
+        }
+        if (pumpPercent === undefined || pumpPercent === 0) {
             pumpPercent = 50 + Math.random() * 150; // 50-200%
         }
         pumpPercent = Math.max(pumpPercent, 10); // Minimum 10%

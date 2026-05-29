@@ -1,5 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { cleanDiscordId } from "#utils/commandArgs.js";
 import { isOwner } from "#utils/owners.js";
 
 class KickCommand extends Command {
@@ -22,7 +23,8 @@ class KickCommand extends Command {
       this.options?.reason ?? this.getOptionString("reason") ?? this.args.slice(1).join(" ") ?? "Gabe's decision";
 
     try {
-      const userToKick = typeof user === "string" ? await this.client.rest.users.get(user).catch(() => null) : user;
+      const userToKick =
+        typeof user === "string" ? await this.client.rest.users.get(cleanDiscordId(user)).catch(() => null) : user;
 
       if (!userToKick) return "❌ Gabe says: That user doesn't exist. Try again.";
 

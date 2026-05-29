@@ -1,5 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { parseIntegerArg } from "#utils/commandArgs.js";
 
 class CoinbetCommand extends Command {
     async run() {
@@ -26,7 +27,7 @@ class CoinbetCommand extends Command {
         }
 
         // Get bet amount
-        let bet = this.options.bet ?? parseInt(this.args?.[0]);
+        let bet = this.options.bet ?? parseIntegerArg(this.args?.[0]);
         if (!bet || isNaN(bet) || bet < 10) {
             this.success = false;
             return "❌ Minimum bet is **10** 🪙!";
@@ -55,7 +56,6 @@ class CoinbetCommand extends Command {
         // 0.5% chance of edge (lose either way but special message)
         const isEdge = roll >= 99.5;
 
-        let winnings = 0;
         let netChange = 0;
         let resultEmoji = "";
         let resultText = "";
@@ -67,7 +67,6 @@ class CoinbetCommand extends Command {
             netChange = -bet;
             color = 0x9b59b6;
         } else if (won) {
-            winnings = bet * 2;
             netChange = bet;
             resultEmoji = choice === "heads" ? "🪙" : "👻";
             resultText = `It's **${result.toUpperCase()}**! You win!`;

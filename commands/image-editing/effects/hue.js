@@ -1,9 +1,10 @@
 import { Constants } from "oceanic.js";
 import ImageCommand from "#cmd-classes/imageCommand.js";
+import { parseIntegerArg } from "#utils/commandArgs.js";
 
 class HueCommand extends ImageCommand {
   paramsFunc() {
-    const shift = this.getOptionInteger("shift", true) ?? Number.parseInt(this.args[0]);
+    const shift = this.getOptionInteger("shift", true) ?? parseIntegerArg(this.args[0]) ?? 0;
     return {
       color: "hueshift",
       shift: Math.max(-180, Math.min(shift, 180)),

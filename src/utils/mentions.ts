@@ -16,19 +16,19 @@ export async function mentionToObject(
   mention: string,
   type: "user",
   options: MentionToObjectParams,
-): Promise<User | Member>;
+): Promise<User | Member | undefined>;
 export async function mentionToObject(
   client: Client,
   mention: string,
   type: "role",
   options: MentionToObjectParams,
-): Promise<Role>;
+): Promise<Role | undefined>;
 export async function mentionToObject(
   client: Client,
   mention: string,
   type: "channel",
   options: MentionToObjectParams,
-): Promise<AnyChannel>;
+): Promise<AnyChannel | undefined>;
 export async function mentionToObject(
   client: Client,
   mention: string,
@@ -65,13 +65,13 @@ function validID(id: string) {
 
 async function getChannel(client: Client, id: string) {
   let channel = client.getChannel(id);
-  if (!channel) channel = await client.rest.channels.get(id);
+  if (!channel) channel = await client.rest.channels.get(id).catch(() => undefined);
   return channel;
 }
 
 async function getRole(client: Client, guild: Guild, id: string) {
   let role = guild?.roles.get(id);
-  if (!role && guild) role = await client.rest.guilds.getRole(guild.id, id);
+  if (!role && guild) role = await client.rest.guilds.getRole(guild.id, id).catch(() => undefined);
   return role;
 }
 
@@ -81,14 +81,14 @@ export async function getUser(
   id: string,
   member = false,
   rest = false,
-): Promise<Member | User> {
+): Promise<Member | User | undefined> {
   let user;
   if (member && guild) {
     if (!rest) user = guild.members.get(id);
-    if (!user) user = await client.rest.guilds.getMember(guild.id, id);
+    if (!user) user = await client.rest.guilds.getMember(guild.id, id).catch(() => undefined);
   } else {
     if (!rest) user = client.users.get(id);
-    if (!user) user = await client.rest.users.get(id);
+    if (!user) user = await client.rest.users.get(id).catch(() => undefined);
   }
   return user;
 }

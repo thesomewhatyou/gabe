@@ -1,5 +1,5 @@
-import { ButtonStyles, ChannelTypes, ComponentTypes, Constants, OverwriteTypes, type Client, type Guild, type TextChannel, type User } from "oceanic.js";
 import { randomBytes } from "node:crypto";
+import { ButtonStyles, ChannelTypes, ComponentTypes, Constants, OverwriteTypes, type Client, type Guild, type TextChannel, type User } from "oceanic.js";
 import type { DatabasePlugin } from "../database.js";
 
 export async function createTicket(

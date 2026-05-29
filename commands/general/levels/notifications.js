@@ -1,5 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { parseBooleanArg } from "#utils/commandArgs.js";
 
 class NotificationsCommand extends Command {
   async run() {
@@ -19,8 +20,11 @@ class NotificationsCommand extends Command {
       return "❌ You need the **Administrator** permission to manage the leveling system.";
     }
 
-    // Get the enabled parameter
-    const enabled = this.options.enabled !== undefined ? this.options.enabled : this.args[0]?.toLowerCase() === "true";
+    const enabled = this.getOptionBoolean("enabled") ?? parseBooleanArg(this.args[0]);
+    if (enabled === undefined) {
+      this.success = false;
+      return "Please specify `true` or `false` for level-up notifications.";
+    }
 
     // Set notification status
     await this.database.setLevelUpNotifications(this.guild.id, enabled);

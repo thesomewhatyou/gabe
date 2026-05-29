@@ -1,6 +1,12 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { parseIntegerArg } from "#utils/commandArgs.js";
 import { isOwner } from "#utils/owners.js";
+
+function parseOptionalInteger(value) {
+    if (value === undefined) return undefined;
+    return typeof value === "number" ? value : parseIntegerArg(value);
+}
 
 class AntinukeSettingsCommand extends Command {
     async run() {
@@ -14,9 +20,18 @@ class AntinukeSettingsCommand extends Command {
             return "❌ You need Administrator permissions to manage anti-nuke settings.";
         }
 
-        const threshold = this.options?.threshold ?? this.getOptionInteger("threshold");
-        const timeWindow = this.options?.time_window ?? this.getOptionInteger("time_window");
+        const rawThreshold = this.options?.threshold ?? this.getOptionInteger("threshold");
+        const rawTimeWindow = this.options?.time_window ?? this.getOptionInteger("time_window");
+        const threshold = parseOptionalInteger(rawThreshold);
+        const timeWindow = parseOptionalInteger(rawTimeWindow);
         const logChannel = this.options?.log_channel ?? this.getOptionChannel("log_channel");
+
+        if (rawThreshold !== undefined && threshold === undefined) {
+            return "âŒ Threshold must be between 1 and 100.";
+        }
+        if (rawTimeWindow !== undefined && timeWindow === undefined) {
+            return "âŒ Time window must be between 1 and 60 seconds.";
+        }
 
         if (threshold === undefined && timeWindow === undefined && !logChannel) {
             // Show current settings if no options provided

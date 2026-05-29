@@ -1,5 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { parseIntegerArg } from "#utils/commandArgs.js";
 import { isOwner } from "#utils/owners.js";
 
 class WarningsCommand extends Command {
@@ -31,7 +32,7 @@ class WarningsCommand extends Command {
     }
 
     if (subcommand === "delete" || subcommand === "remove") {
-      const warningId = this.getOptionInteger("id") ?? parseInt(this.args[1]);
+      const warningId = this.getOptionInteger("id") ?? parseIntegerArg(this.args[1]);
       return this.deleteWarning(warningId);
     }
 
@@ -91,7 +92,7 @@ class WarningsCommand extends Command {
       return "❌ You need Moderate Members permission to delete warnings.";
     }
 
-    if (!warningId || isNaN(warningId)) {
+    if (warningId === undefined) {
       return "❌ Please provide a valid warning ID to delete.";
     }
 

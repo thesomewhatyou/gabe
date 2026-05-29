@@ -6,7 +6,7 @@
  * Special handling for compromised owner accounts.
  */
 
-import type { Client, Guild, Member, Constants } from "oceanic.js";
+import type { Client, Guild, Member } from "oceanic.js";
 import type { DatabasePlugin } from "../database.ts";
 import logger from "./logger.js";
 

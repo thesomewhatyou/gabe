@@ -10,7 +10,7 @@ export function getRedditCache(key) {
 }
 
 export function filterNSFW(posts) {
-  const filtered = posts.filter((post) => !post.data.over_18);
+  const filtered = posts.filter((post) => !(post.data ?? post).over_18);
   const blockedCount = posts.length - filtered.length;
 
   if (blockedCount > 0) {

@@ -1,5 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { parseNumberArg } from "#utils/commandArgs.js";
 import { isOwner } from "#utils/owners.js";
 
 class InflateCommand extends Command {
@@ -24,8 +25,8 @@ class InflateCommand extends Command {
         }
 
         // Get percentage
-        let percentage = this.options.percentage ?? parseFloat(this.args?.[0]);
-        if (!percentage || isNaN(percentage)) {
+        let percentage = this.options.percentage ?? parseNumberArg(this.args?.[0]);
+        if (percentage === undefined || percentage === 0) {
             this.success = false;
             return "❌ Please provide a percentage (e.g., 50 for 50% increase, -30 for 30% decrease).";
         }

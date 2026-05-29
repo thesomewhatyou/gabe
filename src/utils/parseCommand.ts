@@ -5,17 +5,25 @@ type Args = {
   };
 };
 
+function getFlagDashLength(input: string) {
+  if (input.startsWith("--")) return 2;
+  if (input.startsWith("\u2014") || input.startsWith("â€”")) return 1;
+  return 0;
+}
+
 export default (cmd: string[] | string) => {
   let input = cmd;
   if (typeof input === "string") input = input.split(/\s+/g);
   const args: Args = { args: [], flags: {} };
-  let curr = null;
-  let concated = "";
+  let curr: string | null = null;
+
   for (let i = 0; i < input.length; i++) {
     const a = input[i];
-    if ((a.startsWith("--") || a.startsWith("—")) && !curr) {
+    const dashLength = getFlagDashLength(a);
+
+    if (dashLength && !curr) {
       if (a.includes("=")) {
-        const [arg, value] = a.startsWith("--") ? a.slice(2).split("=") : a.slice(1).split("=");
+        const [arg, value] = a.slice(dashLength).split("=");
         let ended = true;
         if (arg !== "args") {
           if (value.startsWith('"')) {
@@ -40,7 +48,7 @@ export default (cmd: string[] | string) => {
           if (!ended) curr = arg;
         }
       } else {
-        args.flags[a.slice(2)] = true;
+        args.flags[a.slice(dashLength)] = true;
       }
     } else if (curr) {
       if (a.endsWith('"')) {
@@ -50,11 +58,7 @@ export default (cmd: string[] | string) => {
         args.flags[curr] += `${a} `;
       }
     } else {
-      if (concated !== "") {
-        concated += `${a} `;
-      } else {
-        args.args.push(a);
-      }
+      args.args.push(a);
     }
   }
 
@@ -64,57 +68,3 @@ export default (cmd: string[] | string) => {
 
   return args;
 };
-
-// /*
-// Format:
-// [{name: "verbose", type: "bool"}, {name: "username", type: "string"}]
-// */
-// export default (input, format) => {
-//     let results = {};
-//     let text = input.split(' ').slice(1).join(' ');
-//     format.forEach(element => {
-//         if(element.pos !== undefined) return;
-//         switch (element.type) {
-//             case "bool":
-//                 res = text.match(`--${element.name}[ |=](.*?)($| )`);
-//                 if(res) {
-//                     text = text.replace(res[0], "");
-//                     results[element.name] = (res[1].toLowerCase() == "true");
-//                 } else {
-//                     res = text.match(`--${element.name}`);
-//                     if(res) text = text.replace(res[0], "");
-//                     results[element.name] = (res != null);
-//                 }
-//                 break;
-//             case "string":
-//                 res = text.match(`--${element.name}[ |=](.*?)($| )`);
-//                 if(res) text = text.replace(res[0], "");
-//                 results[element.name] = (res ? res[1].replace('\\','') : null);
-//                 break;
-//             case "int":
-//                 res = text.match(`--${element.name}[ |=](.*?)($| )`);
-//                 if(res) text = text.replace(res[0], "");
-//                 results[element.name] = (res ? parseInt(res[1]) : null);
-//                 break;
-//             case "float":
-//                 res = text.match(`--${element.name}[ |=](.*?)($| )`);
-//                 if(res) text = text.replace(res[0], "");
-//                 results[element.name] = (res ? parseFloat(res[1]) : null);
-//                 break;
-//             default:
-//                 throw Error("unknown type");
-//                 break;
-//         }
-//     });
-//     let s = text.split(' ');
-//     results._ = text;
-//     format.forEach(element => {
-//         if(element.pos === undefined) return;
-//         if(element.pos <= s.length) {
-//             results[element.name] = s[element.pos];
-//         } else {
-//             results[element.name] = null;
-//         }
-//     })
-//     return results;
-// }

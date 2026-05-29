@@ -1,5 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { cleanDiscordId, parseIntegerArg } from "#utils/commandArgs.js";
 import { isOwner } from "#utils/owners.js";
 
 class BanCommand extends Command {
@@ -20,10 +21,15 @@ class BanCommand extends Command {
 
     const reason =
       this.options?.reason ?? this.getOptionString("reason") ?? this.args.slice(1).join(" ") ?? "Gabe's judgement";
-    const days = this.options?.days ?? this.getOptionInteger("days") ?? 0;
+    const rawDays = this.options?.days ?? this.getOptionInteger("days");
+    const days = rawDays === undefined ? 0 : typeof rawDays === "number" ? rawDays : parseIntegerArg(rawDays);
+    if (days === undefined || days < 0 || days > 7) {
+      return "âŒ Gabe says: Message delete days must be between 0 and 7.";
+    }
 
     try {
-      const userToBan = typeof user === "string" ? await this.client.rest.users.get(user).catch(() => null) : user;
+      const userToBan =
+        typeof user === "string" ? await this.client.rest.users.get(cleanDiscordId(user)).catch(() => null) : user;
 
       if (!userToBan) return "❌ Gabe says: I can't find that user. Are they even real?";
 

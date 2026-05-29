@@ -1,5 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { parseIntegerArg } from "#utils/commandArgs.js";
 import { isOwner } from "#utils/owners.js";
 
 class SetupTicketCommand extends Command {
@@ -120,8 +121,8 @@ Use \`ticket setup <action>\` to configure:
 
       case "maxopen": {
         const val = this.getOptionString("value") ?? this.args[1];
-        const max = parseInt(val);
-        if (isNaN(max) || max < 1 || max > 10) {
+        const max = parseIntegerArg(val);
+        if (max === undefined || max < 1 || max > 10) {
           return "❌ Please specify a number between 1 and 10.";
         }
         settings.max_open_per_user = max;

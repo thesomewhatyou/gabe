@@ -1,6 +1,6 @@
 import { Constants, GuildChannel } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
-import { safeBigInt } from "#utils/misc.js";
+import { parseDiscordSnowflakeArg } from "#utils/commandArgs.js";
 import { isOwner } from "#utils/owners.js";
 
 class ChannelCommand extends Command {
@@ -12,21 +12,15 @@ class ChannelCommand extends Command {
     if (!this.memberPermissions.has("ADMINISTRATOR") && !isOwner(this.author?.id))
       return this.getString("commands.responses.channel.adminOnly");
     if (this.args.length === 0) return this.getString("commands.responses.channel.noCmd");
-    if (this.args[0] !== "disable" && this.args[0] !== "enable")
-      return this.getString("commands.responses.channel.invalid");
+    const action = this.args[0].toLowerCase();
+    if (action !== "disable" && action !== "enable") return this.getString("commands.responses.channel.invalid");
 
     const guildDB = await this.database.getGuild(this.guild.id);
 
-    if (this.args[0].toLowerCase() === "disable") {
+    if (action === "disable") {
       let channel;
-      if (this.args[1]?.match(/^<?[@#]?[&!]?\d+>?$/) && safeBigInt(this.args[1]) >= 21154535154122752n) {
-        const id = this.args[1]
-          .replaceAll("@", "")
-          .replaceAll("#", "")
-          .replaceAll("!", "")
-          .replaceAll("&", "")
-          .replaceAll("<", "")
-          .replaceAll(">", "");
+      const id = parseDiscordSnowflakeArg(this.args[1]);
+      if (id) {
         if (guildDB.disabled.includes(id)) return this.getString("commands.responses.channel.alreadyDisabled");
         channel = this.guild.channels.get(id) ?? (await this.client.rest.channels.get(id));
       } else {
@@ -45,16 +39,10 @@ class ChannelCommand extends Command {
         },
       });
     }
-    if (this.args[0].toLowerCase() === "enable") {
+    if (action === "enable") {
       let channel;
-      if (this.args[1]?.match(/^<?[@#]?[&!]?\d+>?$/) && safeBigInt(this.args[1]) >= 21154535154122752n) {
-        const id = this.args[1]
-          .replaceAll("@", "")
-          .replaceAll("#", "")
-          .replaceAll("!", "")
-          .replaceAll("&", "")
-          .replaceAll("<", "")
-          .replaceAll(">", "");
+      const id = parseDiscordSnowflakeArg(this.args[1]);
+      if (id) {
         if (!guildDB.disabled.includes(id)) return this.getString("commands.responses.channel.notDisabled");
         channel = this.guild.channels.get(id) ?? (await this.client.rest.channels.get(id));
       } else {

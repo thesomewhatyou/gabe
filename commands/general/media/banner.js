@@ -3,34 +3,35 @@ import Command from "#cmd-classes/command.js";
 import { getUser, mentionToObject } from "#utils/mentions.js";
 const imageSize = 4096;
 
+async function fetchBannerSubject(client, guild, target, server) {
+  try {
+    if (target instanceof Member && server && guild) return await client.rest.guilds.getMember(guild.id, target.id);
+    if (target?.id) return await client.rest.users.get(target.id);
+  } catch {
+    return undefined;
+  }
+}
+
 class BannerCommand extends Command {
   // this command sucks a little bit more again
   async run() {
     const member = this.getOptionMember("member") ?? this.getOptionUser("member") ?? this.args[0];
     const server = !!this.getOptionBoolean("server");
     const self =
-      server && this.guild
-        ? await this.client.rest.guilds.getMember(this.guild.id, this.author.id)
-        : await this.client.rest.users.get(this.author.id); // banners are only available over REST
+      (await fetchBannerSubject(this.client, this.guild, this.member ?? this.author, server)) ?? this.member ?? this.author;
     if (this.type === "classic" && this.message?.mentions.users[0]) {
-      return (
-        (server && this.guild
-          ? await this.client.rest.guilds.getMember(this.guild.id, this.message.mentions.members[0].id)
-          : await this.client.rest.users.get(this.message.mentions.users[0].id)
-        )?.bannerURL(undefined, imageSize) ??
-        self.bannerURL(undefined, imageSize) ??
-        this.getString("commands.responses.banner.noUserBanner")
+      const mentioned = await fetchBannerSubject(
+        this.client,
+        this.guild,
+        this.message.mentions.members[0] ?? this.message.mentions.users[0],
+        server,
       );
+      return mentioned?.bannerURL(undefined, imageSize) ?? self.bannerURL(undefined, imageSize) ?? this.getString("commands.responses.banner.noUserBanner");
     }
     if (member && typeof member !== "string") {
-      let restMember;
-      if (member instanceof Member && server && this.guild) {
-        restMember = await this.client.rest.guilds.getMember(this.guild.id, member.id);
-      } else {
-        restMember = await this.client.rest.users.get(member.id);
-      }
+      const restMember = await fetchBannerSubject(this.client, this.guild, member, server);
       return (
-        restMember.bannerURL(undefined, imageSize) ??
+        restMember?.bannerURL(undefined, imageSize) ??
         self.bannerURL(undefined, imageSize) ??
         this.getString("commands.responses.banner.noUserBanner")
       );
@@ -56,7 +57,7 @@ class BannerCommand extends Command {
       if (searched.length > 0) {
         const user = await getUser(this.client, this.guild, searched[0].user.id, server, true);
         return (
-          user.bannerURL(undefined, imageSize) ??
+          user?.bannerURL(undefined, imageSize) ??
           self.bannerURL(undefined, imageSize) ??
           this.getString("commands.responses.banner.noUserBanner")
         );

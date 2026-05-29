@@ -1,5 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { parseFirstIntegerArg } from "#utils/commandArgs.js";
 
 class RemoveXPCommand extends Command {
   async run() {
@@ -31,7 +32,7 @@ class RemoveXPCommand extends Command {
         return "❌ Please mention a user to remove XP from.";
       }
       userId = this.message.mentions[0].id;
-      amount = parseInt(this.args[0]);
+      amount = parseFirstIntegerArg(this.args);
     }
 
     if (!amount || isNaN(amount)) {

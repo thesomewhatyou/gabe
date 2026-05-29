@@ -1,6 +1,13 @@
 // Fetch with timeout (15s default)
 export async function fetchWithTimeout(url: string, options: RequestInit = {}, timeout = 15000): Promise<Response> {
   const controller = new AbortController();
+  const externalSignal = options.signal;
+  const abortFromExternal = () => controller.abort(externalSignal?.reason);
+  if (externalSignal?.aborted) {
+    abortFromExternal();
+  } else {
+    externalSignal?.addEventListener("abort", abortFromExternal, { once: true });
+  }
   const timeoutId = setTimeout(() => controller.abort(), timeout);
 
   try {
@@ -13,6 +20,8 @@ export async function fetchWithTimeout(url: string, options: RequestInit = {}, t
   } catch (error) {
     clearTimeout(timeoutId);
     throw error;
+  } finally {
+    externalSignal?.removeEventListener("abort", abortFromExternal);
   }
 }
 

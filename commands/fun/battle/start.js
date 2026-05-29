@@ -1,6 +1,10 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
 
+export function isValidBattleDuration(duration) {
+  return Number.isInteger(duration) && duration >= 5 && duration <= 120;
+}
+
 class BattleStartCommand extends Command {
   async run() {
     if (!this.database) {
@@ -18,7 +22,10 @@ class BattleStartCommand extends Command {
       return this.getString("commands.responses.battle.noTheme");
     }
 
-    const duration = this.getOptionNumber("duration") ?? 30;
+    const duration = this.getOptionInteger("duration") ?? 30;
+    if (!isValidBattleDuration(duration)) {
+      return "Battle duration must be between 5 and 120 minutes.";
+    }
 
     // Create the battle
     const battle = await this.database.createBattle(
@@ -67,8 +74,8 @@ class BattleStartCommand extends Command {
       name: "duration",
       type: Constants.ApplicationCommandOptionTypes.INTEGER,
       description: "Submission time in minutes (default: 30)",
-      min_value: 5,
-      max_value: 120,
+      minValue: 5,
+      maxValue: 120,
     },
   ];
 

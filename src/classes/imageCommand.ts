@@ -51,6 +51,20 @@ class ImageCommand extends Command {
 
     const staticProps = this.constructor as typeof ImageCommand;
 
+    if (this.type === "classic") {
+      const invalidNumericFlag = staticProps.flags.find(
+        (flag) =>
+          (flag.type === Constants.ApplicationCommandOptionTypes.INTEGER ||
+            flag.type === Constants.ApplicationCommandOptionTypes.NUMBER) &&
+          this.hasClassicOption(flag.name) &&
+          this.getOption(flag.name, flag.type) === undefined,
+      );
+      if (invalidNumericFlag) {
+        runningCommands.delete(this.author?.id);
+        return `Invalid number for \`${invalidNumericFlag.name}\`.`;
+      }
+    }
+
     let imageParams: ImageParams;
 
     let needsSpoiler = false;
@@ -127,12 +141,27 @@ class ImageCommand extends Command {
     if (spoiler != null) needsSpoiler = spoiler;
 
     if (staticProps.requiresParam) {
-      const text =
-        this.getOption(
-          staticProps.requiredParam,
-          staticProps.requiredParamType,
-          staticProps.requiredParamType !== Constants.ApplicationCommandOptionTypes.STRING,
-        ) ?? this.args.join(" ").trim();
+      const parsedParam = this.getOption(
+        staticProps.requiredParam,
+        staticProps.requiredParamType,
+        staticProps.requiredParamType !== Constants.ApplicationCommandOptionTypes.STRING,
+      );
+      const classicFallback = this.args.join(" ").trim();
+      if (
+        this.type === "classic" &&
+        staticProps.requiredParamType !== Constants.ApplicationCommandOptionTypes.STRING &&
+        parsedParam === undefined &&
+        classicFallback
+      ) {
+        runningCommands.delete(this.author?.id);
+        return (
+          this.getString(`commands.noParam.${this.cmdName}`, { returnNull: true }) ||
+          this.getString("image.noParam", { returnNull: true }) ||
+          staticProps.noParam
+        );
+      }
+
+      const text = parsedParam ?? classicFallback;
       if (!text || (typeof text === "string" && isEmpty(text)) || !(await this.criteria(text, imageParams.url))) {
         runningCommands.delete(this.author?.id);
         return (

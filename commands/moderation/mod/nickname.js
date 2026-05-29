@@ -1,5 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { cleanDiscordId } from "#utils/commandArgs.js";
 import { isOwner } from "#utils/owners.js";
 
 class NicknameCommand extends Command {
@@ -16,9 +17,13 @@ class NicknameCommand extends Command {
     if (!user) return "❌ Gabe says: Tell me whose nickname to change and I can handle it.";
 
     const nickname = this.options?.nickname ?? this.getOptionString("nickname") ?? this.args.slice(1).join(" ");
+    if (nickname && nickname.length > 32) {
+      return "âŒ Gabe says: Nicknames must be 32 characters or less.";
+    }
 
     try {
-      const targetUser = typeof user === "string" ? await this.client.rest.users.get(user).catch(() => null) : user;
+      const targetUser =
+        typeof user === "string" ? await this.client.rest.users.get(cleanDiscordId(user)).catch(() => null) : user;
       if (!targetUser) return "❌ Gabe says: I can't find that user. Are they even real?";
 
       const targetMember = this.guild.members.get(targetUser.id);

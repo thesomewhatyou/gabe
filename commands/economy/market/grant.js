@@ -1,5 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { parseFirstIntegerArg } from "#utils/commandArgs.js";
 import { isOwner } from "#utils/owners.js";
 
 class GrantCommand extends Command {
@@ -36,7 +37,7 @@ class GrantCommand extends Command {
         }
 
         // Get amount
-        let amount = this.getOptionInteger("amount") ?? parseInt(this.args?.[0]);
+        let amount = this.getOptionInteger("amount") ?? parseFirstIntegerArg(this.args);
         if (!amount || isNaN(amount)) {
             this.success = false;
             return "❌ Please provide a valid amount.";

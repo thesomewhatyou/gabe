@@ -1,8 +1,8 @@
 import { Constants } from "oceanic.js";
-import { fetchWithFallback } from "#utils/apifetch.js";
 import Command from "#cmd-classes/command.js";
-import { setTwitterCache, getTwitterCache, getInstances } from "./user.js";
+import { fetchWithFallback } from "#utils/apifetch.js";
 import { parseTweetHtml } from "./tweet.js";
+import { setTwitterCache, getTwitterCache, getInstances } from "./user.js";
 
 function parseTweetsHtml(html) {
     const tweets = [];
@@ -47,7 +47,7 @@ class TwitterLatestCommand extends Command {
     async run() {
         this.success = false;
         const username = this.getOptionString("username", true);
-        const count = this.getOptionInteger("count") || 5;
+        const count = this.getOptionInteger("count") ?? 5;
 
         if (!username) {
             return "❌ Gabe says: You forgot to tell me which Twitter user to fetch!";

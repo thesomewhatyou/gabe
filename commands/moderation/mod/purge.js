@@ -1,5 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { parseFirstIntegerArg } from "#utils/commandArgs.js";
 import { isOwner } from "#utils/owners.js";
 
 class PurgeCommand extends Command {
@@ -17,7 +18,7 @@ class PurgeCommand extends Command {
 
     const parseValidNumber = (value) => (typeof value === "number" && Number.isFinite(value) ? value : undefined);
     const optionAmount = parseValidNumber(this.getOptionInteger("amount"));
-    const positionalAmount = parseValidNumber(Number.parseInt(this.args[0], 10));
+    const positionalAmount = parseValidNumber(parseFirstIntegerArg([this.args[0]]));
     const amount = optionAmount ?? positionalAmount ?? 10;
     if (amount < 1 || amount > 100) {
       return "❌ Gabe says: I can only purge between 1 and 100 messages at a time.";

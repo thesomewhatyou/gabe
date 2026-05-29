@@ -7,7 +7,11 @@ class BattleLeaderboardCommand extends Command {
       return this.getString("commands.responses.battle.noDatabase");
     }
 
-    const limit = this.getOptionNumber("limit") ?? 10;
+    const limit = this.getOptionInteger("limit") ?? 10;
+    if (limit < 1 || limit > 25) {
+      this.success = false;
+      return "Battle leaderboard limit must be between 1 and 25.";
+    }
     const leaderboard = await this.database.getBattleLeaderboard(this.guild?.id ?? "", limit);
 
     if (leaderboard.length === 0) {
@@ -41,8 +45,8 @@ class BattleLeaderboardCommand extends Command {
       name: "limit",
       type: Constants.ApplicationCommandOptionTypes.INTEGER,
       description: "Number of users to show (default: 10)",
-      min_value: 1,
-      max_value: 25,
+      minValue: 1,
+      maxValue: 25,
     },
   ];
 

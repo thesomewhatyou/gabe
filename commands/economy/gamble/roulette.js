@@ -1,5 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { parseIntegerArg } from "#utils/commandArgs.js";
 
 class RouletteCommand extends Command {
     static numbers = {
@@ -32,7 +33,7 @@ class RouletteCommand extends Command {
         }
 
         // Get bet amount
-        let bet = this.options.bet ?? parseInt(this.args?.[0]);
+        let bet = this.options.bet ?? parseIntegerArg(this.args?.[0]);
         if (!bet || isNaN(bet) || bet < 10) {
             this.success = false;
             return "❌ Minimum bet is **10** 🪙!";
@@ -41,8 +42,8 @@ class RouletteCommand extends Command {
         // Get bet type
         let betType = (this.options.type ?? this.args?.[1])?.toLowerCase();
         const validBets = ["red", "black", "green", "odd", "even", "high", "low"];
-        const numBet = parseInt(betType);
-        const isNumberBet = !isNaN(numBet) && numBet >= 0 && numBet <= 36;
+        const numBet = parseIntegerArg(betType);
+        const isNumberBet = numBet !== undefined && numBet >= 0 && numBet <= 36;
 
         if (!betType || (!validBets.includes(betType) && !isNumberBet)) {
             this.success = false;

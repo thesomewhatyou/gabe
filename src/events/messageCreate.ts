@@ -3,6 +3,7 @@ import process from "node:process";
 import { type AnyTextableChannel, GroupChannel, type Message, PrivateChannel, ThreadChannel } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
 import ImageCommand from "#cmd-classes/imageCommand.js";
+import { checkMessageSpam, handleThreat, handleOwnerThreat, isWhitelisted } from "#utils/antinuke.js";
 import {
   aliases,
   commands,
@@ -18,7 +19,6 @@ import { clean } from "#utils/misc.js";
 import parseCommand from "#utils/parseCommand.js";
 import { upload } from "#utils/tempimages.js";
 import type { DBGuild, EventParams } from "#utils/types.js";
-import { checkMessageSpam, handleThreat, handleOwnerThreat, isWhitelisted } from "#utils/antinuke.js";
 
 let Sentry: typeof import("@sentry/node");
 if (process.env.SENTRY_DSN && process.env.SENTRY_DSN !== "") {

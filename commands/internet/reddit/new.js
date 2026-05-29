@@ -8,7 +8,7 @@ class RedditNewCommand extends Command {
     async run() {
         this.success = false;
         const subreddit = this.getOptionString("subreddit", true);
-        const limit = this.getOptionInteger("limit") || 5;
+        const limit = this.getOptionInteger("limit") ?? 5;
 
         if (!subreddit) {
             return "❌ Gabe says: You forgot to tell me which subreddit to fetch!";

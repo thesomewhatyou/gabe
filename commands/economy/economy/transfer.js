@@ -1,5 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { parseFirstIntegerArg } from "#utils/commandArgs.js";
 
 class TransferCommand extends Command {
     async run() {
@@ -45,7 +46,7 @@ class TransferCommand extends Command {
         // Get amount
         let amount = this.getOptionInteger("amount");
         if (!amount && this.args?.length > 0) {
-            amount = parseInt(this.args[0]);
+            amount = parseFirstIntegerArg(this.args);
         }
 
         if (!amount || isNaN(amount) || amount <= 0) {

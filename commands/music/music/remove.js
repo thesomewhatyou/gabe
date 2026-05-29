@@ -1,5 +1,6 @@
 import { Constants } from "oceanic.js";
 import MusicCommand from "#cmd-classes/musicCommand.js";
+import { parseIntegerArg } from "#utils/commandArgs.js";
 import { isOwner } from "#utils/owners.js";
 import { queues } from "#utils/soundplayer.js";
 
@@ -12,8 +13,8 @@ class MusicRemoveCommand extends MusicCommand {
     if (!this.connection) return this.getString("sound.noConnection");
     if (this.connection.host !== this.author.id && !isOwner(this.author?.id))
       return this.getString("commands.responses.remove.notHost");
-    const pos = this.getOptionInteger("position", true) ?? Number.parseInt(this.args[0]);
-    if (Number.isNaN(pos) || pos > this.queue.length || pos < 1)
+    const pos = this.getOptionInteger("position", true) ?? parseIntegerArg(this.args[0]);
+    if (pos === undefined || pos > this.queue.length || pos < 1)
       return this.getString("commands.responses.remove.invalidPosition");
     const removed = this.queue.splice(pos, 1);
     if (removed.length === 0) return this.getString("commands.responses.remove.invalidPosition");

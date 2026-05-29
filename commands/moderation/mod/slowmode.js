@@ -1,5 +1,6 @@
 import { Constants, TextChannel } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { parseFirstIntegerArg } from "#utils/commandArgs.js";
 import { isOwner } from "#utils/owners.js";
 
 class SlowmodeCommand extends Command {
@@ -17,7 +18,7 @@ class SlowmodeCommand extends Command {
       return "❌ Gabe says: Tell me how many seconds of slowmode to use.";
     }
 
-    const secondsNum = typeof seconds === "string" ? Number.parseInt(seconds) : seconds;
+    const secondsNum = typeof seconds === "string" ? parseFirstIntegerArg([seconds]) : seconds;
 
     if (Number.isNaN(secondsNum) || secondsNum < 0 || secondsNum > 21600) {
       return "❌ Gabe says: Slowmode must be between 0 and 21600 seconds (6 hours).";

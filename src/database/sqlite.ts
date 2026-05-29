@@ -42,6 +42,16 @@ type BSQLite3Init = (filename?: string, options?: BSQLite3Options) => BSQLite3Da
 type CombinedConstructor = BunDenoDatabase | BSQLite3Init;
 let dbInit: CombinedConstructor;
 
+function parseJsonArray(value: string | null | undefined) {
+  if (!value) return [];
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
 if (process.versions.bun) {
   const { Database } = await import("bun:sqlite");
   dbInit = Database;
@@ -859,7 +869,11 @@ export default class SQLitePlugin implements DatabasePlugin {
   }
 
   async setPrefix(prefix: string, guild: Guild) {
-    this.connection.prepare("UPDATE guilds SET prefix = ? WHERE guild_id = ?").run(prefix, guild.id);
+    this.connection
+      .prepare(
+        "INSERT INTO guilds (guild_id, prefix, disabled, disabled_commands, tag_roles) VALUES (?, ?, ?, ?, ?) ON CONFLICT(guild_id) DO UPDATE SET prefix = excluded.prefix",
+      )
+      .run(guild.id, prefix, "[]", "[]", "[]");
     prefixCache.set(guild.id, prefix);
   }
 
@@ -896,9 +910,10 @@ export default class SQLitePlugin implements DatabasePlugin {
       }
     })();
     if (guild) {
-      guild.disabled = JSON.parse(guild.disabled);
-      guild.disabled_commands = JSON.parse(guild.disabled_commands);
-      guild.tag_roles = JSON.parse(guild.tag_roles);
+      const parsedGuild = guild as unknown as DBGuild;
+      parsedGuild.disabled = parseJsonArray(guild.disabled);
+      parsedGuild.disabled_commands = parseJsonArray(guild.disabled_commands);
+      parsedGuild.tag_roles = parseJsonArray(guild.tag_roles);
     }
     return (
       (guild as DBGuild | undefined) ?? {

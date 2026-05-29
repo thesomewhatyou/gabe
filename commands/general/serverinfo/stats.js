@@ -20,7 +20,7 @@ class StatsCommand extends Command {
     const owners = getOwners();
     let owner;
     if (owners.length !== 0) {
-      owner = this.client.users.get(owners[0]) ?? (await this.client.rest.users.get(owners[0]));
+      owner = this.client.users.get(owners[0]) ?? (await this.client.rest.users.get(owners[0]).catch(() => undefined));
     }
     const servers = await getServers(this.client);
     const processMem = `${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB`;
@@ -90,7 +90,7 @@ class StatsCommand extends Command {
             },
             {
               name: this.getString("commands.responses.stats.shard"),
-              value: this.guild ? this.client.guildShardMap[this.guild.id].toString() : "N/A",
+              value: this.guild ? (this.client.guildShardMap[this.guild.id]?.toString() ?? "N/A") : "N/A",
               inline: true,
             },
             {

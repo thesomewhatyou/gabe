@@ -1,5 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { cleanDiscordId } from "#utils/commandArgs.js";
 import { isOwner } from "#utils/owners.js";
 
 class UnmuteCommand extends Command {
@@ -19,7 +20,8 @@ class UnmuteCommand extends Command {
       this.options?.reason ?? this.getOptionString("reason") ?? this.args.slice(1).join(" ") ?? "Server unmuted";
 
     try {
-      const targetUser = typeof user === "string" ? await this.client.rest.users.get(user).catch(() => null) : user;
+      const targetUser =
+        typeof user === "string" ? await this.client.rest.users.get(cleanDiscordId(user)).catch(() => null) : user;
       if (!targetUser) return "❌ Gabe says: I can't find that user. Are they even real?";
 
       const targetMember = this.guild.members.get(targetUser.id);

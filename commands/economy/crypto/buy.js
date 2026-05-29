@@ -1,5 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { parseNumberArg } from "#utils/commandArgs.js";
 import { CRYPTOS } from "./prices.js";
 
 class BuyCommand extends Command {
@@ -35,7 +36,7 @@ class BuyCommand extends Command {
     }
 
     // Get amount
-    let amount = this.options.amount ?? parseFloat(this.args?.[1]);
+    let amount = this.options.amount ?? parseNumberArg(this.args?.[1]);
     if (!amount || isNaN(amount) || amount <= 0) {
       this.success = false;
       return "❌ Please provide a valid amount to buy.";

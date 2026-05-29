@@ -85,7 +85,7 @@ Use \`birthday setup <action>\`:
             }
 
             case "message": {
-                const message = this.args.slice(1).join(" ");
+                const message = this.getOptionString("value") ?? this.args.slice(1).join(" ");
                 if (!message) {
                     return `❌ Please provide a message.\n\nVariables: \`{user}\`, \`{username}\`, \`{age}\``;
                 }

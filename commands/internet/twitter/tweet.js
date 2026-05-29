@@ -1,6 +1,6 @@
 import { Constants } from "oceanic.js";
-import { fetchWithFallback } from "#utils/apifetch.js";
 import Command from "#cmd-classes/command.js";
+import { fetchWithFallback } from "#utils/apifetch.js";
 import { setTwitterCache, getTwitterCache, getInstances } from "./user.js";
 
 function parseTweetHtml(html) {

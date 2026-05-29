@@ -1,5 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { parseFirstIntegerArg } from "#utils/commandArgs.js";
 
 class SetLevelCommand extends Command {
   async run() {
@@ -31,10 +32,10 @@ class SetLevelCommand extends Command {
         return "❌ Please mention a user to set the level for.";
       }
       userId = this.message.mentions[0].id;
-      level = parseInt(this.args[0]);
+      level = parseFirstIntegerArg(this.args);
     }
 
-    if (!level || isNaN(level)) {
+    if (level == null || isNaN(level)) {
       this.success = false;
       return "❌ Please provide a valid level.";
     }

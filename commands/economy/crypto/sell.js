@@ -1,5 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { parseNumberArg } from "#utils/commandArgs.js";
 import { CRYPTOS } from "./prices.js";
 
 class SellCommand extends Command {
@@ -47,7 +48,7 @@ class SellCommand extends Command {
         if (amountInput === "all" || amountInput === undefined) {
             amount = holding.amount;
         } else {
-            amount = parseFloat(amountInput);
+            amount = parseNumberArg(amountInput);
             if (isNaN(amount) || amount <= 0) {
                 this.success = false;
                 return "❌ Please provide a valid amount to sell.";

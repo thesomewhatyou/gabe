@@ -1,4 +1,5 @@
 import Command from "#cmd-classes/command.js";
+import { checkBattleTransition } from "#utils/battleScheduler.js";
 
 class BattleStatusCommand extends Command {
   async run() {
@@ -6,8 +7,14 @@ class BattleStatusCommand extends Command {
       return this.getString("commands.responses.battle.noDatabase");
     }
 
+    const guildId = this.guild?.id ?? "";
+    const transition = await checkBattleTransition(this.client, this.database, guildId);
+    if (transition.transitioned && transition.message) {
+      await this.channel?.createMessage?.(transition.message);
+    }
+
     // Get active battle
-    const battle = await this.database.getActiveBattle(this.guild?.id ?? "");
+    const battle = await this.database.getActiveBattle(guildId);
     if (!battle) {
       return this.getString("commands.responses.battle.noBattle");
     }

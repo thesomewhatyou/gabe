@@ -1,5 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { parseIntegerArg } from "#utils/commandArgs.js";
 import { isOwner } from "#utils/owners.js";
 
 class SettingsCommand extends Command {
@@ -23,7 +24,7 @@ class SettingsCommand extends Command {
             return "🔒 You need to be a server administrator to manage the economy.";
         }
 
-        const action = this.options.action ?? this.args?.[0];
+        const action = (this.options.action ?? this.args?.[0])?.toLowerCase();
 
         // If no action, show current settings
         if (!action || action === "view") {
@@ -83,8 +84,9 @@ class SettingsCommand extends Command {
         }
 
         if (action === "daily") {
-            const value = this.options.value ?? parseInt(this.args?.[1]);
-            if (!value || isNaN(value) || value < 1) {
+            const rawValue = this.options.value ?? this.args?.[1];
+            const value = typeof rawValue === "number" ? rawValue : parseIntegerArg(rawValue);
+            if (value === undefined || value < 1) {
                 this.success = false;
                 return "❌ Please provide a valid daily amount.";
             }

@@ -1,5 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { parseNumberArg } from "#utils/commandArgs.js";
 import { isOwner } from "#utils/owners.js";
 import { CRYPTOS } from "../crypto/prices.js";
 
@@ -33,8 +34,13 @@ class CrashCommand extends Command {
         }
 
         // Get crash percentage (default: random between 50-90%)
-        let crashPercent = this.options.percentage ?? parseFloat(this.args?.[1]);
-        if (!crashPercent || isNaN(crashPercent)) {
+        const rawCrashPercent = this.options.percentage ?? this.args?.[1];
+        let crashPercent = rawCrashPercent === undefined ? undefined : parseNumberArg(rawCrashPercent);
+        if (crashPercent === undefined && rawCrashPercent !== undefined) {
+            this.success = false;
+            return "âŒ Please provide a valid crash percentage.";
+        }
+        if (crashPercent === undefined || crashPercent === 0) {
             crashPercent = 50 + Math.random() * 40; // 50-90%
         }
         crashPercent = Math.min(Math.max(crashPercent, 10), 99); // Clamp between 10-99%

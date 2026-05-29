@@ -1,4 +1,5 @@
 import { lstat, readdir, rm, stat, writeFile } from "node:fs/promises";
+import { extname } from "node:path";
 import process from "node:process";
 
 import {
@@ -26,6 +27,11 @@ type FileStats = {
 let dirSizeCache: number;
 let threshold: number | undefined;
 
+export function makeTempImageFilename(originalName: string, randomId = Math.random().toString(36).substring(2, 15)) {
+  const extension = extname(originalName).slice(1) || "bin";
+  return `${randomId}.${extension}`;
+}
+
 export async function upload(
   client: Client,
   result: { flags?: number } & File,
@@ -33,7 +39,7 @@ export async function upload(
   success = true,
   save = false,
 ) {
-  const filename = `${Math.random().toString(36).substring(2, 15)}.${result.name.split(".")[1]}`;
+  const filename = makeTempImageFilename(result.name);
   await writeFile(`${process.env.TEMPDIR}/${filename}`, result.contents);
   const imageURL = `${process.env.TMP_DOMAIN || "https://tmp.gabe.net"}/${filename}`;
   const payload: InteractionContent = {

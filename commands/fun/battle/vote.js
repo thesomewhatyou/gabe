@@ -1,5 +1,11 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { checkBattleTransition } from "#utils/battleScheduler.js";
+
+export function parseSubmissionNumber(input) {
+  const parsed = typeof input === "number" ? input : Number(input);
+  return Number.isInteger(parsed) && parsed >= 1 ? parsed : undefined;
+}
 
 class BattleVoteCommand extends Command {
   async run() {
@@ -7,8 +13,14 @@ class BattleVoteCommand extends Command {
       return this.getString("commands.responses.battle.noDatabase");
     }
 
+    const guildId = this.guild?.id ?? "";
+    const transition = await checkBattleTransition(this.client, this.database, guildId);
+    if (transition.transitioned && transition.message) {
+      await this.channel?.createMessage?.(transition.message);
+    }
+
     // Get active battle
-    const battle = await this.database.getActiveBattle(this.guild?.id ?? "");
+    const battle = await this.database.getActiveBattle(guildId);
     if (!battle) {
       return this.getString("commands.responses.battle.noBattle");
     }
@@ -34,8 +46,8 @@ class BattleVoteCommand extends Command {
     }
 
     // Get submission number
-    const submissionNum = this.getOptionNumber("submission") ?? Number.parseInt(this.args[0], 10);
-    if (!submissionNum || Number.isNaN(submissionNum)) {
+    const submissionNum = parseSubmissionNumber(this.getOptionInteger("submission") ?? this.args[0]);
+    if (!submissionNum) {
       return this.getString("commands.responses.battle.invalidSubmission");
     }
 
@@ -68,7 +80,7 @@ class BattleVoteCommand extends Command {
       type: Constants.ApplicationCommandOptionTypes.INTEGER,
       description: "The submission number to vote for",
       required: true,
-      min_value: 1,
+      minValue: 1,
       classic: true,
     },
   ];

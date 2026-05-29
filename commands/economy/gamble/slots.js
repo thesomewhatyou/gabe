@@ -1,5 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { parseIntegerArg } from "#utils/commandArgs.js";
 
 class SlotsCommand extends Command {
     static symbols = [
@@ -56,7 +57,7 @@ class SlotsCommand extends Command {
         }
 
         // Get bet amount
-        let bet = this.options.bet ?? parseInt(this.args?.[0]);
+        let bet = this.options.bet ?? parseIntegerArg(this.args?.[0]);
         if (!bet || isNaN(bet) || bet < 10) {
             this.success = false;
             return "❌ Minimum bet is **10** 🪙!";

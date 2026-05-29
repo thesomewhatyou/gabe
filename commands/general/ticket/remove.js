@@ -1,5 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { cleanDiscordId } from "#utils/commandArgs.js";
 
 class RemoveFromTicketCommand extends Command {
     async run() {
@@ -35,7 +36,8 @@ class RemoveFromTicketCommand extends Command {
             return "❌ Please specify a user to remove.";
         }
 
-        const userToRemove = typeof user === "string" ? await this.client.rest.users.get(user).catch(() => null) : user;
+        const userToRemove =
+            typeof user === "string" ? await this.client.rest.users.get(cleanDiscordId(user)).catch(() => null) : user;
         if (!userToRemove) {
             return "❌ User not found.";
         }

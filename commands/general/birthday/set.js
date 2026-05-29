@@ -1,5 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { parseIntegerArg } from "#utils/commandArgs.js";
 
 class SetBirthdayCommand extends Command {
     async run() {
@@ -8,9 +9,9 @@ class SetBirthdayCommand extends Command {
         if (!this.guild) return "❌ This command can only be used in a server!";
         if (!this.database) return "❌ Database is not configured.";
 
-        const month = this.getOptionInteger("month") ?? parseInt(this.args[0]);
-        const day = this.getOptionInteger("day") ?? parseInt(this.args[1]);
-        const year = this.getOptionInteger("year") ?? (this.args[2] ? parseInt(this.args[2]) : undefined);
+        const month = this.getOptionInteger("month") ?? parseIntegerArg(this.args[0]);
+        const day = this.getOptionInteger("day") ?? parseIntegerArg(this.args[1]);
+        const year = this.getOptionInteger("year") ?? (this.args[2] ? parseIntegerArg(this.args[2]) : undefined);
 
         if (!month || !day || isNaN(month) || isNaN(day)) {
             return "❌ Please provide a valid month and day. Example: `/birthday set 12 25`";

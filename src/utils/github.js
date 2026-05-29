@@ -1,5 +1,3 @@
-import { fetchWithFallback } from "#utils/apifetch.js";
-
 const githubRepoCache = new Map();
 const githubUserCache = new Map();
 

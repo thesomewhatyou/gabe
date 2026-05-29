@@ -1,5 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { cleanDiscordId } from "#utils/commandArgs.js";
 import { isOwner } from "#utils/owners.js";
 
 class WarnCommand extends Command {
@@ -31,7 +32,8 @@ class WarnCommand extends Command {
     if (!reason) return "❌ Please provide a reason for the warning.";
 
     try {
-      const userToWarn = typeof user === "string" ? await this.client.rest.users.get(user).catch(() => null) : user;
+      const userToWarn =
+        typeof user === "string" ? await this.client.rest.users.get(cleanDiscordId(user)).catch(() => null) : user;
 
       if (!userToWarn) return "❌ I can't find that user.";
 

@@ -20,6 +20,14 @@ class PrefixCommand extends Command {
         this.success = false;
         return this.getString("commands.responses.prefix.adminOnly");
       }
+      if (this.args[0].length > 15) {
+        this.success = false;
+        return "âŒ Prefix must be 15 characters or less.";
+      }
+      if (this.args[0].includes(" ")) {
+        this.success = false;
+        return "âŒ Prefix cannot contain spaces.";
+      }
       await this.database.setPrefix(this.args[0], this.guild);
       return this.getString("commands.responses.prefix.changed", {
         params: {

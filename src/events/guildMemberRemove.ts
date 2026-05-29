@@ -4,7 +4,7 @@
  * (Distinguishes kicks from leaves by checking audit log)
  */
 
-import { Constants, type Guild, type Member, type User } from "oceanic.js";
+import { Constants, type Guild, type Member } from "oceanic.js";
 import { checkAndLogAction, handleThreat, handleOwnerThreat, isWhitelisted } from "#utils/antinuke.js";
 import logger from "#utils/logger.js";
 import type { EventParams } from "#utils/types.js";

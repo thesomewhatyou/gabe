@@ -1,6 +1,21 @@
 import { Constants } from "oceanic.js";
 import MusicCommand from "#cmd-classes/musicCommand.js";
 
+export function parseSeekPosition(pos) {
+  const input = typeof pos === "number" ? pos.toString() : pos?.trim();
+  if (!input) return NaN;
+  if (!input.includes(":")) {
+    const seconds = Number(input);
+    return Number.isFinite(seconds) ? seconds : NaN;
+  }
+
+  const parts = input.split(":");
+  if (parts.length > 3 || parts.some((part) => !/^\d+$/.test(part))) return NaN;
+  const times = parts.map((part) => Number(part));
+  if (times.slice(1).some((part) => part > 59)) return NaN;
+  return times.reduce((acc, time) => 60 * acc + time, 0);
+}
+
 class MusicSeekCommand extends MusicCommand {
   async run() {
     this.success = false;
@@ -14,12 +29,7 @@ class MusicSeekCommand extends MusicCommand {
     const track = await player.node.rest.decode(player.track);
     if (!track?.info.isSeekable) return this.getString("commands.responses.seek.notSeekable");
     const pos = this.getOptionString("position") ?? this.args[0];
-    let seconds;
-    if (typeof pos === "string" && pos.includes(":")) {
-      seconds = +pos.split(":").reduce((acc, time) => (60 * Number(acc) + +Number(time)).toString());
-    } else {
-      seconds = Number.parseFloat(pos);
-    }
+    const seconds = parseSeekPosition(pos);
     if (Number.isNaN(seconds) || seconds * 1000 > track.info.length || seconds * 1000 < 0)
       return this.getString("commands.responses.seek.invalidPosition");
     player.seekTo(seconds * 1000);

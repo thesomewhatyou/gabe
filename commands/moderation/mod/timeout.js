@@ -1,5 +1,6 @@
 import { Constants } from "oceanic.js";
 import Command from "#cmd-classes/command.js";
+import { cleanDiscordId, parseIntegerArg } from "#utils/commandArgs.js";
 import { isOwner } from "#utils/owners.js";
 
 class TimeoutCommand extends Command {
@@ -18,13 +19,11 @@ class TimeoutCommand extends Command {
     const user = this.options?.user ?? this.getOptionUser("user") ?? this.args[0];
     if (!user) return "❌ Gabe says: Tell me who to timeout, will ya?";
 
-    const parsedDurationArg = parseInt(this.args[1], 10);
+    const optionDuration = this.options?.duration ?? this.getOptionInteger("duration");
+    const rawDuration = optionDuration ?? this.args[1];
     const duration =
-      this.options?.duration ??
-      this.getOptionInteger("duration") ??
-      (Number.isNaN(parsedDurationArg) ? undefined : parsedDurationArg) ??
-      60;
-    if (duration < 1 || duration > 40320) {
+      typeof rawDuration === "number" ? rawDuration : rawDuration === undefined ? 60 : parseIntegerArg(rawDuration);
+    if (duration === undefined || duration < 1 || duration > 40320) {
       return "❌ Gabe says: Duration must be between 1 and 40320 minutes (28 days).";
     }
 
@@ -32,7 +31,8 @@ class TimeoutCommand extends Command {
       this.options?.reason ?? this.getOptionString("reason") ?? this.args.slice(2).join(" ") ?? "Gabe's timeout";
 
     try {
-      const userToTimeout = typeof user === "string" ? await this.client.rest.users.get(user).catch(() => null) : user;
+      const userToTimeout =
+        typeof user === "string" ? await this.client.rest.users.get(cleanDiscordId(user)).catch(() => null) : user;
 
       if (!userToTimeout) return "❌ Gabe says: Can't find that user. Are you sure they exist?";
 

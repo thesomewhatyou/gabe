@@ -405,7 +405,11 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
   }
 
   async setPrefix(prefix: string, guild: Guild) {
-    await this.sql`UPDATE guilds SET prefix = ${prefix} WHERE guild_id = ${guild.id}`;
+    await this.sql`
+      INSERT INTO guilds (guild_id, prefix, disabled, disabled_commands, tag_roles)
+      VALUES (${guild.id}, ${prefix}, ${[]}, ${[]}, ${[]})
+      ON CONFLICT (guild_id) DO UPDATE SET prefix = ${prefix}
+    `;
     prefixCache.set(guild.id, prefix);
   }
 
@@ -1477,6 +1481,7 @@ export default class PostgreSQLPlugin implements DatabasePlugin {
     const [result] = await this.sql<{ id: number }[]>`
       INSERT INTO battle_submissions (battle_id, user_id, image_url)
       VALUES (${battleId}, ${userId}, ${imageUrl})
+      ON CONFLICT (battle_id, user_id) DO UPDATE SET image_url = EXCLUDED.image_url
       RETURNING id
     `;
     return (
